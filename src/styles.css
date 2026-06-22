@@ -132,13 +132,52 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+@theme {
+  --color-forest-deep: #0B2E1F;
+  --color-forest-mid: #16412C;
+  --color-cream-foundation: #FAF8F2;
+  --color-cream-stone: #EDE8DA;
+  --color-gold-champagne: #D9BC72;
+  --color-gold-classic: #C9A24A;
+  --font-display: "Libre Caslon Text", serif;
+  --font-sans: "Hanken Grotesk", sans-serif;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
   }
 
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--color-cream-foundation);
+    color: var(--color-forest-deep);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .reveal-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .reveal-up.active {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
