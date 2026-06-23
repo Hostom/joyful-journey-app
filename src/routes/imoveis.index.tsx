@@ -90,8 +90,8 @@ function ListingsPage() {
 
   const setFilter = (patch: Partial<Search>) => {
     navigate({
-      search: (prev) => {
-        const next = { ...prev, ...patch };
+      search: (prev: Search) => {
+        const next: Search = { ...prev, ...patch };
         (Object.keys(next) as (keyof Search)[]).forEach((k) => {
           if (next[k] === undefined || next[k] === ("" as never)) delete next[k];
         });
