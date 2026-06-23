@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { PROPERTIES as ALL_PROPERTIES } from "@/data/properties";
+import { PropertyCard } from "@/components/fenomeno/PropertyCard";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,29 +33,8 @@ export const Route = createFileRoute("/")({
 const HERO_IMG =
   "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=2000&q=80";
 
-const PROPERTIES = [
-  {
-    name: "Yachthouse Residence Club",
-    location: "Barra Sul · Balneário Camboriú",
-    price: "Sob consulta",
-    sqm: "470 m²",
-    img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1400&q=80",
-  },
-  {
-    name: "Cobertura Iconic Tower",
-    location: "Av. Atlântica · Frente Mar",
-    price: "R$ 38.500.000",
-    sqm: "820 m²",
-    img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80",
-  },
-  {
-    name: "One Tower Penthouse",
-    location: "Centro · Vista Panorâmica",
-    price: "R$ 22.900.000",
-    sqm: "510 m²",
-    img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1400&q=80",
-  },
-];
+const PROPERTIES = ALL_PROPERTIES.slice(0, 3);
+
 
 const SERVICES = [
   {
@@ -153,6 +134,12 @@ function Nav({ scrolled }: { scrolled: boolean }) {
           <span className="font-display italic text-sm text-gold-champagne">imóveis</span>
         </a>
         <nav className="hidden md:flex items-center gap-10">
+          <Link
+            to="/imoveis"
+            className="text-xs uppercase tracking-[0.2em] text-cream-foundation/80 hover:text-gold-champagne transition-colors"
+          >
+            Portfólio
+          </Link>
           {links.map(([label, href]) => (
             <a
               key={href}
@@ -254,40 +241,17 @@ function Properties() {
       </div>
       <div className="grid md:grid-cols-3 gap-8">
         {PROPERTIES.map((p, i) => (
-          <article
-            key={p.name}
-            className="reveal-up group"
-            style={{ transitionDelay: `${i * 120}ms` }}
-          >
-            <div className="relative overflow-hidden mb-6 aspect-[4/5]">
-              <img
-                src={p.img}
-                alt={p.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute top-4 left-4 bg-cream-foundation/95 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-forest-deep">
-                Exclusivo
-              </div>
-            </div>
-            <div className="flex items-baseline justify-between mb-2">
-              <h3 className="font-display text-2xl">{p.name}</h3>
-              <span className="text-xs uppercase tracking-widest text-gold-classic">
-                {p.sqm}
-              </span>
-            </div>
-            <p className="text-sm text-forest-mid/70 mb-4">{p.location}</p>
-            <div className="flex items-center justify-between pt-4 border-t border-forest-deep/10">
-              <span className="font-medium">{p.price}</span>
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.2em] text-forest-deep hover:text-gold-classic transition-colors"
-              >
-                Detalhes
-                <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </a>
-            </div>
-          </article>
+          <PropertyCard key={p.slug} property={p} index={i} />
         ))}
+      </div>
+      <div className="reveal-up mt-16 flex justify-center">
+        <Link
+          to="/imoveis"
+          className="inline-flex items-center gap-3 border border-forest-deep/40 px-8 py-4 text-xs uppercase tracking-[0.25em] hover:bg-forest-deep hover:text-cream-foundation transition-colors"
+        >
+          Ver portfólio completo
+          <span className="material-symbols-outlined text-base">arrow_forward</span>
+        </Link>
       </div>
     </section>
   );
