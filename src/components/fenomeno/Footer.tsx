@@ -10,8 +10,8 @@ export function Footer() {
             <span className="font-display italic text-sm text-gold-champagne">imóveis</span>
           </div>
           <p className="max-w-md text-sm leading-relaxed">
-            O ápice do mercado imobiliário em Balneário Camboriú. Curadoria,
-            assessoria e investimentos de altíssimo padrão.
+            Especialistas em imóveis de alto padrão e investimentos imobiliários
+            em Balneário Camboriú. Compre com segurança e rentabilidade.
           </p>
         </div>
         <div>

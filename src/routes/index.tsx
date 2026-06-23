@@ -11,17 +11,17 @@ import { Footer } from "@/components/fenomeno/Footer";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Fenômeno Imóveis | Luxo em Balneário Camboriú" },
+      { title: "Fenômeno Imóveis | Apartamentos de Luxo em Balneário Camboriú" },
       {
         name: "description",
         content:
-          "Imóveis de altíssimo padrão em Balneário Camboriú. Coberturas, apartamentos e residências exclusivas no destino mais luxuoso do Brasil.",
+          "Imóveis de alto padrão e apartamentos de luxo em Balneário Camboriú. Encontre coberturas exclusivas, imóveis frente mar e oportunidades de investimento.",
       },
-      { property: "og:title", content: "Fenômeno Imóveis | Luxo em Balneário Camboriú" },
+      { property: "og:title", content: "Fenômeno Imóveis | Apartamentos de Luxo em Balneário Camboriú" },
       {
         property: "og:description",
         content:
-          "Imóveis de altíssimo padrão em Balneário Camboriú. Coberturas e residências exclusivas.",
+          "Imóveis de alto padrão e apartamentos de luxo em Balneário Camboriú. Encontre coberturas exclusivas e imóveis frente mar.",
       },
       { property: "og:url", content: "/" },
       {
@@ -43,24 +43,24 @@ const PROPERTIES = ALL_PROPERTIES.slice(0, 3);
 
 const SERVICES = [
   {
-    icon: "diamond",
-    title: "Curadoria Exclusiva",
-    body: "Seleção criteriosa de imóveis off-market para clientes de altíssimo padrão.",
+    icon: "real_estate_agent",
+    title: "Imóveis Exclusivos",
+    body: "Acesso antecipado a lançamentos de alto padrão e oportunidades fora do mercado convencional.",
   },
   {
     icon: "handshake",
-    title: "Assessoria Privada",
-    body: "Acompanhamento personalizado em cada etapa, do primeiro contato à entrega das chaves.",
+    title: "Consultoria Imobiliária",
+    body: "Apoio jurídica e comercial especializado para garantir uma compra segura e sem burocracia.",
   },
   {
-    icon: "public",
-    title: "Investimentos Globais",
-    body: "Estruturação de aquisições para investidores nacionais e internacionais.",
+    icon: "trending_up",
+    title: "Retorno sobre Investimento",
+    body: "Análise detalhada de rentabilidade e projeção de valorização para multiplicar seu patrimônio.",
   },
   {
-    icon: "design_services",
-    title: "Arquitetura & Interiores",
-    body: "Parcerias com escritórios premiados para entregas chave-na-mão sob medida.",
+    icon: "support_agent",
+    title: "Suporte Pós-Venda",
+    body: "Acompanhamento contínuo após o fechamento do negócio para sua total tranquilidade.",
   },
 ];
 
@@ -147,30 +147,29 @@ function Hero() {
           />
         </div>
         <p className="text-xs uppercase tracking-[0.4em] text-gold-champagne mb-6">
-          Coleção 2026 · Balneário Camboriú
+          Imóveis de Alto Padrão · Balneário Camboriú
         </p>
         <h1 className="font-display text-cream-foundation text-5xl md:text-7xl lg:text-8xl leading-[0.95] max-w-5xl">
-          O cume do <em className="italic text-gold-champagne">luxo</em>
+          Os melhores imóveis de <em className="italic text-gold-champagne">alto padrão</em>
           <br />
-          começa no endereço certo.
+          no endereço mais valorizado do Brasil.
         </h1>
         <p className="mt-8 max-w-xl text-cream-foundation/80 text-lg leading-relaxed">
-          Coberturas, residências e oportunidades off-market no destino mais
-          desejado do litoral brasileiro.
+          Compre ou invista em coberturas exclusivas, apartamentos frente mar e oportunidades off-market de alta valorização.
         </p>
         <div className="mt-12 flex flex-wrap gap-4">
           <a
             href="#properties"
             className="inline-flex items-center gap-3 bg-gold-classic text-forest-deep px-8 py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors"
           >
-            Explorar Portfólio
+            Explorar Imóveis
             <span className="material-symbols-outlined text-base">arrow_forward</span>
           </a>
           <a
             href="#contact"
             className="inline-flex items-center gap-3 border border-cream-foundation/30 text-cream-foundation px-8 py-4 text-xs uppercase tracking-[0.25em] hover:border-gold-champagne hover:text-gold-champagne transition-colors"
           >
-            Agendar Visita Privada
+            Falar com um Consultor
           </a>
         </div>
       </div>
@@ -191,14 +190,13 @@ function Properties() {
     <section id="properties" className="py-32 px-6 lg:px-12 max-w-7xl mx-auto">
       <div className="reveal-up flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-20">
         <div>
-          <SectionLabel>Portfólio Selecionado</SectionLabel>
+          <SectionLabel>Imóveis em Destaque</SectionLabel>
           <h2 className="font-display text-5xl md:text-6xl leading-tight max-w-2xl">
-            Residências que <em className="italic text-gold-classic">definem</em> a paisagem.
+            Apartamentos de alto padrão <em className="italic text-gold-classic">prontos e na planta</em>.
           </h2>
         </div>
         <p className="max-w-md text-forest-mid/80 leading-relaxed">
-          Cada imóvel da nossa curadoria é avaliado por critérios de localização,
-          arquitetura, vista e potencial de valorização.
+          Opções selecionadas com alto potencial de valorização, localização privilegiada e acabamento premium para moradia ou investimento.
         </p>
       </div>
       <div className="grid md:grid-cols-3 gap-8">
@@ -211,7 +209,7 @@ function Properties() {
           to="/imoveis"
           className="inline-flex items-center gap-3 border border-forest-deep/40 px-8 py-4 text-xs uppercase tracking-[0.25em] hover:bg-forest-deep hover:text-cream-foundation transition-colors"
         >
-          Ver portfólio completo
+          Ver todos os imóveis
           <span className="material-symbols-outlined text-base">arrow_forward</span>
         </Link>
       </div>
@@ -231,27 +229,22 @@ function About() {
           />
         </div>
         <div className="reveal-up">
-          <SectionLabel>Nossa Filosofia</SectionLabel>
+          <SectionLabel>Sobre a Fenômeno</SectionLabel>
           <h2 className="font-display text-5xl md:text-6xl leading-tight mb-8">
-            Um <em className="italic text-gold-champagne">fenômeno</em> chamado
-            Balneário.
+            Sua imobiliária de <em className="italic text-gold-champagne">confiança</em> em
+            Balneário Camboriú.
           </h2>
           <p className="text-cream-foundation/80 leading-relaxed mb-6">
-            Balneário Camboriú é o epicentro do novo luxo brasileiro. Nossa
-            atuação nasceu para acompanhar quem reconhece o valor desse momento
-            histórico — com sigilo, sofisticação e profundo conhecimento de
-            mercado.
+            Somos especialistas no mercado de imóveis de alto padrão em Balneário Camboriú. Auxiliamos investidores e famílias a realizarem transações seguras, rentáveis e com máxima discrição no mercado mais valorizado do país.
           </p>
           <p className="text-cream-foundation/80 leading-relaxed mb-10">
-            Trabalhamos com as principais incorporadoras da cidade e mantemos
-            relacionamentos diretos com proprietários, oferecendo acesso a
-            oportunidades que não circulam publicamente.
+            Parceiros das principais construtoras da região, oferecemos acesso exclusivo a lançamentos, apartamentos prontos frente mar e oportunidades que não entram no mercado aberto.
           </p>
           <div className="grid grid-cols-3 gap-6 border-t border-gold-champagne/20 pt-8">
             {[
-              ["+R$ 2,8 bi", "Em VGV negociado"],
-              ["15 anos", "De atuação local"],
-              ["320+", "Famílias atendidas"],
+              ["+R$ 2,8 bi", "VGV Negociado"],
+              ["15 anos", "Experiência"],
+              ["320+", "Clientes Satisfeitos"],
             ].map(([n, l]) => (
               <div key={l}>
                 <div className="font-display text-3xl text-gold-champagne">{n}</div>
@@ -271,10 +264,9 @@ function Services() {
   return (
     <section id="services" className="py-32 px-6 lg:px-12 max-w-7xl mx-auto">
       <div className="reveal-up text-center max-w-2xl mx-auto mb-20">
-        <SectionLabel>Serviços</SectionLabel>
+        <SectionLabel>Nossos Serviços</SectionLabel>
         <h2 className="font-display text-5xl md:text-6xl leading-tight">
-          Uma experiência <em className="italic text-gold-classic">imersiva</em>{" "}
-          de ponta a ponta.
+          Consultoria completa para <em className="italic text-gold-classic">comprar e investir</em>.
         </h2>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-forest-deep/10">
@@ -301,9 +293,9 @@ function Testimonials() {
     <section className="py-32 bg-cream-stone">
       <div className="max-w-6xl mx-auto px-6 lg:px-12">
         <div className="reveal-up mb-20">
-          <SectionLabel>Confiança</SectionLabel>
+          <SectionLabel>Depoimentos</SectionLabel>
           <h2 className="font-display text-5xl md:text-6xl leading-tight max-w-3xl">
-            Reconhecidos por quem busca o <em className="italic text-gold-classic">excepcional</em>.
+            Resultados comprovados por quem <em className="italic text-gold-classic">investe e confia</em>.
           </h2>
         </div>
         <div className="grid md:grid-cols-2 gap-12">
@@ -347,13 +339,12 @@ function Contact() {
       />
       <div className="relative max-w-4xl mx-auto px-6 lg:px-12 text-center">
         <div className="reveal-up">
-          <SectionLabel>Atendimento Privado</SectionLabel>
+          <SectionLabel>Fale Conosco</SectionLabel>
           <h2 className="font-display text-5xl md:text-7xl leading-tight mb-8">
-            Vamos conversar sobre o seu <em className="italic text-gold-champagne">próximo endereço</em>.
+            Encontre sua próxima <em className="italic text-gold-champagne">oportunidade de negócio</em>.
           </h2>
           <p className="text-cream-foundation/80 text-lg max-w-2xl mx-auto mb-12">
-            Nossa equipe atende com discrição absoluta. Agende uma conversa
-            privada para conhecer oportunidades sob medida.
+            Fale com nossos consultores especialistas. Estamos prontos para apresentar as melhores opções de moradia e investimento em Balneário Camboriú.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-16">
             <a
@@ -361,14 +352,14 @@ function Contact() {
               className="inline-flex items-center gap-3 bg-gold-classic text-forest-deep px-10 py-5 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors"
             >
               <span className="material-symbols-outlined text-base">chat</span>
-              WhatsApp Concierge
+              Falar no WhatsApp
             </a>
             <a
               href="mailto:contato@fenomenoimoveis.com.br"
               className="inline-flex items-center gap-3 border border-cream-foundation/30 px-10 py-5 text-xs uppercase tracking-[0.25em] hover:border-gold-champagne hover:text-gold-champagne transition-colors"
             >
               <span className="material-symbols-outlined text-base">mail</span>
-              Enviar Mensagem
+              Enviar E-mail
             </a>
           </div>
           <div className="grid sm:grid-cols-3 gap-8 pt-12 border-t border-gold-champagne/20 text-left sm:text-center">
