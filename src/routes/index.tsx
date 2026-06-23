@@ -134,6 +134,12 @@ function Nav({ scrolled }: { scrolled: boolean }) {
           <span className="font-display italic text-sm text-gold-champagne">imóveis</span>
         </a>
         <nav className="hidden md:flex items-center gap-10">
+          <Link
+            to="/imoveis"
+            className="text-xs uppercase tracking-[0.2em] text-cream-foundation/80 hover:text-gold-champagne transition-colors"
+          >
+            Portfólio
+          </Link>
           {links.map(([label, href]) => (
             <a
               key={href}
