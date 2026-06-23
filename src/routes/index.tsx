@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { PROPERTIES as ALL_PROPERTIES } from "@/data/properties";
+import { PropertyCard } from "@/components/fenomeno/PropertyCard";
 
 export const Route = createFileRoute("/")({
   head: () => ({
