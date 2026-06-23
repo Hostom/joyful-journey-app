@@ -33,29 +33,8 @@ export const Route = createFileRoute("/")({
 const HERO_IMG =
   "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=2000&q=80";
 
-const PROPERTIES = [
-  {
-    name: "Yachthouse Residence Club",
-    location: "Barra Sul · Balneário Camboriú",
-    price: "Sob consulta",
-    sqm: "470 m²",
-    img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1400&q=80",
-  },
-  {
-    name: "Cobertura Iconic Tower",
-    location: "Av. Atlântica · Frente Mar",
-    price: "R$ 38.500.000",
-    sqm: "820 m²",
-    img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80",
-  },
-  {
-    name: "One Tower Penthouse",
-    location: "Centro · Vista Panorâmica",
-    price: "R$ 22.900.000",
-    sqm: "510 m²",
-    img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1400&q=80",
-  },
-];
+const PROPERTIES = ALL_PROPERTIES.slice(0, 3);
+
 
 const SERVICES = [
   {
