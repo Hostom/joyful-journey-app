@@ -1,7 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { PROPERTIES as ALL_PROPERTIES } from "@/data/properties";
 import { PropertyCard } from "@/components/fenomeno/PropertyCard";
+import { AdvancedFilter } from "@/components/fenomeno/AdvancedFilter";
+import { Navbar } from "@/components/fenomeno/Navbar";
+import { WhatsAppButton } from "@/components/fenomeno/WhatsAppButton";
+import { BackToTop } from "@/components/fenomeno/BackToTop";
+import { Footer } from "@/components/fenomeno/Footer";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -75,15 +80,6 @@ const TESTIMONIALS = [
 ];
 
 function Index() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => {
@@ -99,7 +95,7 @@ function Index() {
 
   return (
     <div className="bg-cream-foundation text-forest-deep">
-      <Nav scrolled={scrolled} />
+      <Navbar transparent />
       <Hero />
       <Properties />
       <About />
@@ -107,61 +103,16 @@ function Index() {
       <Testimonials />
       <Contact />
       <Footer />
+      <WhatsAppButton />
+      <BackToTop />
     </div>
   );
 }
 
-function Nav({ scrolled }: { scrolled: boolean }) {
-  const links = [
-    ["Imóveis", "#properties"],
-    ["Sobre", "#about"],
-    ["Serviços", "#services"],
-    ["Contato", "#contact"],
-  ];
-  return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-forest-deep py-3 shadow-lg shadow-black/20"
-          : "bg-forest-deep/80 backdrop-blur-md py-6"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
-        <a href="#top" className="flex items-baseline gap-2">
-          <span className="font-display text-2xl tracking-wide text-cream-foundation">
-            Fenômeno
-          </span>
-          <span className="font-display italic text-sm text-gold-champagne">imóveis</span>
-        </a>
-        <nav className="hidden md:flex items-center gap-10">
-          <Link
-            to="/imoveis"
-            className="text-xs uppercase tracking-[0.2em] text-cream-foundation/80 hover:text-gold-champagne transition-colors"
-          >
-            Portfólio
-          </Link>
-          {links.map(([label, href]) => (
-            <a
-              key={href}
-              href={href}
-              className="text-xs uppercase tracking-[0.2em] text-cream-foundation/80 hover:text-gold-champagne transition-colors"
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
-        <a
-          href="#contact"
-          className="hidden md:inline-flex items-center gap-2 border border-gold-champagne/60 text-gold-champagne px-5 py-2 text-xs uppercase tracking-[0.2em] hover:bg-gold-champagne hover:text-forest-deep transition-all"
-        >
-          Atendimento Privado
-        </a>
-      </div>
-    </header>
-  );
-}
+/* Nav is now the shared <Navbar /> component */
 
 function Hero() {
+  const navigate = useNavigate();
   const imgRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
     const onScroll = () => {
@@ -173,7 +124,7 @@ function Hero() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <section id="top" className="relative h-[100vh] min-h-[700px] overflow-hidden">
+    <section id="top" className="relative min-h-screen lg:h-screen lg:min-h-[880px] overflow-hidden">
       <div className="absolute inset-0">
         <img
           ref={imgRef}
@@ -183,7 +134,18 @@ function Hero() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-forest-deep/70 via-forest-deep/30 to-forest-deep" />
       </div>
-      <div className="relative z-10 h-full flex flex-col justify-end pb-24 px-6 lg:px-12 max-w-7xl mx-auto">
+      <div className="relative z-10 h-full flex flex-col justify-start pt-24 md:pt-28 lg:pt-28 pb-16 px-6 lg:px-12 max-w-7xl mx-auto">
+        <div className="mb-8 w-full">
+          <AdvancedFilter
+            variant="hero"
+            onSubmit={(values) => {
+              navigate({
+                to: "/imoveis",
+                search: values,
+              });
+            }}
+          />
+        </div>
         <p className="text-xs uppercase tracking-[0.4em] text-gold-champagne mb-6">
           Coleção 2026 · Balneário Camboriú
         </p>
@@ -431,51 +393,4 @@ function Contact() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="bg-forest-deep text-cream-foundation/60 border-t border-gold-champagne/10">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16 grid md:grid-cols-4 gap-12">
-        <div className="md:col-span-2">
-          <div className="flex items-baseline gap-2 mb-6">
-            <span className="font-display text-2xl text-cream-foundation">Fenômeno</span>
-            <span className="font-display italic text-sm text-gold-champagne">imóveis</span>
-          </div>
-          <p className="max-w-md text-sm leading-relaxed">
-            O ápice do mercado imobiliário em Balneário Camboriú. Curadoria,
-            assessoria e investimentos de altíssimo padrão.
-          </p>
-        </div>
-        <div>
-          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-4">
-            Navegação
-          </div>
-          <ul className="space-y-2 text-sm">
-            <li><a href="#properties" className="hover:text-gold-champagne">Imóveis</a></li>
-            <li><a href="#about" className="hover:text-gold-champagne">Sobre</a></li>
-            <li><a href="#services" className="hover:text-gold-champagne">Serviços</a></li>
-            <li><a href="#contact" className="hover:text-gold-champagne">Contato</a></li>
-          </ul>
-        </div>
-        <div>
-          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-4">
-            Redes
-          </div>
-          <div className="flex gap-3">
-            {["public", "share", "mail"].map((i) => (
-              <a
-                key={i}
-                href="#"
-                className="w-10 h-10 border border-gold-champagne/30 flex items-center justify-center text-gold-classic hover:bg-gold-classic hover:text-forest-deep transition-all"
-              >
-                <span className="material-symbols-outlined text-base">{i}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 border-t border-gold-champagne/10 text-center text-[11px] uppercase tracking-[0.25em] text-cream-foundation/40">
-        © 2026 Fenômeno Imóveis · Todos os direitos reservados
-      </div>
-    </footer>
-  );
-}
+/* Footer is now the shared <Footer /> component */

@@ -9,6 +9,10 @@ import { findProperty, PROPERTIES } from "@/data/properties";
 import { PropertyGallery } from "@/components/fenomeno/PropertyGallery";
 import { InquiryCTA } from "@/components/fenomeno/InquiryCTA";
 import { PropertyCard } from "@/components/fenomeno/PropertyCard";
+import { Navbar } from "@/components/fenomeno/Navbar";
+import { WhatsAppButton } from "@/components/fenomeno/WhatsAppButton";
+import { BackToTop } from "@/components/fenomeno/BackToTop";
+import { Footer } from "@/components/fenomeno/Footer";
 
 export const Route = createFileRoute("/imoveis/$slug")({
   loader: ({ params }) => {
@@ -58,7 +62,7 @@ function PropertyDetail() {
 
   return (
     <div className="bg-cream-foundation text-forest-deep">
-      <DetailNav />
+      <Navbar />
 
       <div className="pt-28 px-6 lg:px-12 max-w-7xl mx-auto">
         <Link
@@ -156,6 +160,9 @@ function PropertyDetail() {
           </div>
         </section>
       )}
+      <Footer />
+      <WhatsAppButton />
+      <BackToTop />
     </div>
   );
 }
@@ -184,36 +191,7 @@ function Spec({
   );
 }
 
-function DetailNav() {
-  return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-forest-deep py-4 shadow-lg shadow-black/20">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
-        <Link to="/" className="flex items-baseline gap-2">
-          <span className="font-display text-2xl tracking-wide text-cream-foundation">
-            Fenômeno
-          </span>
-          <span className="font-display italic text-sm text-gold-champagne">
-            imóveis
-          </span>
-        </Link>
-        <nav className="hidden md:flex items-center gap-10">
-          <Link
-            to="/"
-            className="text-xs uppercase tracking-[0.2em] text-cream-foundation/80 hover:text-gold-champagne"
-          >
-            Início
-          </Link>
-          <Link
-            to="/imoveis"
-            className="text-xs uppercase tracking-[0.2em] text-cream-foundation/80 hover:text-gold-champagne"
-          >
-            Portfólio
-          </Link>
-        </nav>
-      </div>
-    </header>
-  );
-}
+/* DetailNav removed — using shared <Navbar /> */
 
 function NotFoundPage() {
   return (
