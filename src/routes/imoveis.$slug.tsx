@@ -122,7 +122,7 @@ function PropertyDetail() {
             Características
           </p>
           <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
-            {property.features.map((f) => (
+            {property.features.map((f: string) => (
               <li key={f} className="flex items-start gap-3 text-sm">
                 <span className="material-symbols-outlined text-gold-classic text-base mt-0.5">
                   check
