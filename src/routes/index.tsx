@@ -241,40 +241,17 @@ function Properties() {
       </div>
       <div className="grid md:grid-cols-3 gap-8">
         {PROPERTIES.map((p, i) => (
-          <article
-            key={p.name}
-            className="reveal-up group"
-            style={{ transitionDelay: `${i * 120}ms` }}
-          >
-            <div className="relative overflow-hidden mb-6 aspect-[4/5]">
-              <img
-                src={p.img}
-                alt={p.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute top-4 left-4 bg-cream-foundation/95 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-forest-deep">
-                Exclusivo
-              </div>
-            </div>
-            <div className="flex items-baseline justify-between mb-2">
-              <h3 className="font-display text-2xl">{p.name}</h3>
-              <span className="text-xs uppercase tracking-widest text-gold-classic">
-                {p.sqm}
-              </span>
-            </div>
-            <p className="text-sm text-forest-mid/70 mb-4">{p.location}</p>
-            <div className="flex items-center justify-between pt-4 border-t border-forest-deep/10">
-              <span className="font-medium">{p.price}</span>
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.2em] text-forest-deep hover:text-gold-classic transition-colors"
-              >
-                Detalhes
-                <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </a>
-            </div>
-          </article>
+          <PropertyCard key={p.slug} property={p} index={i} />
         ))}
+      </div>
+      <div className="reveal-up mt-16 flex justify-center">
+        <Link
+          to="/imoveis"
+          className="inline-flex items-center gap-3 border border-forest-deep/40 px-8 py-4 text-xs uppercase tracking-[0.25em] hover:bg-forest-deep hover:text-cream-foundation transition-colors"
+        >
+          Ver portfólio completo
+          <span className="material-symbols-outlined text-base">arrow_forward</span>
+        </Link>
       </div>
     </section>
   );
