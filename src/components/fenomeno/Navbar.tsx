@@ -1,11 +1,51 @@
 import { Link, useMatches } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { fetchDailyVerse } from "@/components/fenomeno/DailyVerse";
+import type { VerseData } from "@/components/fenomeno/DailyVerse";
 
 type NavbarProps = {
   /** If true, starts transparent and turns solid on scroll (homepage).
    *  If false, always solid (inner pages). */
   transparent?: boolean;
 };
+
+function NavbarVerse() {
+  const [verse, setVerse] = useState<VerseData | null>(null);
+
+  useEffect(() => {
+    const today = new Date().toDateString();
+    const cached = localStorage.getItem("navbar_verse_v5");
+    const cachedDate = localStorage.getItem("navbar_verse_date_v5");
+
+    if (cached && cachedDate === today) {
+      try {
+        setVerse(JSON.parse(cached));
+        return;
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    fetchDailyVerse().then((v) => {
+      localStorage.setItem("navbar_verse_v5", JSON.stringify(v));
+      localStorage.setItem("navbar_verse_date_v5", today);
+      setVerse(v);
+    });
+  }, []);
+
+  if (!verse) return null;
+
+  return (
+    <div className="hidden lg:flex flex-col items-end text-right max-w-[420px] select-none flex-shrink-0 ml-6">
+      <p className="text-[11px] italic text-cream-foundation/70 font-sans leading-relaxed break-words">
+        "{verse.text}"
+      </p>
+      <span className="text-[10px] text-gold-classic font-sans font-bold mt-1">
+        {verse.reference}
+      </span>
+    </div>
+  );
+}
 
 export function Navbar({ transparent = false }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
@@ -45,7 +85,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
 
   const navLinks = [
     { label: "Início", to: "/", hash: undefined, active: isHome && !isListings },
-    { label: "Portfólio", to: "/imoveis", hash: undefined, active: isListings },
+    { label: "Imóveis", to: "/imoveis", hash: undefined, active: isListings },
     { label: "Sobre", to: "/", hash: "about", active: false },
     { label: "Serviços", to: "/", hash: "services", active: false },
     { label: "Contato", to: "/", hash: "contact", active: false },
@@ -62,13 +102,8 @@ export function Navbar({ transparent = false }: NavbarProps) {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-baseline gap-2">
-            <span className="font-display text-2xl tracking-wide text-cream-foundation">
-              Fenômeno
-            </span>
-            <span className="font-display italic text-sm text-gold-champagne">
-              imóveis
-            </span>
+          <Link to="/" className="flex items-center">
+            <img src="/logo.svg" alt="Fenômeno Imóveis" className="h-8 w-auto" />
           </Link>
 
           {/* Desktop nav */}
@@ -98,13 +133,8 @@ export function Navbar({ transparent = false }: NavbarProps) {
             )}
           </nav>
 
-          {/* Desktop CTA */}
-          <a
-            href="/#contact"
-            className="hidden md:inline-flex items-center gap-2 border border-gold-champagne/60 text-gold-champagne px-5 py-2 text-xs uppercase tracking-[0.2em] hover:bg-gold-champagne hover:text-forest-deep transition-all"
-          >
-            Atendimento Privado
-          </a>
+          {/* Desktop CTA replaced by Bible Verse */}
+          <NavbarVerse />
 
           {/* Mobile hamburger */}
           <button
@@ -208,7 +238,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
                   className="w-full inline-flex items-center justify-center gap-3 bg-gold-classic text-forest-deep px-8 py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors"
                 >
                   <span className="material-symbols-outlined text-base">chat</span>
-                  WhatsApp Concierge
+                  Falar no WhatsApp
                 </a>
 
                 <div className="mt-8 text-center">

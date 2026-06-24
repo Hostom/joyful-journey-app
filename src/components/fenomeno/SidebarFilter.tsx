@@ -1,0 +1,306 @@
+import { useState, useEffect } from "react";
+import type { PropertyLocation, PropertyType } from "@/data/properties";
+import { LOCATIONS, TYPES } from "@/data/properties";
+
+type FilterValues = {
+  location?: PropertyLocation;
+  type?: PropertyType;
+  minPrice?: number;
+  maxPrice?: number;
+  bedrooms?: number;
+  suites?: number;
+  parking?: number;
+};
+
+type SidebarFilterProps = {
+  initialValues?: FilterValues;
+  onSubmit: (values: FilterValues) => void;
+  onClear: () => void;
+};
+
+export function SidebarFilter({
+  initialValues,
+  onSubmit,
+  onClear,
+}: SidebarFilterProps) {
+  const [location, setLocation] = useState<string>(initialValues?.location ?? "");
+  const [type, setType] = useState<string>(initialValues?.type ?? "");
+  const [status, setStatus] = useState<string>("");
+
+  const [bedrooms, setBedrooms] = useState<number | undefined>(initialValues?.bedrooms);
+  const [suites, setSuites] = useState<number | undefined>(initialValues?.suites);
+  const [parking, setParking] = useState<number | undefined>(initialValues?.parking);
+
+  const [minPrice, setMinPrice] = useState<number>(initialValues?.minPrice ?? 0);
+  const [maxPrice, setMaxPrice] = useState<number>(initialValues?.maxPrice ?? 50000000);
+
+  // Sync state if initialValues change
+  useEffect(() => {
+    if (initialValues) {
+      setLocation(initialValues.location ?? "");
+      setType(initialValues.type ?? "");
+      setBedrooms(initialValues.bedrooms);
+      setSuites(initialValues.suites);
+      setParking(initialValues.parking);
+      setMinPrice(initialValues.minPrice ?? 0);
+      setMaxPrice(initialValues.maxPrice ?? 50000000);
+    }
+  }, [initialValues]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({
+      location: (location || undefined) as PropertyLocation | undefined,
+      type: (type || undefined) as PropertyType | undefined,
+      minPrice: minPrice > 0 ? minPrice : undefined,
+      maxPrice: maxPrice < 50000000 ? maxPrice : undefined,
+      bedrooms: bedrooms || undefined,
+      suites: suites || undefined,
+      parking: parking || undefined,
+    });
+  };
+
+  const handleClearClick = () => {
+    setLocation("");
+    setType("");
+    setStatus("");
+    setBedrooms(undefined);
+    setSuites(undefined);
+    setParking(undefined);
+    setMinPrice(0);
+    setMaxPrice(50000000);
+    onClear();
+  };
+
+  const formatBRL = (val: number) => {
+    return val.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      maximumFractionDigits: 0,
+    });
+  };
+
+  const handleMinPriceChange = (valStr: string) => {
+    const num = Number(valStr.replace(/\D/g, ""));
+    setMinPrice(num);
+  };
+
+  const handleMaxPriceChange = (valStr: string) => {
+    const num = Number(valStr.replace(/\D/g, ""));
+    setMaxPrice(num);
+  };
+
+  const getPillClass = (isSelected: boolean) => {
+    return isSelected
+      ? "w-9 h-9 rounded bg-gold-classic text-forest-deep border border-gold-classic text-sm font-extrabold font-sans transition-all flex items-center justify-center cursor-pointer shadow-md shadow-gold-classic/30 hover:bg-gold-champagne"
+      : "w-9 h-9 rounded border border-cream-foundation/30 text-white hover:bg-white/10 hover:border-cream-foundation/50 text-sm font-bold font-sans transition-all flex items-center justify-center cursor-pointer";
+  };
+
+  return (
+    <form onSubmit={handleSearchSubmit} className="flex flex-col gap-6 w-full text-cream-foundation">
+      {/* Title */}
+      <div className="pb-4 border-b border-cream-foundation/15">
+        <h2 className="font-display text-2xl text-white font-normal leading-tight">
+          Filtrar Imóveis
+        </h2>
+      </div>
+
+      {/* Localização */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+          Localização
+        </label>
+        <div className="relative">
+          <select
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="w-full bg-transparent border-b border-cream-foundation/40 focus:border-gold-classic text-white outline-none py-2 pr-8 text-sm font-sans font-semibold transition-colors cursor-pointer appearance-none"
+          >
+            <option value="" className="bg-forest-deep text-cream-foundation">Todas as localizações</option>
+            {LOCATIONS.map((l) => (
+              <option key={l} value={l} className="bg-forest-deep text-cream-foundation">
+                {l}
+              </option>
+            ))}
+          </select>
+          <span className="material-symbols-outlined text-gold-classic absolute right-1 bottom-2 pointer-events-none text-lg select-none">
+            expand_more
+          </span>
+        </div>
+      </div>
+
+      {/* Tipo do Imóvel */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+          Tipo do Imóvel
+        </label>
+        <div className="relative">
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="w-full bg-transparent border-b border-cream-foundation/40 focus:border-gold-classic text-white outline-none py-2 pr-8 text-sm font-sans font-semibold transition-colors cursor-pointer appearance-none"
+          >
+            <option value="" className="bg-forest-deep text-cream-foundation">Todos os tipos</option>
+            {TYPES.map((t) => (
+              <option key={t} value={t} className="bg-forest-deep text-cream-foundation">
+                {t}
+              </option>
+            ))}
+          </select>
+          <span className="material-symbols-outlined text-gold-classic absolute right-1 bottom-2 pointer-events-none text-lg select-none">
+            expand_more
+          </span>
+        </div>
+      </div>
+
+      {/* Status */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+          Status
+        </label>
+        <div className="relative">
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="w-full bg-transparent border-b border-cream-foundation/40 focus:border-gold-classic text-white outline-none py-2 pr-8 text-sm font-sans font-semibold transition-colors cursor-pointer appearance-none"
+          >
+            <option value="" className="bg-forest-deep text-cream-foundation">Todos os status</option>
+            <option value="pronto" className="bg-forest-deep text-cream-foundation">Pronto para morar</option>
+            <option value="construcao" className="bg-forest-deep text-cream-foundation">Em construção</option>
+            <option value="lancamento" className="bg-forest-deep text-cream-foundation">Lançamento</option>
+          </select>
+          <span className="material-symbols-outlined text-gold-classic absolute right-1 bottom-2 pointer-events-none text-lg select-none">
+            expand_more
+          </span>
+        </div>
+      </div>
+
+      {/* Quartos */}
+      <div className="flex flex-col gap-2.5">
+        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+          Quartos mínimo
+        </label>
+        <div className="flex justify-between items-center w-full">
+          {[1, 2, 3, 4, 5, 6].map((num) => (
+            <button
+              key={num}
+              type="button"
+              onClick={() => setBedrooms(bedrooms === num ? undefined : num)}
+              className={getPillClass(bedrooms === num)}
+            >
+              {num}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Suítes */}
+      <div className="flex flex-col gap-2.5">
+        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+          Suítes mínimo
+        </label>
+        <div className="flex justify-between items-center w-full">
+          {[1, 2, 3, 4, 5, 6].map((num) => (
+            <button
+              key={num}
+              type="button"
+              onClick={() => setSuites(suites === num ? undefined : num)}
+              className={getPillClass(suites === num)}
+            >
+              {num}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Vagas */}
+      <div className="flex flex-col gap-2.5">
+        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+          Vagas de Garagem mínimo
+        </label>
+        <div className="flex justify-between items-center w-full">
+          {[1, 2, 3, 4, 5, 6].map((num) => (
+            <button
+              key={num}
+              type="button"
+              onClick={() => setParking(parking === num ? undefined : num)}
+              className={getPillClass(parking === num)}
+            >
+              {num}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Preço */}
+      <div className="flex flex-col gap-3">
+        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+          Valor
+        </label>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] uppercase tracking-wider text-cream-foundation/80 font-bold font-sans">
+              Mínimo
+            </span>
+            <input
+              type="text"
+              value={minPrice === 0 ? "" : formatBRL(minPrice)}
+              onChange={(e) => handleMinPriceChange(e.target.value)}
+              className="w-full bg-transparent border-b border-cream-foundation/40 focus:border-gold-classic text-white outline-none py-1.5 text-sm font-sans font-semibold transition-colors placeholder:text-cream-foundation/50"
+              placeholder="R$ 0"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] uppercase tracking-wider text-cream-foundation/80 font-bold font-sans">
+              Máximo
+            </span>
+            <input
+              type="text"
+              value={maxPrice === 50000000 ? "" : formatBRL(maxPrice)}
+              onChange={(e) => handleMaxPriceChange(e.target.value)}
+              className="w-full bg-transparent border-b border-cream-foundation/40 focus:border-gold-classic text-white outline-none py-1.5 text-sm font-sans font-semibold transition-colors placeholder:text-cream-foundation/50"
+              placeholder="Sem Limite"
+            />
+          </div>
+        </div>
+        
+        {/* Slider for Max Price */}
+        <div className="mt-2 flex flex-col gap-2">
+          <input
+            type="range"
+            min="0"
+            max="50000000"
+            step="500000"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(Number(e.target.value))}
+            className="w-full h-1.5 bg-cream-foundation/20 rounded-full appearance-none cursor-pointer accent-gold-classic focus:outline-none"
+          />
+          <div className="flex justify-between text-[10px] text-cream-foundation/90 font-sans font-bold">
+            <span>R$ 0</span>
+            <span>{maxPrice === 50000000 ? "Sem Limite" : formatBRL(maxPrice)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Buttons */}
+      <div className="flex flex-col gap-2 mt-4">
+        <button
+          type="submit"
+          className="w-full bg-gold-classic hover:bg-gold-champagne text-forest-deep hover:scale-[1.01] transition-all duration-300 font-bold px-4 py-3 rounded text-xs uppercase tracking-[0.15em] flex items-center justify-center gap-2 cursor-pointer shadow-md h-[42px]"
+        >
+          <span className="material-symbols-outlined text-sm select-none">search</span>
+          Aplicar Filtros
+        </button>
+
+        <button
+          type="button"
+          onClick={handleClearClick}
+          className="w-full bg-transparent hover:bg-cream-foundation/5 text-cream-foundation/80 border border-cream-foundation/25 hover:border-cream-foundation transition-all duration-300 font-bold px-4 py-3 rounded text-xs uppercase tracking-[0.15em] flex items-center justify-center gap-2 cursor-pointer h-[42px]"
+        >
+          <span className="material-symbols-outlined text-sm select-none">close</span>
+          Limpar Filtros
+        </button>
+      </div>
+    </form>
+  );
+}

@@ -17,6 +17,8 @@ type AdvancedFilterProps = {
   onSubmit: (values: FilterValues) => void;
   variant?: "hero" | "listings";
   defaultExpanded?: boolean;
+  showCollapse?: boolean;
+  bgClassName?: string;
 };
 
 export function AdvancedFilter({
@@ -24,6 +26,8 @@ export function AdvancedFilter({
   onSubmit,
   variant = "hero",
   defaultExpanded,
+  showCollapse = true,
+  bgClassName,
 }: AdvancedFilterProps) {
   const [location, setLocation] = useState<string>(initialValues?.location ?? "");
   const [type, setType] = useState<string>(initialValues?.type ?? "");
@@ -57,7 +61,7 @@ export function AdvancedFilter({
 
   // Click outside listener
   useEffect(() => {
-    if (!isExpanded || variant !== "hero") return;
+    if (!isExpanded || variant !== "hero" || !showCollapse) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -69,7 +73,7 @@ export function AdvancedFilter({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isExpanded, variant]);
+  }, [isExpanded, variant, showCollapse]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -301,7 +305,9 @@ export function AdvancedFilter({
   return (
     <div
       ref={containerRef}
-      className={`mx-auto bg-forest-deep/50 backdrop-blur-md border text-cream-foundation transition-all duration-500 ease-in-out shadow-2xl overflow-hidden ${
+      className={`mx-auto border text-cream-foundation transition-all duration-500 ease-in-out shadow-2xl overflow-hidden ${
+        bgClassName || "bg-forest-deep/50 backdrop-blur-md"
+      } ${
         isExpanded
           ? "w-full max-w-5xl rounded-3xl p-6 lg:p-8 border-gold-classic/60"
           : "w-full max-w-2xl rounded-full p-4 cursor-pointer border-gold-champagne/40 hover:border-gold-classic hover:bg-forest-deep/60 transform hover:scale-[1.01]"
@@ -318,7 +324,7 @@ export function AdvancedFilter({
       >
         <div className="flex items-center gap-3 pl-3">
           <span className="material-symbols-outlined text-gold-classic">search</span>
-          <span className="text-sm font-sans font-medium text-cream-foundation/80 select-none">
+          <span className="text-sm font-sans font-semibold text-cream-foundation select-none">
             Buscar imóvel por localização, tipo, quartos...
           </span>
         </div>
@@ -405,7 +411,7 @@ export function AdvancedFilter({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Quartos */}
             <div className="flex flex-col gap-1.5">
-              <span className="text-[11px] uppercase tracking-[0.2em] text-gold-champagne font-semibold font-sans">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-bold font-sans">
                 Quartos
               </span>
               <div className="bg-white rounded-lg p-2 flex items-center border border-cream-stone/40 shadow-sm text-forest-deep">
@@ -431,7 +437,7 @@ export function AdvancedFilter({
 
             {/* Suítes */}
             <div className="flex flex-col gap-1.5">
-              <span className="text-[11px] uppercase tracking-[0.2em] text-gold-champagne font-semibold font-sans">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-bold font-sans">
                 Suítes
               </span>
               <div className="bg-white rounded-lg p-2 flex items-center border border-cream-stone/40 shadow-sm text-forest-deep">
@@ -457,7 +463,7 @@ export function AdvancedFilter({
 
             {/* Vagas */}
             <div className="flex flex-col gap-1.5">
-              <span className="text-[11px] uppercase tracking-[0.2em] text-gold-champagne font-semibold font-sans">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-bold font-sans">
                 Vagas
               </span>
               <div className="bg-white rounded-lg p-2 flex items-center border border-cream-stone/40 shadow-sm text-forest-deep">
@@ -486,27 +492,27 @@ export function AdvancedFilter({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-end">
             {/* Min/Max Inputs */}
             <div className="lg:col-span-4 flex flex-col gap-1.5">
-              <span className="text-[11px] uppercase tracking-[0.2em] text-gold-champagne font-semibold font-sans">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-bold font-sans">
                 Valor
               </span>
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1">
-                  <span className="text-[9px] uppercase tracking-wider text-gold-champagne/80 font-sans">Mínimo</span>
+                  <span className="text-[9px] uppercase tracking-wider text-cream-foundation font-semibold font-sans">Mínimo</span>
                   <input
                     type="text"
                     value={minPrice === 0 ? "R$ 0" : formatBRL(minPrice)}
                     onChange={(e) => handleMinPriceChange(e.target.value)}
-                    className="w-full bg-forest-deep border border-gold-champagne/30 rounded-lg p-2.5 text-xs text-cream-foundation font-sans font-medium focus:outline-none focus:border-gold-classic"
+                    className="w-full bg-forest-deep border border-gold-champagne/60 rounded-lg p-2.5 text-xs text-cream-foundation font-sans font-semibold focus:outline-none focus:border-gold-classic"
                     placeholder="R$ 0"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[9px] uppercase tracking-wider text-gold-champagne/80 font-sans">Máximo</span>
+                  <span className="text-[9px] uppercase tracking-wider text-cream-foundation font-semibold font-sans">Máximo</span>
                   <input
                     type="text"
                     value={maxPrice === 50000000 ? "R$ 50M+" : formatBRL(maxPrice)}
                     onChange={(e) => handleMaxPriceChange(e.target.value)}
-                    className="w-full bg-forest-deep border border-gold-champagne/30 rounded-lg p-2.5 text-xs text-cream-foundation font-sans font-medium focus:outline-none focus:border-gold-classic"
+                    className="w-full bg-forest-deep border border-gold-champagne/60 rounded-lg p-2.5 text-xs text-cream-foundation font-sans font-semibold focus:outline-none focus:border-gold-classic"
                     placeholder="R$ 50.000.000"
                   />
                 </div>
@@ -522,9 +528,9 @@ export function AdvancedFilter({
                 step="500000"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full h-1 bg-gold-champagne/20 rounded-lg appearance-none cursor-pointer accent-gold-classic"
+                className="w-full h-1 bg-gold-champagne/30 rounded-lg appearance-none cursor-pointer accent-gold-classic"
               />
-              <div className="flex justify-between text-[10px] text-gold-champagne/70 font-sans font-medium">
+              <div className="flex justify-between text-[10px] text-cream-foundation font-sans font-semibold">
                 <span>R$ 0,00</span>
                 <span>R$ 50.000.000,00</span>
               </div>
@@ -533,14 +539,16 @@ export function AdvancedFilter({
             {/* Submit and Collapse Buttons */}
             <div className="lg:col-span-3">
               <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsExpanded(false)}
-                  className="bg-transparent border border-gold-champagne/40 hover:border-gold-classic text-gold-champagne transition-all duration-300 px-3 py-3.5 rounded-lg flex items-center justify-center cursor-pointer"
-                  title="Recolher filtros"
-                >
-                  <span className="material-symbols-outlined">expand_less</span>
-                </button>
+                {showCollapse && (
+                  <button
+                    type="button"
+                    onClick={() => setIsExpanded(false)}
+                    className="bg-transparent border border-gold-champagne/40 hover:border-gold-classic text-gold-champagne transition-all duration-300 px-3 py-3.5 rounded-lg flex items-center justify-center cursor-pointer"
+                    title="Recolher filtros"
+                  >
+                    <span className="material-symbols-outlined">expand_less</span>
+                  </button>
+                )}
                 <button
                   type="submit"
                   className="flex-1 bg-gold-classic hover:bg-gold-champagne text-forest-deep transition-all duration-300 font-bold px-6 py-3.5 rounded-lg text-sm uppercase tracking-[0.15em] flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-98"

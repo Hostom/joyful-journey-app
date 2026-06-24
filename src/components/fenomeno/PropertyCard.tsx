@@ -5,12 +5,21 @@ import { useState } from "react";
 export function PropertyCard({
   property,
   index = 0,
+  onSelect,
 }: {
   property: Property;
   index?: number;
+  onSelect?: (property: Property) => void;
 }) {
   const [imgIndex, setImgIndex] = useState(0);
   const [isFav, setIsFav] = useState(false);
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (onSelect) {
+      e.preventDefault();
+      onSelect(property);
+    }
+  };
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -37,6 +46,7 @@ export function PropertyCard({
     <Link
       to="/imoveis/$slug"
       params={{ slug: property.slug }}
+      onClick={handleClick}
       className="reveal-up group block h-full"
       style={{ transitionDelay: `${index * 80}ms` }}
     >

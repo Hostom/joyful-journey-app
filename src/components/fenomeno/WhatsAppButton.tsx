@@ -1,16 +1,8 @@
 import { useState, useEffect } from "react";
 
 export function WhatsAppButton() {
-  const [visible, setVisible] = useState(false);
+  const [visible] = useState(true);
   const [pulse, setPulse] = useState(true);
-
-  useEffect(() => {
-    // Show button after scrolling past hero
-    const onScroll = () => setVisible(window.scrollY > 400);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Stop pulsing after 8 seconds
   useEffect(() => {
