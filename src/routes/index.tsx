@@ -323,6 +323,10 @@ function Testimonials() {
 }
 
 function Contact() {
+  const [modal, setModal] = useState<null | "whatsapp" | "email">(null);
+  const whatsappUrl = "https://wa.me/5547999999999";
+  const emailUrl = "mailto:contato@fenomenoimoveis.com.br";
+
   return (
     <section
       id="contact"
@@ -347,20 +351,22 @@ function Contact() {
             Fale com nossos consultores especialistas. Estamos prontos para apresentar as melhores opções de moradia e investimento em Balneário Camboriú.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-16">
-            <a
-              href="https://wa.me/5547999999999"
+            <button
+              type="button"
+              onClick={() => setModal("whatsapp")}
               className="inline-flex items-center gap-3 bg-gold-classic text-forest-deep px-10 py-5 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors"
             >
               <span className="material-symbols-outlined text-base">chat</span>
               Falar no WhatsApp
-            </a>
-            <a
-              href="mailto:contato@fenomenoimoveis.com.br"
+            </button>
+            <button
+              type="button"
+              onClick={() => setModal("email")}
               className="inline-flex items-center gap-3 border border-cream-foundation/30 px-10 py-5 text-xs uppercase tracking-[0.25em] hover:border-gold-champagne hover:text-gold-champagne transition-colors"
             >
               <span className="material-symbols-outlined text-base">mail</span>
               Enviar E-mail
-            </a>
+            </button>
           </div>
           <div className="grid sm:grid-cols-3 gap-8 pt-12 border-t border-gold-champagne/20 text-left sm:text-center">
             {[
@@ -380,8 +386,16 @@ function Contact() {
           </div>
         </div>
       </div>
+
+      <ContactLeadModal
+        open={modal !== null}
+        onOpenChange={(o) => !o && setModal(null)}
+        channel={modal ?? "whatsapp"}
+        redirectUrl={modal === "email" ? emailUrl : whatsappUrl}
+      />
     </section>
   );
 }
+
 
 /* Footer is now the shared <Footer /> component */
