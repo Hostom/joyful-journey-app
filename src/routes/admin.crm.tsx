@@ -18,9 +18,25 @@ const getCrmSettings = createServerFn({ method: "GET" }).handler(async () => {
 const validateApiKey = createServerFn({ method: "GET" })
   .inputValidator((key: string) => key)
   .handler(async ({ data: key }) => {
-    const expected = process.env.SITE_TO_CRM_API_KEY ?? "";
-    if (!expected || key !== expected) return { valid: false };
-    return { valid: true };
+    const expected = (process.env.SITE_TO_CRM_API_KEY ?? "").trim();
+    const provided = (key ?? "").trim();
+    if (!expected) {
+      console.error("[admin/crm validateApiKey] SITE_TO_CRM_API_KEY ausente no ambiente do servidor.");
+      return { valid: false, reason: "env_missing" as const };
+    }
+    if (provided.length === 0) {
+      return { valid: false, reason: "empty_input" as const };
+    }
+    if (provided !== expected) {
+      console.warn("[admin/crm validateApiKey] Chave não confere.", {
+        providedLength: provided.length,
+        expectedLength: expected.length,
+        providedPrefix: provided.slice(0, 3),
+        expectedPrefix: expected.slice(0, 3),
+      });
+      return { valid: false, reason: "mismatch" as const };
+    }
+    return { valid: true as const };
   });
 
 // ─── Rota ───────────────────────────────────────────────────────────────────
