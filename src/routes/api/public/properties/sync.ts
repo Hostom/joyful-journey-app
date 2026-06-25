@@ -82,7 +82,7 @@ function formatZodIssues(err: z.ZodError) {
 
 // ─── Route ──────────────────────────────────────────────────────────────────
 
-export const Route = createFileRoute("/api/properties/sync")({
+export const Route = createFileRoute("/api/public/properties/sync")({
   server: {
     handlers: {
       POST: async ({ request }) => {

@@ -13,7 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ImoveisIndexRouteImport } from './routes/imoveis.index'
 import { Route as ImoveisCodeRouteImport } from './routes/imoveis.$code'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
-import { Route as ApiPropertiesSyncRouteImport } from './routes/api/properties/sync'
+import { Route as ApiPublicPropertiesSyncRouteImport } from './routes/api/public/properties/sync'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -35,9 +35,9 @@ const AdminCrmRoute = AdminCrmRouteImport.update({
   path: '/admin/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPropertiesSyncRoute = ApiPropertiesSyncRouteImport.update({
-  id: '/api/properties/sync',
-  path: '/api/properties/sync',
+const ApiPublicPropertiesSyncRoute = ApiPublicPropertiesSyncRouteImport.update({
+  id: '/api/public/properties/sync',
+  path: '/api/public/properties/sync',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -46,14 +46,14 @@ export interface FileRoutesByFullPath {
   '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis/': typeof ImoveisIndexRoute
-  '/api/properties/sync': typeof ApiPropertiesSyncRoute
+  '/api/public/properties/sync': typeof ApiPublicPropertiesSyncRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis': typeof ImoveisIndexRoute
-  '/api/properties/sync': typeof ApiPropertiesSyncRoute
+  '/api/public/properties/sync': typeof ApiPublicPropertiesSyncRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,7 +61,7 @@ export interface FileRoutesById {
   '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis/': typeof ImoveisIndexRoute
-  '/api/properties/sync': typeof ApiPropertiesSyncRoute
+  '/api/public/properties/sync': typeof ApiPublicPropertiesSyncRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -70,21 +70,21 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/imoveis/$code'
     | '/imoveis/'
-    | '/api/properties/sync'
+    | '/api/public/properties/sync'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin/crm'
     | '/imoveis/$code'
     | '/imoveis'
-    | '/api/properties/sync'
+    | '/api/public/properties/sync'
   id:
     | '__root__'
     | '/'
     | '/admin/crm'
     | '/imoveis/$code'
     | '/imoveis/'
-    | '/api/properties/sync'
+    | '/api/public/properties/sync'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -92,7 +92,7 @@ export interface RootRouteChildren {
   AdminCrmRoute: typeof AdminCrmRoute
   ImoveisCodeRoute: typeof ImoveisCodeRoute
   ImoveisIndexRoute: typeof ImoveisIndexRoute
-  ApiPropertiesSyncRoute: typeof ApiPropertiesSyncRoute
+  ApiPublicPropertiesSyncRoute: typeof ApiPublicPropertiesSyncRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -125,11 +125,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCrmRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/properties/sync': {
-      id: '/api/properties/sync'
-      path: '/api/properties/sync'
-      fullPath: '/api/properties/sync'
-      preLoaderRoute: typeof ApiPropertiesSyncRouteImport
+    '/api/public/properties/sync': {
+      id: '/api/public/properties/sync'
+      path: '/api/public/properties/sync'
+      fullPath: '/api/public/properties/sync'
+      preLoaderRoute: typeof ApiPublicPropertiesSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -140,7 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCrmRoute: AdminCrmRoute,
   ImoveisCodeRoute: ImoveisCodeRoute,
   ImoveisIndexRoute: ImoveisIndexRoute,
-  ApiPropertiesSyncRoute: ApiPropertiesSyncRoute,
+  ApiPublicPropertiesSyncRoute: ApiPublicPropertiesSyncRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
