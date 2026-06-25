@@ -16,7 +16,7 @@ import { Footer } from "@/components/fenomeno/Footer";
 
 export const Route = createFileRoute("/imoveis/$code")({
   loader: ({ params }) => {
-    const property = findProperty(params.slug);
+    const property = findProperty(params.code);
     if (!property) throw notFound();
     return { property };
   },
