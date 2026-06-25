@@ -445,9 +445,9 @@ function LeadsTab({ settings, copied, onCopy }: TabProps) {
     <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       <InfoCard title="Como funciona o envio de Leads" icon="info">
         <p style={bodyText}>
-          Quando um visitante preenche o formulário de contato no site, os dados são enviados automaticamente para a URL de Leads do CRM configurada abaixo. O site usa a{" "}
-          <strong style={{ color: "#D9BC72" }}>SITE_TO_CRM_API_KEY</strong> no cabeçalho{" "}
-          <code style={codeStyle}>X-API-Key</code> para autenticar a requisição.
+          Quando um visitante preenche o formulário de contato no site, os dados são enviados automaticamente para a URL de Leads do CRM configurada abaixo. O site inclui a{" "}
+          <strong style={{ color: "#D9BC72" }}>SITE_TO_CRM_API_KEY</strong> no corpo da requisição, no campo{" "}
+          <code style={codeStyle}>webhook_token</code>, para autenticar o lead no CRM.
         </p>
       </InfoCard>
 
@@ -471,30 +471,29 @@ function LeadsTab({ settings, copied, onCopy }: TabProps) {
 
 Headers:
   Content-Type: application/json
-  X-API-Key: ${settings.siteToCrmApiKey ? maskKey(settings.siteToCrmApiKey) : "<SITE_TO_CRM_API_KEY>"}
 
 Body:
 {
-  "name": "Nome do Cliente",
-  "email": "cliente@email.com",
-  "phone": "+5547999998888",
-  "message": "Mensagem do cliente",
-  "interest": {
-    "property_slug": "cobertura-iconic-tower",
-    "property_name": "Cobertura Iconic Tower"
-  },
-  "marketing": {
-    "utm_source": "google",
-    "utm_medium": "cpc",
-    "page_url": "https://fenomenoimoveis.com.br/imoveis/cobertura-iconic-tower"
-  }
+  "name": "Maria Oliveira",
+  "email": "maria@email.com",
+  "phone": "+5547999999999",
+  "message": "Tenho interesse no apartamento Beira Mar.",
+  "property_id": "prop_abc123",
+  "source": "site",
+  "webhook_token": "${settings.siteToCrmApiKey ? maskKey(settings.siteToCrmApiKey) : "<SITE_TO_CRM_API_KEY>"}"
 }`}</CodeBlock>
+        <p style={{ margin: "12px 0 0", fontSize: "12px", color: "rgba(250,248,242,0.5)", lineHeight: 1.6 }}>
+          O campo <code style={codeStyle}>webhook_token</code> recebe o valor da variável{" "}
+          <code style={codeStyle}>SITE_TO_CRM_API_KEY</code>. <code style={codeStyle}>property_id</code> é o
+          identificador do imóvel no CRM e <code style={codeStyle}>source</code> identifica a origem do lead
+          (use <code style={codeStyle}>"site"</code> para envios a partir do site).
+        </p>
       </Section>
 
       <Section title="Variáveis de Ambiente" icon="settings">
         <EnvTable rows={[
-          { key: "CRM_LEADS_API_URL",    value: settings.crmLeadsApiUrl || "—",                                           description: "URL do endpoint de leads do CRM",            required: true },
-          { key: "SITE_TO_CRM_API_KEY",  value: settings.siteToCrmApiKey ? maskKey(settings.siteToCrmApiKey) : "—",       description: "Chave enviada no cabeçalho X-API-Key",       required: true },
+          { key: "CRM_LEADS_API_URL",    value: settings.crmLeadsApiUrl || "—",                                           description: "URL do endpoint de leads do CRM",                       required: true },
+          { key: "SITE_TO_CRM_API_KEY",  value: settings.siteToCrmApiKey ? maskKey(settings.siteToCrmApiKey) : "—",       description: "Enviado no corpo como campo webhook_token",             required: true },
         ]} />
       </Section>
     </div>
@@ -603,7 +602,7 @@ function TokensTab({ settings, copied, onCopy }: TabProps) {
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <TokenRow
             name="SITE_TO_CRM_API_KEY"
-            description="Chave que o Site envia para o CRM ao submeter leads. Configure esta mesma chave no painel do CRM para autenticar as requisições recebidas."
+            description="Chave que o Site envia para o CRM no corpo do lead, no campo webhook_token. Configure esta mesma chave no CRM para validar leads recebidos."
             direction="Site → CRM"
             value={settings.siteToCrmApiKey}
             copyId="token-site-crm"
@@ -629,8 +628,7 @@ function TokensTab({ settings, copied, onCopy }: TabProps) {
 # Cabeçalho: Authorization: Bearer <TOKEN>
 CRM_TO_SITE_BEARER_TOKEN="${settings.crmToSiteBearerToken || "SEU_TOKEN_AQUI"}"
 
-# Chave que o Site usa para autenticar ao enviar leads (Site → CRM)
-# Cabeçalho: X-API-Key: <CHAVE>
+# Chave que o Site envia no corpo do lead (campo webhook_token) — Site → CRM
 SITE_TO_CRM_API_KEY="${settings.siteToCrmApiKey || "SUA_CHAVE_AQUI"}"
 
 # URL do endpoint de Leads do seu CRM
