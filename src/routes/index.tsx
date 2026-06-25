@@ -7,6 +7,7 @@ import { Navbar } from "@/components/fenomeno/Navbar";
 import { WhatsAppButton } from "@/components/fenomeno/WhatsAppButton";
 import { BackToTop } from "@/components/fenomeno/BackToTop";
 import { Footer } from "@/components/fenomeno/Footer";
+import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -389,7 +390,7 @@ function Contact() {
 
       <ContactLeadModal
         open={modal !== null}
-        onOpenChange={(o) => !o && setModal(null)}
+        onOpenChange={(o: boolean) => !o && setModal(null)}
         channel={modal ?? "whatsapp"}
         redirectUrl={modal === "email" ? emailUrl : whatsappUrl}
       />
