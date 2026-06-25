@@ -15,7 +15,7 @@ const getCrmSettings = createServerFn({ method: "GET" }).handler(async () => {
 
 /** Valida se a chave API fornecida confere com a chave do ambiente. */
 const validateApiKey = createServerFn({ method: "GET" })
-  .validator((key: string) => key)
+  .inputValidator((key: string) => key)
   .handler(async ({ data: key }) => {
     const expected = process.env.SITE_TO_CRM_API_KEY ?? "";
     if (!expected || key !== expected) return { valid: false };
