@@ -507,7 +507,7 @@ Body:
 
 function ImoveisTab({ settings, copied, onCopy }: TabProps) {
   const origin = typeof window !== "undefined" ? window.location.origin : "https://fenomenoimoveis.com.br";
-  const webhookUrl = `${origin}/api/properties/sync`;
+  const webhookUrl = `${origin}/api/public/properties/sync`;
   const bearerDisplay = settings.crmToSiteBearerToken ? maskKey(settings.crmToSiteBearerToken) : "<CRM_TO_SITE_BEARER_TOKEN>";
 
   return (

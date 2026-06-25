@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ImoveisIndexRouteImport } from './routes/imoveis.index'
 import { Route as ImoveisCodeRouteImport } from './routes/imoveis.$code'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
+import { Route as ApiPublicPropertiesSyncRouteImport } from './routes/api/public/properties/sync'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const AdminCrmRoute = AdminCrmRouteImport.update({
   path: '/admin/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPropertiesSyncRoute = ApiPublicPropertiesSyncRouteImport.update({
+  id: '/api/public/properties/sync',
+  path: '/api/public/properties/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis/': typeof ImoveisIndexRoute
+  '/api/public/properties/sync': typeof ApiPublicPropertiesSyncRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis': typeof ImoveisIndexRoute
+  '/api/public/properties/sync': typeof ApiPublicPropertiesSyncRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,30 @@ export interface FileRoutesById {
   '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis/': typeof ImoveisIndexRoute
+  '/api/public/properties/sync': typeof ApiPublicPropertiesSyncRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin/crm' | '/imoveis/$code' | '/imoveis/'
+  fullPaths:
+    | '/'
+    | '/admin/crm'
+    | '/imoveis/$code'
+    | '/imoveis/'
+    | '/api/public/properties/sync'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/crm' | '/imoveis/$code' | '/imoveis'
-  id: '__root__' | '/' | '/admin/crm' | '/imoveis/$code' | '/imoveis/'
+  to:
+    | '/'
+    | '/admin/crm'
+    | '/imoveis/$code'
+    | '/imoveis'
+    | '/api/public/properties/sync'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin/crm'
+    | '/imoveis/$code'
+    | '/imoveis/'
+    | '/api/public/properties/sync'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +92,7 @@ export interface RootRouteChildren {
   AdminCrmRoute: typeof AdminCrmRoute
   ImoveisCodeRoute: typeof ImoveisCodeRoute
   ImoveisIndexRoute: typeof ImoveisIndexRoute
+  ApiPublicPropertiesSyncRoute: typeof ApiPublicPropertiesSyncRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCrmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/properties/sync': {
+      id: '/api/public/properties/sync'
+      path: '/api/public/properties/sync'
+      fullPath: '/api/public/properties/sync'
+      preLoaderRoute: typeof ApiPublicPropertiesSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCrmRoute: AdminCrmRoute,
   ImoveisCodeRoute: ImoveisCodeRoute,
   ImoveisIndexRoute: ImoveisIndexRoute,
+  ApiPublicPropertiesSyncRoute: ApiPublicPropertiesSyncRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
