@@ -82,6 +82,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Fenômeno Imóveis" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Fenômeno Imóveis | Luxo em Balneário Camboriú" },
+      { name: "twitter:title", content: "Fenômeno Imóveis | Luxo em Balneário Camboriú" },
+      { property: "og:description", content: "Imóveis de altíssimo padrão em Balneário Camboriú. Coberturas, apartamentos e residências exclusivas no destino mais luxuoso do Brasil." },
+      { name: "twitter:description", content: "Imóveis de altíssimo padrão em Balneário Camboriú. Coberturas, apartamentos e residências exclusivas no destino mais luxuoso do Brasil." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/CtogEPl6bAMjmkaJ1MeXQkQL9dz1/social-images/social-1782265535304-Captura_de_tela_2026-06-23_224523.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/CtogEPl6bAMjmkaJ1MeXQkQL9dz1/social-images/social-1782265535304-Captura_de_tela_2026-06-23_224523.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
