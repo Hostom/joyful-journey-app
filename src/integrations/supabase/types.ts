@@ -14,7 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      properties: {
+        Row: {
+          area: number
+          bedrooms: number
+          code: string
+          created_at: string
+          description: string
+          features: Json
+          id: string
+          images: Json
+          location: string
+          name: string
+          neighborhood: string
+          parking: number
+          price: number
+          suites: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          area?: number
+          bedrooms?: number
+          code: string
+          created_at?: string
+          description?: string
+          features?: Json
+          id?: string
+          images?: Json
+          location: string
+          name: string
+          neighborhood?: string
+          parking?: number
+          price?: number
+          suites?: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          area?: number
+          bedrooms?: number
+          code?: string
+          created_at?: string
+          description?: string
+          features?: Json
+          id?: string
+          images?: Json
+          location?: string
+          name?: string
+          neighborhood?: string
+          parking?: number
+          price?: number
+          suites?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
