@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ImoveisIndexRouteImport } from './routes/imoveis.index'
 import { Route as ImoveisSlugRouteImport } from './routes/imoveis.$slug'
+import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,33 +29,42 @@ const ImoveisSlugRoute = ImoveisSlugRouteImport.update({
   path: '/imoveis/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCrmRoute = AdminCrmRouteImport.update({
+  id: '/admin/crm',
+  path: '/admin/crm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$slug': typeof ImoveisSlugRoute
   '/imoveis/': typeof ImoveisIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$slug': typeof ImoveisSlugRoute
   '/imoveis': typeof ImoveisIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$slug': typeof ImoveisSlugRoute
   '/imoveis/': typeof ImoveisIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/imoveis/$slug' | '/imoveis/'
+  fullPaths: '/' | '/admin/crm' | '/imoveis/$slug' | '/imoveis/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/imoveis/$slug' | '/imoveis'
-  id: '__root__' | '/' | '/imoveis/$slug' | '/imoveis/'
+  to: '/' | '/admin/crm' | '/imoveis/$slug' | '/imoveis'
+  id: '__root__' | '/' | '/admin/crm' | '/imoveis/$slug' | '/imoveis/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminCrmRoute: typeof AdminCrmRoute
   ImoveisSlugRoute: typeof ImoveisSlugRoute
   ImoveisIndexRoute: typeof ImoveisIndexRoute
 }
@@ -82,11 +92,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ImoveisSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/crm': {
+      id: '/admin/crm'
+      path: '/admin/crm'
+      fullPath: '/admin/crm'
+      preLoaderRoute: typeof AdminCrmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminCrmRoute: AdminCrmRoute,
   ImoveisSlugRoute: ImoveisSlugRoute,
   ImoveisIndexRoute: ImoveisIndexRoute,
 }
