@@ -84,13 +84,21 @@ function CrmSettingsPage() {
     try {
       const result = await validateApiKey({ data: apiKeyInput.trim() });
       if (!result.valid) {
-        setAuthError("Chave API inválida. Verifique e tente novamente.");
+        const reason = (result as { reason?: string }).reason;
+        if (reason === "env_missing") {
+          setAuthError("SITE_TO_CRM_API_KEY não está configurada no servidor (verifique os secrets do projeto).");
+        } else if (reason === "mismatch") {
+          setAuthError("Chave API não confere com a registrada nos secrets do projeto.");
+        } else {
+          setAuthError("Chave API inválida. Verifique e tente novamente.");
+        }
         return;
       }
       const data = await getCrmSettings();
       setSettings(data);
       setAuthenticated(true);
-    } catch {
+    } catch (err) {
+      console.error("[admin/crm] erro ao validar chave:", err);
       setAuthError("Erro ao validar a chave. Tente novamente.");
     } finally {
       setIsAuthenticating(false);
