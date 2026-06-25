@@ -202,7 +202,7 @@ function Properties() {
       </div>
       <div className="grid md:grid-cols-3 gap-8">
         {PROPERTIES.map((p, i) => (
-          <PropertyCard key={p.slug} property={p} index={i} />
+          <PropertyCard key={p.code} property={p} index={i} />
         ))}
       </div>
       <div className="reveal-up mt-16 flex justify-center">

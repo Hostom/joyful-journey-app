@@ -14,7 +14,7 @@ import { WhatsAppButton } from "@/components/fenomeno/WhatsAppButton";
 import { BackToTop } from "@/components/fenomeno/BackToTop";
 import { Footer } from "@/components/fenomeno/Footer";
 
-export const Route = createFileRoute("/imoveis/$slug")({
+export const Route = createFileRoute("/imoveis/$code")({
   loader: ({ params }) => {
     const property = findProperty(params.slug);
     if (!property) throw notFound();
@@ -53,10 +53,10 @@ function PropertyDetail() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
-  }, [property.slug]);
+  }, [property.code]);
 
   const related = PROPERTIES.filter(
-    (p) => p.slug !== property.slug &&
+    (p) => p.code !== property.code &&
       (p.type === property.type || p.location === property.location),
   ).slice(0, 3);
 
@@ -155,7 +155,7 @@ function PropertyDetail() {
           </div>
           <div className="grid md:grid-cols-3 gap-10">
             {related.map((p, i) => (
-              <PropertyCard key={p.slug} property={p} index={i} />
+              <PropertyCard key={p.code} property={p} index={i} />
             ))}
           </div>
         </section>

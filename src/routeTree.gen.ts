@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ImoveisIndexRouteImport } from './routes/imoveis.index'
-import { Route as ImoveisSlugRouteImport } from './routes/imoveis.$slug'
+import { Route as ImoveisCodeRouteImport } from './routes/imoveis.$code'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 
 const IndexRoute = IndexRouteImport.update({
@@ -24,9 +24,9 @@ const ImoveisIndexRoute = ImoveisIndexRouteImport.update({
   path: '/imoveis/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ImoveisSlugRoute = ImoveisSlugRouteImport.update({
-  id: '/imoveis/$slug',
-  path: '/imoveis/$slug',
+const ImoveisCodeRoute = ImoveisCodeRouteImport.update({
+  id: '/imoveis/$code',
+  path: '/imoveis/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminCrmRoute = AdminCrmRouteImport.update({
@@ -38,34 +38,34 @@ const AdminCrmRoute = AdminCrmRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin/crm': typeof AdminCrmRoute
-  '/imoveis/$slug': typeof ImoveisSlugRoute
+  '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis/': typeof ImoveisIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/crm': typeof AdminCrmRoute
-  '/imoveis/$slug': typeof ImoveisSlugRoute
+  '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis': typeof ImoveisIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin/crm': typeof AdminCrmRoute
-  '/imoveis/$slug': typeof ImoveisSlugRoute
+  '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis/': typeof ImoveisIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin/crm' | '/imoveis/$slug' | '/imoveis/'
+  fullPaths: '/' | '/admin/crm' | '/imoveis/$code' | '/imoveis/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/crm' | '/imoveis/$slug' | '/imoveis'
-  id: '__root__' | '/' | '/admin/crm' | '/imoveis/$slug' | '/imoveis/'
+  to: '/' | '/admin/crm' | '/imoveis/$code' | '/imoveis'
+  id: '__root__' | '/' | '/admin/crm' | '/imoveis/$code' | '/imoveis/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminCrmRoute: typeof AdminCrmRoute
-  ImoveisSlugRoute: typeof ImoveisSlugRoute
+  ImoveisCodeRoute: typeof ImoveisCodeRoute
   ImoveisIndexRoute: typeof ImoveisIndexRoute
 }
 
@@ -85,11 +85,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ImoveisIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/imoveis/$slug': {
-      id: '/imoveis/$slug'
-      path: '/imoveis/$slug'
-      fullPath: '/imoveis/$slug'
-      preLoaderRoute: typeof ImoveisSlugRouteImport
+    '/imoveis/$code': {
+      id: '/imoveis/$code'
+      path: '/imoveis/$code'
+      fullPath: '/imoveis/$code'
+      preLoaderRoute: typeof ImoveisCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/crm': {
@@ -105,7 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminCrmRoute: AdminCrmRoute,
-  ImoveisSlugRoute: ImoveisSlugRoute,
+  ImoveisCodeRoute: ImoveisCodeRoute,
   ImoveisIndexRoute: ImoveisIndexRoute,
 }
 export const routeTree = rootRouteImport

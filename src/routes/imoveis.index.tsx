@@ -243,7 +243,7 @@ function ListingsPage() {
               <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-7 lg:gap-8">
                 {filtered.map((p, i) => (
                   <PropertyCard
-                    key={p.slug}
+                    key={p.code}
                     property={p}
                     index={i}
                     onSelect={setSelectedProperty}

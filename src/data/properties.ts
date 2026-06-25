@@ -1,8 +1,15 @@
 export type PropertyLocation = "Balneário Camboriú" | "Itapema" | "Itajaí";
 export type PropertyType = "Apartamento" | "Cobertura" | "Penthouse" | "Casa";
 
+/**
+ * Código único do imóvel — string de exatamente 5 dígitos numéricos
+ * ("00001" a "99999"). Usado como identificador nas URLs (/imoveis/:code)
+ * e como chave de sincronização com o CRM.
+ */
+export type PropertyCode = string;
+
 export type Property = {
-  slug: string;
+  code: PropertyCode;
   name: string;
   location: PropertyLocation;
   neighborhood: string;
@@ -27,9 +34,13 @@ const make = (
   p: Omit<Property, "priceLabel">,
 ): Property => ({ ...p, priceLabel: fmt(p.price) });
 
+/** Valida se um código tem exatamente 5 dígitos numéricos (00001–99999). */
+export const isValidPropertyCode = (code: string): boolean =>
+  /^\d{5}$/.test(code) && code !== "00000";
+
 export const PROPERTIES: Property[] = [
   make({
-    slug: "yachthouse-residence-club",
+    code: "00001",
     name: "Yachthouse Residence Club",
     location: "Balneário Camboriú",
     neighborhood: "Barra Sul",
@@ -59,7 +70,7 @@ export const PROPERTIES: Property[] = [
     ],
   }),
   make({
-    slug: "cobertura-iconic-tower",
+    code: "00002",
     name: "Cobertura Iconic Tower",
     location: "Balneário Camboriú",
     neighborhood: "Av. Atlântica · Frente Mar",
@@ -89,7 +100,7 @@ export const PROPERTIES: Property[] = [
     ],
   }),
   make({
-    slug: "one-tower-penthouse",
+    code: "00003",
     name: "One Tower Penthouse",
     location: "Balneário Camboriú",
     neighborhood: "Centro · Vista Panorâmica",
@@ -119,7 +130,7 @@ export const PROPERTIES: Property[] = [
     ],
   }),
   make({
-    slug: "casa-praia-brava",
+    code: "00004",
     name: "Casa Praia Brava",
     location: "Itajaí",
     neighborhood: "Praia Brava",
@@ -148,7 +159,7 @@ export const PROPERTIES: Property[] = [
     ],
   }),
   make({
-    slug: "residencial-meia-praia",
+    code: "00005",
     name: "Residencial Meia Praia",
     location: "Itapema",
     neighborhood: "Meia Praia",
@@ -177,7 +188,7 @@ export const PROPERTIES: Property[] = [
     ],
   }),
   make({
-    slug: "skyline-frente-mar",
+    code: "00006",
     name: "Skyline Frente Mar",
     location: "Balneário Camboriú",
     neighborhood: "Av. Atlântica",
@@ -219,5 +230,5 @@ export const TYPES: PropertyType[] = [
   "Casa",
 ];
 
-export const findProperty = (slug: string) =>
-  PROPERTIES.find((p) => p.slug === slug);
+export const findProperty = (code: string) =>
+  PROPERTIES.find((p) => p.code === code);

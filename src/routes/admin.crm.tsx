@@ -552,7 +552,7 @@ Headers:
 
 Body:
 {
-  "slug": "nome-do-imovel",
+  "code": "00001",
   "name": "Nome Comercial do Imóvel",
   "location": "Balneário Camboriú",
   "neighborhood": "Barra Sul",
@@ -565,7 +565,10 @@ Body:
   "description": "Descrição completa do imóvel...",
   "features": ["Vista para o mar", "Piscina privativa"],
   "images": ["https://seu-crm.com/fotos/imovel.jpg"]
-}`}</CodeBlock>
+}
+
+// "code" — string obrigatória de exatamente 5 dígitos (00001 a 99999).
+// É o identificador único do imóvel e aparece na URL: /imoveis/00001`}</CodeBlock>
       </Section>
 
       <Section title="Remover Imóvel (DELETE)" icon="home_work">
@@ -577,7 +580,7 @@ Headers:
 
 Body:
 {
-  "slug": "nome-do-imovel"
+  "code": "00001"
 }`}</CodeBlock>
       </Section>
 

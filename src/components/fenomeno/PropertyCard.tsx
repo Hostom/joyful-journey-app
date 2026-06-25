@@ -39,13 +39,12 @@ export function PropertyCard({
     setIsFav(!isFav);
   };
 
-  // Generate a mock code based on slug
-  const propertyCode = `IM${(10000 + index + property.name.charCodeAt(0)).toString()}`;
+  const propertyCode = `IM${property.code}`;
 
   return (
     <Link
-      to="/imoveis/$slug"
-      params={{ slug: property.slug }}
+      to="/imoveis/$code"
+      params={{ code: property.code }}
       onClick={handleClick}
       className="reveal-up group block h-full"
       style={{ transitionDelay: `${index * 80}ms` }}
