@@ -300,7 +300,7 @@ function SettingsDashboard({
       }}>
         <div style={{
           maxWidth: "1100px", margin: "0 auto",
-          display: "flex", alignItems: "center", justifyBetween: "space-between",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
           height: "64px",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
