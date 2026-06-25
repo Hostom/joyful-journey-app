@@ -18,9 +18,25 @@ const getCrmSettings = createServerFn({ method: "GET" }).handler(async () => {
 const validateApiKey = createServerFn({ method: "GET" })
   .inputValidator((key: string) => key)
   .handler(async ({ data: key }) => {
-    const expected = process.env.SITE_TO_CRM_API_KEY ?? "";
-    if (!expected || key !== expected) return { valid: false };
-    return { valid: true };
+    const expected = (process.env.SITE_TO_CRM_API_KEY ?? "").trim();
+    const provided = (key ?? "").trim();
+    if (!expected) {
+      console.error("[admin/crm validateApiKey] SITE_TO_CRM_API_KEY ausente no ambiente do servidor.");
+      return { valid: false, reason: "env_missing" as const };
+    }
+    if (provided.length === 0) {
+      return { valid: false, reason: "empty_input" as const };
+    }
+    if (provided !== expected) {
+      console.warn("[admin/crm validateApiKey] Chave não confere.", {
+        providedLength: provided.length,
+        expectedLength: expected.length,
+        providedPrefix: provided.slice(0, 3),
+        expectedPrefix: expected.slice(0, 3),
+      });
+      return { valid: false, reason: "mismatch" as const };
+    }
+    return { valid: true as const };
   });
 
 // ─── Rota ───────────────────────────────────────────────────────────────────
@@ -68,13 +84,21 @@ function CrmSettingsPage() {
     try {
       const result = await validateApiKey({ data: apiKeyInput.trim() });
       if (!result.valid) {
-        setAuthError("Chave API inválida. Verifique e tente novamente.");
+        const reason = (result as { reason?: string }).reason;
+        if (reason === "env_missing") {
+          setAuthError("SITE_TO_CRM_API_KEY não está configurada no servidor (verifique os secrets do projeto).");
+        } else if (reason === "mismatch") {
+          setAuthError("Chave API não confere com a registrada nos secrets do projeto.");
+        } else {
+          setAuthError("Chave API inválida. Verifique e tente novamente.");
+        }
         return;
       }
       const data = await getCrmSettings();
       setSettings(data);
       setAuthenticated(true);
-    } catch {
+    } catch (err) {
+      console.error("[admin/crm] erro ao validar chave:", err);
       setAuthError("Erro ao validar a chave. Tente novamente.");
     } finally {
       setIsAuthenticating(false);
