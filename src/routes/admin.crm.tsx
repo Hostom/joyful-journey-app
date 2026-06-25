@@ -628,8 +628,7 @@ function TokensTab({ settings, copied, onCopy }: TabProps) {
 # Cabeçalho: Authorization: Bearer <TOKEN>
 CRM_TO_SITE_BEARER_TOKEN="${settings.crmToSiteBearerToken || "SEU_TOKEN_AQUI"}"
 
-# Chave que o Site usa para autenticar ao enviar leads (Site → CRM)
-# Cabeçalho: X-API-Key: <CHAVE>
+# Chave que o Site envia no corpo do lead (campo webhook_token) — Site → CRM
 SITE_TO_CRM_API_KEY="${settings.siteToCrmApiKey || "SUA_CHAVE_AQUI"}"
 
 # URL do endpoint de Leads do seu CRM
