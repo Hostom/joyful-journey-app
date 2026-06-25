@@ -602,7 +602,7 @@ function TokensTab({ settings, copied, onCopy }: TabProps) {
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <TokenRow
             name="SITE_TO_CRM_API_KEY"
-            description="Chave que o Site envia para o CRM ao submeter leads. Configure esta mesma chave no painel do CRM para autenticar as requisições recebidas."
+            description="Chave que o Site envia para o CRM no corpo do lead, no campo webhook_token. Configure esta mesma chave no CRM para validar leads recebidos."
             direction="Site → CRM"
             value={settings.siteToCrmApiKey}
             copyId="token-site-crm"
