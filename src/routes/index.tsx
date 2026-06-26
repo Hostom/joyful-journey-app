@@ -27,8 +27,7 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "/" },
       {
         property: "og:image",
-        content:
-          "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1600&q=80",
+        content: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1600&q=80",
       },
     ],
     links: [{ rel: "canonical", href: "/" }],
@@ -36,11 +35,9 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const HERO_IMG =
-  "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=2000&q=80";
+const HERO_IMG = "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=2000&q=80";
 
 const PROPERTIES = ALL_PROPERTIES.slice(0, 3);
-
 
 const SERVICES = [
   {
@@ -73,8 +70,7 @@ const TESTIMONIALS = [
     role: "Investidor — São Paulo",
   },
   {
-    quote:
-      "Atendimento absolutamente impecável. Encontraram a cobertura ideal antes mesmo do lançamento oficial.",
+    quote: "Atendimento absolutamente impecável. Encontraram a cobertura ideal antes mesmo do lançamento oficial.",
     author: "M. Ferreira",
     role: "Empresária — Florianópolis",
   },
@@ -156,7 +152,8 @@ function Hero() {
           no endereço mais valorizado do Brasil.
         </h1>
         <p className="mt-8 max-w-xl text-cream-foundation/80 text-lg leading-relaxed">
-          Compre ou invista em coberturas exclusivas, apartamentos frente mar e oportunidades off-market de alta valorização.
+          Compre ou invista em coberturas exclusivas, apartamentos frente mar e oportunidades off-market de alta
+          valorização.
         </p>
         <div className="mt-12 flex flex-wrap gap-4">
           <a
@@ -179,11 +176,7 @@ function Hero() {
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs uppercase tracking-[0.4em] text-gold-classic mb-6">
-      {children}
-    </p>
-  );
+  return <p className="text-xs uppercase tracking-[0.4em] text-gold-classic mb-6">{children}</p>;
 }
 
 function Properties() {
@@ -197,7 +190,8 @@ function Properties() {
           </h2>
         </div>
         <p className="max-w-md text-forest-mid/80 leading-relaxed">
-          Opções selecionadas com alto potencial de valorização, localização privilegiada e acabamento premium para moradia ou investimento.
+          Opções selecionadas com alto potencial de valorização, localização privilegiada e acabamento premium para
+          moradia ou investimento.
         </p>
       </div>
       <div className="grid md:grid-cols-3 gap-8">
@@ -232,14 +226,16 @@ function About() {
         <div className="reveal-up">
           <SectionLabel>Sobre a Fenômeno</SectionLabel>
           <h2 className="font-display text-5xl md:text-6xl leading-tight mb-8">
-            Sua imobiliária de <em className="italic text-gold-champagne">confiança</em> em
-            Balneário Camboriú.
+            Sua imobiliária de <em className="italic text-gold-champagne">confiança</em> em Balneário Camboriú.
           </h2>
           <p className="text-cream-foundation/80 leading-relaxed mb-6">
-            Somos especialistas no mercado de imóveis de alto padrão em Balneário Camboriú. Auxiliamos investidores e famílias a realizarem transações seguras, rentáveis e com máxima discrição no mercado mais valorizado do país.
+            Somos especialistas no mercado de imóveis de alto padrão em Balneário Camboriú. Auxiliamos investidores e
+            famílias a realizarem transações seguras, rentáveis e com máxima discrição no mercado mais valorizado do
+            país.
           </p>
           <p className="text-cream-foundation/80 leading-relaxed mb-10">
-            Parceiros das principais construtoras da região, oferecemos acesso exclusivo a lançamentos, apartamentos prontos frente mar e oportunidades que não entram no mercado aberto.
+            Parceiros das principais construtoras da região, oferecemos acesso exclusivo a lançamentos, apartamentos
+            prontos frente mar e oportunidades que não entram no mercado aberto.
           </p>
           <div className="grid grid-cols-3 gap-6 border-t border-gold-champagne/20 pt-8">
             {[
@@ -249,9 +245,7 @@ function About() {
             ].map(([n, l]) => (
               <div key={l}>
                 <div className="font-display text-3xl text-gold-champagne">{n}</div>
-                <div className="text-[11px] uppercase tracking-[0.2em] text-cream-foundation/60 mt-2">
-                  {l}
-                </div>
+                <div className="text-[11px] uppercase tracking-[0.2em] text-cream-foundation/60 mt-2">{l}</div>
               </div>
             ))}
           </div>
@@ -306,14 +300,10 @@ function Testimonials() {
               className="reveal-up border-l-2 border-gold-classic pl-8"
               style={{ transitionDelay: `${i * 120}ms` }}
             >
-              <p className="font-display italic text-2xl md:text-3xl leading-snug text-forest-deep mb-8">
-                “{t.quote}”
-              </p>
+              <p className="font-display italic text-2xl md:text-3xl leading-snug text-forest-deep mb-8">“{t.quote}”</p>
               <footer>
                 <div className="font-medium">{t.author}</div>
-                <div className="text-xs uppercase tracking-[0.2em] text-forest-mid/60 mt-1">
-                  {t.role}
-                </div>
+                <div className="text-xs uppercase tracking-[0.2em] text-forest-mid/60 mt-1">{t.role}</div>
               </footer>
             </blockquote>
           ))}
@@ -325,14 +315,11 @@ function Testimonials() {
 
 function Contact() {
   const [modal, setModal] = useState<null | "whatsapp" | "email">(null);
-  const whatsappUrl = "https://wa.me/5547999999999";
+  const whatsappUrl = "https://wa.me/5547999837494";
   const emailUrl = "mailto:contato@fenomenoimoveis.com.br";
 
   return (
-    <section
-      id="contact"
-      className="relative py-32 bg-forest-deep text-cream-foundation overflow-hidden"
-    >
+    <section id="contact" className="relative py-32 bg-forest-deep text-cream-foundation overflow-hidden">
       <div
         className="absolute inset-0 opacity-20"
         style={{
@@ -349,7 +336,8 @@ function Contact() {
             Encontre sua próxima <em className="italic text-gold-champagne">oportunidade de negócio</em>.
           </h2>
           <p className="text-cream-foundation/80 text-lg max-w-2xl mx-auto mb-12">
-            Fale com nossos consultores especialistas. Estamos prontos para apresentar as melhores opções de moradia e investimento em Balneário Camboriú.
+            Fale com nossos consultores especialistas. Estamos prontos para apresentar as melhores opções de moradia e
+            investimento em Balneário Camboriú.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-16">
             <button
@@ -376,12 +364,8 @@ function Contact() {
               ["Contato Direto", "+55 (47) 99999-9999\ncontato@fenomenoimoveis.com.br"],
             ].map(([k, v]) => (
               <div key={k}>
-                <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-3">
-                  {k}
-                </div>
-                <div className="text-cream-foundation/80 text-sm whitespace-pre-line leading-relaxed">
-                  {v}
-                </div>
+                <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-3">{k}</div>
+                <div className="text-cream-foundation/80 text-sm whitespace-pre-line leading-relaxed">{v}</div>
               </div>
             ))}
           </div>
@@ -397,6 +381,5 @@ function Contact() {
     </section>
   );
 }
-
 
 /* Footer is now the shared <Footer /> component */
