@@ -24,6 +24,7 @@ type Search = {
 };
 
 export const Route = createFileRoute("/imoveis/")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(propertiesQueryOptions),
   validateSearch: (s: Record<string, unknown>): Search => {
     const loc = s.location as string | undefined;
     const typ = s.type as string | undefined;
