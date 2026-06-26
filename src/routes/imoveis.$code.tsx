@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { findProperty, PROPERTIES } from "@/data/properties";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { propertiesQueryOptions } from "@/lib/properties.functions";
 import { PropertyGallery } from "@/components/fenomeno/PropertyGallery";
 import { InquiryCTA } from "@/components/fenomeno/InquiryCTA";
 import { PropertyCard } from "@/components/fenomeno/PropertyCard";
