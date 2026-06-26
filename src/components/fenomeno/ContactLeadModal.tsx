@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { submitLead } from "@/lib/crm.functions";
 
 export type ContactChannel = "whatsapp" | "email";
@@ -25,14 +19,7 @@ type Props = {
 
 type Errors = Partial<Record<"name" | "email" | "phone", string>>;
 
-export function ContactLeadModal({
-  open,
-  onOpenChange,
-  channel,
-  redirectUrl,
-  defaultMessage = "",
-  propertyId,
-}: Props) {
+export function ContactLeadModal({ open, onOpenChange, channel, redirectUrl, defaultMessage = "", propertyId }: Props) {
   const send = useServerFn(submitLead);
 
   const [name, setName] = useState("");
@@ -110,12 +97,8 @@ export function ContactLeadModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-forest-deep border-gold-champagne/20 text-cream-foundation sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display text-2xl text-cream-foundation">
-            {title}
-          </DialogTitle>
-          <DialogDescription className="text-cream-foundation/70 text-sm">
-            {description}
-          </DialogDescription>
+          <DialogTitle className="font-display text-2xl text-cream-foundation">{title}</DialogTitle>
+          <DialogDescription className="text-cream-foundation/70 text-sm">{description}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="mt-2 space-y-4" noValidate>
@@ -151,7 +134,7 @@ export function ContactLeadModal({
               autoComplete="tel"
               maxLength={40}
               className={inputClass(Boolean(errors.phone))}
-              placeholder="+55 (47) 9983-7494
+              placeholder="+55 (47) 9983-7494"
             />
           </Field>
 
@@ -166,9 +149,7 @@ export function ContactLeadModal({
             disabled={submitting}
             className="w-full inline-flex items-center justify-center gap-2 bg-gold-classic text-forest-deep px-6 py-3 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <span className="material-symbols-outlined text-base">
-              {channel === "whatsapp" ? "chat" : "mail"}
-            </span>
+            <span className="material-symbols-outlined text-base">{channel === "whatsapp" ? "chat" : "mail"}</span>
             {submitting ? "Enviando..." : channel === "whatsapp" ? "Continuar no WhatsApp" : "Continuar por E-mail"}
           </button>
 
@@ -181,20 +162,10 @@ export function ContactLeadModal({
   );
 }
 
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="block text-[11px] uppercase tracking-[0.18em] text-cream-foundation/60 mb-2">
-        {label}
-      </span>
+      <span className="block text-[11px] uppercase tracking-[0.18em] text-cream-foundation/60 mb-2">{label}</span>
       {children}
       {error && <span className="block mt-1 text-xs text-red-300">{error}</span>}
     </label>
