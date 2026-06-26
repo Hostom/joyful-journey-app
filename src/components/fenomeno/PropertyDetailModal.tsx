@@ -100,6 +100,14 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
           </div>
         </div>
       </DialogContent>
+      <ContactLeadModal
+        open={leadOpen}
+        onOpenChange={setLeadOpen}
+        channel="whatsapp"
+        redirectUrl={whatsappUrl}
+        defaultMessage={`Olá! Tenho interesse no imóvel "${property.name}" (Código: ${property.code}).`}
+        propertyId={property.code}
+      />
     </Dialog>
   );
 }
