@@ -12,7 +12,12 @@ type PropertyDetailModalProps = {
 };
 
 export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetailModalProps) {
+  const [leadOpen, setLeadOpen] = useState(false);
   if (!property) return null;
+
+  const whatsappUrl = `https://wa.me/5547999837494?text=${encodeURIComponent(
+    `Olá! Tenho interesse no imóvel "${property.name}" (Código: ${property.code}).`,
+  )}`;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
