@@ -84,7 +84,7 @@ function PropertyDetail() {
               <Spec icon="garage" label="Vagas" value={String(property.parking)} />
             </div>
             <a
-              href={`https://wa.me/5547999837494?text=${encodeURIComponent(
+              href={`https://api.whatsapp.com/send?phone=5547999837494=${encodeURIComponent(
                 `Olá! Tenho interesse no imóvel "${property.name}".`,
               )}`}
               className="mt-8 w-full inline-flex items-center justify-center gap-3 bg-gold-classic text-forest-deep px-8 py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors"
