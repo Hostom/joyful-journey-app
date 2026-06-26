@@ -259,7 +259,7 @@ function ListingsPage() {
                 </div>
                 <div className="relative z-10 shrink-0 w-full md:w-auto">
                   <a
-                    href="https://wa.me/5547999837494"
+                    href="https://api.whatsapp.com/send?phone=5547999837494"
                     className="w-full md:w-auto inline-flex items-center justify-center gap-3 bg-gold-classic hover:bg-gold-champagne text-forest-deep px-8 py-4 text-xs uppercase tracking-[0.25em] font-medium transition-colors shadow-lg shadow-black/20"
                   >
                     <span className="material-symbols-outlined text-base">chat</span>
