@@ -39,7 +39,6 @@ export const Route = createFileRoute("/")({
 
 const HERO_IMG = "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=2000&q=80";
 
-
 const SERVICES = [
   {
     icon: "real_estate_agent",
@@ -362,7 +361,7 @@ function Contact() {
           </div>
           <div className="grid sm:grid-cols-3 gap-8 pt-12 border-t border-gold-champagne/20 text-left sm:text-center">
             {[
-              ["Escritório", "Av. Atlântica, 1500\nBalneário Camboriú · SC"],
+              ["Escritório", "Av. Atlântica, 3230\nBalneário Camboriú · SC"],
               ["Atendimento", "Seg–Sáb · 09h às 20h\nDomingo sob agendamento"],
               ["Contato Direto", "+55 (47) 9983-7494\nadm.fenomenoimoveis@gmail.com"],
             ].map(([k, v]) => (
