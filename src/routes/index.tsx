@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { PROPERTIES as ALL_PROPERTIES } from "@/data/properties";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { propertiesQueryOptions } from "@/lib/properties.functions";
 import { PropertyCard } from "@/components/fenomeno/PropertyCard";
 import { AdvancedFilter } from "@/components/fenomeno/AdvancedFilter";
 import { Navbar } from "@/components/fenomeno/Navbar";
