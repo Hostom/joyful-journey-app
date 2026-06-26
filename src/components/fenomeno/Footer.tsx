@@ -55,7 +55,7 @@ export function Footer() {
             {[
               { icon: "public", label: "Site", href: "#" },
               { icon: "share", label: "Social", href: "#" },
-              { icon: "mail", label: "Email", href: "mailto:contato@fenomenoimoveis.com.br" },
+              { icon: "mail", label: "Email", href: "mailto:adm.fenomenoimoveis@gmail.com" },
             ].map((item) => (
               <a
                 key={item.icon}
