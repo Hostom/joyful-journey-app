@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-rout
 import { useEffect } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { propertiesQueryOptions } from "@/lib/properties.functions";
+import type { Property } from "@/data/properties";
 import { PropertyGallery } from "@/components/fenomeno/PropertyGallery";
 import { InquiryCTA } from "@/components/fenomeno/InquiryCTA";
 import { PropertyCard } from "@/components/fenomeno/PropertyCard";
