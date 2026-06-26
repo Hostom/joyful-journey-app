@@ -25,7 +25,7 @@ export function InquiryCTA({
         </p>
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           <a
-            href={`https://wa.me/5547999999999?text=${msg}`}
+            href={`https://wa.me/5547999837494?text=${msg}`}
             className="inline-flex items-center gap-3 bg-gold-classic text-forest-deep px-8 py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors"
           >
             <span className="material-symbols-outlined text-base">chat</span>
