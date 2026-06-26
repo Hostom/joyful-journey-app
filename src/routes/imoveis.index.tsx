@@ -64,6 +64,7 @@ export const Route = createFileRoute("/imoveis/")({
 function ListingsPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
+  const { data: PROPERTIES } = useSuspenseQuery(propertiesQueryOptions);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
 
