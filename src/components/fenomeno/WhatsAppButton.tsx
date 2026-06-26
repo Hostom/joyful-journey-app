@@ -12,7 +12,7 @@ export function WhatsAppButton() {
 
   return (
     <a
-      href="https://wa.me/5547999837494?text=Ol%C3%A1!%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20im%C3%B3veis."
+      href="https://api.whatsapp.com/send?phone=5547999837494?text=Ol%C3%A1!%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20im%C3%B3veis."
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Fale conosco pelo WhatsApp"
