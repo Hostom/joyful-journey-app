@@ -78,8 +78,6 @@ const TESTIMONIALS = [
 ];
 
 function Index() {
-  const { data: ALL_PROPERTIES } = useSuspenseQuery(propertiesQueryOptions);
-  const PROPERTIES = ALL_PROPERTIES.slice(0, 3);
   useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => {
