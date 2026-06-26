@@ -11,8 +11,9 @@ import { BackToTop } from "@/components/fenomeno/BackToTop";
 import { Footer } from "@/components/fenomeno/Footer";
 
 export const Route = createFileRoute("/imoveis/$code")({
-  loader: ({ params }) => {
-    const property = findProperty(params.code);
+  loader: async ({ params, context }) => {
+    const props = await context.queryClient.ensureQueryData(propertiesQueryOptions);
+    const property = props.find((p) => p.code === params.code);
     if (!property) throw notFound();
     return { property };
   },
@@ -46,6 +47,7 @@ export const Route = createFileRoute("/imoveis/$code")({
 
 function PropertyDetail() {
   const { property } = Route.useLoaderData();
+  const { data: PROPERTIES } = useSuspenseQuery(propertiesQueryOptions);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
