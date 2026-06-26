@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PropertyGallery } from "@/components/fenomeno/PropertyGallery";
 import { InquiryCTA } from "@/components/fenomeno/InquiryCTA";
+import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
 import type { Property } from "@/data/properties";
 
 type PropertyDetailModalProps = {
