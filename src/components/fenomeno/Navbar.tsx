@@ -233,7 +233,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
                 style={{ transitionDelay: mobileOpen ? "600ms" : "0ms" }}
               >
                 <a
-                  href="https://wa.me/5547999999999"
+                  href="https://wa.me/5547999837494?text=Ol%C3%A1!%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20im%C3%B3veis."
                   onClick={() => setMobileOpen(false)}
                   className="w-full inline-flex items-center justify-center gap-3 bg-gold-classic text-forest-deep px-8 py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors"
                 >

@@ -47,7 +47,7 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
 
               {/* CTA WhatsApp - High Contrast Gold on Dark Glass */}
               <a
-                href={`https://api.whatsapp.com/send?phone=5547999837494=${encodeURIComponent(
+                href={`https://wa.me/5547999837494?text=${encodeURIComponent(
                   `Olá! Tenho interesse no imóvel "${property.name}".`,
                 )}`}
                 className="mt-8 w-full inline-flex items-center justify-center gap-3 bg-gold-classic hover:bg-gold-champagne text-forest-deep hover:scale-[1.01] transition-all duration-300 font-bold px-8 py-4 text-xs uppercase tracking-[0.25em] shadow-lg h-[52px] rounded"
