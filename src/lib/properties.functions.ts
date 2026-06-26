@@ -32,8 +32,18 @@ function rowToProperty(row: Record<string, unknown>): Property {
 
 export const listProperties = createServerFn({ method: "GET" }).handler(async () => {
   try {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin
+    const SUPABASE_URL = process.env.SUPABASE_URL;
+    const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+    if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+      return STATIC_PROPERTIES;
+    }
+
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabasePublic = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+    });
+
+    const { data, error } = await supabasePublic
       .from("properties")
       .select("*")
       .order("updated_at", { ascending: false });
@@ -56,6 +66,7 @@ export const listProperties = createServerFn({ method: "GET" }).handler(async ()
     return STATIC_PROPERTIES;
   }
 });
+
 
 export const propertiesQueryOptions = queryOptions({
   queryKey: ["properties"],
