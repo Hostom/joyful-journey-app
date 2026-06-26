@@ -1,13 +1,7 @@
 import type { Property } from "@/data/properties";
 import { DailyVerse } from "@/components/fenomeno/DailyVerse";
 
-export function InquiryCTA({
-  property,
-  className,
-}: {
-  property: Property;
-  className?: string;
-}) {
+export function InquiryCTA({ property, className }: { property: Property; className?: string }) {
   const msg = encodeURIComponent(
     `Olá! Tenho interesse no imóvel "${property.name}" (${property.neighborhood}). Poderiam me enviar mais informações?`,
   );
@@ -16,12 +10,10 @@ export function InquiryCTA({
     <section className={className || "bg-forest-deep text-cream-foundation py-20 px-6 lg:px-12"}>
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="font-display text-4xl md:text-5xl leading-tight mb-6">
-          Interessado neste{" "}
-          <em className="italic text-gold-champagne">endereço</em>?
+          Interessado neste <em className="italic text-gold-champagne">endereço</em>?
         </h2>
         <p className="text-cream-foundation/80 max-w-xl mx-auto mb-10">
-          Agende uma visita privada ou solicite o book completo com plantas,
-          tour virtual e condições comerciais.
+          Agende uma visita privada ou solicite o book completo com plantas, tour virtual e condições comerciais.
         </p>
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           <a
@@ -32,7 +24,7 @@ export function InquiryCTA({
             Falar no WhatsApp
           </a>
           <a
-            href={`mailto:contato@fenomenoimoveis.com.br?subject=${subject}&body=${msg}`}
+            href={`mailto:adm.fenomenoimoveis@gmail.com?subject=${subject}&body=${msg}`}
             className="inline-flex items-center gap-3 border border-cream-foundation/30 px-8 py-4 text-xs uppercase tracking-[0.25em] hover:border-gold-champagne hover:text-gold-champagne transition-colors"
           >
             <span className="material-symbols-outlined text-base">mail</span>
