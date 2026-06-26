@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { PROPERTIES, LOCATIONS, TYPES } from "@/data/properties";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { LOCATIONS, TYPES } from "@/data/properties";
 import type { PropertyLocation, PropertyType, Property } from "@/data/properties";
+import { propertiesQueryOptions } from "@/lib/properties.functions";
 import { PropertyCard } from "@/components/fenomeno/PropertyCard";
 import { SidebarFilter } from "@/components/fenomeno/SidebarFilter";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
