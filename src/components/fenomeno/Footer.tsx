@@ -70,7 +70,7 @@ export function Footer() {
           <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-3">Contato</div>
           <div className="text-sm space-y-1">
             <p>+55 (47) 9983-7494</p>
-            <p>contato@fenomenoimoveis.com.br</p>
+            <p>adm.fenomenoimovies@gmail.com</p>
           </div>
         </div>
       </div>
