@@ -315,7 +315,7 @@ function Testimonials() {
 
 function Contact() {
   const [modal, setModal] = useState<null | "whatsapp" | "email">(null);
-  const whatsappUrl = "https://wa.me/5547999837494";
+  const whatsappUrl = "https://api.whatsapp.com/send?phone=5547999837494";
   const emailUrl = "mailto:contato@fenomenoimoveis.com.br";
 
   return (
