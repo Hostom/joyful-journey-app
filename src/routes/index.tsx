@@ -183,6 +183,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 function Properties() {
+  const { data: ALL_PROPERTIES } = useSuspenseQuery(propertiesQueryOptions);
+  const PROPERTIES = ALL_PROPERTIES.slice(0, 3);
   return (
     <section id="properties" className="py-32 px-6 lg:px-12 max-w-7xl mx-auto">
       <div className="reveal-up flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-20">
