@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PropertyGallery } from "@/components/fenomeno/PropertyGallery";
 import { InquiryCTA } from "@/components/fenomeno/InquiryCTA";
+import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
 import type { Property } from "@/data/properties";
 
 type PropertyDetailModalProps = {
@@ -10,7 +12,12 @@ type PropertyDetailModalProps = {
 };
 
 export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetailModalProps) {
+  const [leadOpen, setLeadOpen] = useState(false);
   if (!property) return null;
+
+  const whatsappUrl = `https://wa.me/5547999837494?text=${encodeURIComponent(
+    `Olá! Tenho interesse no imóvel "${property.name}" (Código: ${property.code}).`,
+  )}`;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -45,16 +52,15 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                 </div>
               </div>
 
-              {/* CTA WhatsApp - High Contrast Gold on Dark Glass */}
-              <a
-                href={`https://wa.me/5547999837494?text=${encodeURIComponent(
-                  `Olá! Tenho interesse no imóvel "${property.name}".`,
-                )}`}
+              {/* CTA WhatsApp - opens lead capture before WhatsApp */}
+              <button
+                type="button"
+                onClick={() => setLeadOpen(true)}
                 className="mt-8 w-full inline-flex items-center justify-center gap-3 bg-gold-classic hover:bg-gold-champagne text-forest-deep hover:scale-[1.01] transition-all duration-300 font-bold px-8 py-4 text-xs uppercase tracking-[0.25em] shadow-lg h-[52px] rounded"
               >
                 <span className="material-symbols-outlined text-base">chat</span>
                 Falar com Consultor
-              </a>
+              </button>
             </div>
           </div>
 
@@ -94,6 +100,14 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
           </div>
         </div>
       </DialogContent>
+      <ContactLeadModal
+        open={leadOpen}
+        onOpenChange={setLeadOpen}
+        channel="whatsapp"
+        redirectUrl={whatsappUrl}
+        defaultMessage={`Olá! Tenho interesse no imóvel "${property.name}" (Código: ${property.code}).`}
+        propertyId={property.code}
+      />
     </Dialog>
   );
 }
