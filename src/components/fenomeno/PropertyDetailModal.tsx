@@ -9,11 +9,7 @@ type PropertyDetailModalProps = {
   onClose: () => void;
 };
 
-export function PropertyDetailModal({
-  property,
-  isOpen,
-  onClose,
-}: PropertyDetailModalProps) {
+export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetailModalProps) {
   if (!property) return null;
 
   return (
@@ -39,10 +35,8 @@ export function PropertyDetailModal({
                 <p className="text-cream-foundation/70 mb-6 font-sans">
                   {property.neighborhood} · {property.location}
                 </p>
-                <div className="font-display text-3xl text-gold-champagne mb-6 font-medium">
-                  {property.priceLabel}
-                </div>
-                
+                <div className="font-display text-3xl text-gold-champagne mb-6 font-medium">{property.priceLabel}</div>
+
                 <div className="grid grid-cols-2 gap-y-4 gap-x-6 py-5 border-y border-cream-foundation/10">
                   <Spec icon="straighten" label="Área" value={`${property.area} m²`} />
                   <Spec icon="bed" label="Dormitórios" value={String(property.bedrooms)} />
@@ -53,7 +47,7 @@ export function PropertyDetailModal({
 
               {/* CTA WhatsApp - High Contrast Gold on Dark Glass */}
               <a
-                href={`https://wa.me/5547999999999?text=${encodeURIComponent(
+                href={`https://api.whatsapp.com/send?phone=5547999837494=${encodeURIComponent(
                   `Olá! Tenho interesse no imóvel "${property.name}".`,
                 )}`}
                 className="mt-8 w-full inline-flex items-center justify-center gap-3 bg-gold-classic hover:bg-gold-champagne text-forest-deep hover:scale-[1.01] transition-all duration-300 font-bold px-8 py-4 text-xs uppercase tracking-[0.25em] shadow-lg h-[52px] rounded"
@@ -104,20 +98,10 @@ export function PropertyDetailModal({
   );
 }
 
-function Spec({
-  icon,
-  label,
-  value,
-}: {
-  icon: string;
-  label: string;
-  value: string;
-}) {
+function Spec({ icon, label, value }: { icon: string; label: string; value: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="material-symbols-outlined text-gold-champagne text-xl select-none">
-        {icon}
-      </span>
+      <span className="material-symbols-outlined text-gold-champagne text-xl select-none">{icon}</span>
       <div>
         <div className="text-[10px] uppercase tracking-[0.2em] text-cream-foundation/60 font-sans font-bold">
           {label}
