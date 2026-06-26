@@ -34,11 +34,11 @@ export const Route = createFileRoute("/")({
     links: [{ rel: "canonical", href: "/" }],
   }),
   component: Index,
+  loader: ({ context }) => context.queryClient.ensureQueryData(propertiesQueryOptions),
 });
 
 const HERO_IMG = "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=2000&q=80";
 
-const PROPERTIES = ALL_PROPERTIES.slice(0, 3);
 
 const SERVICES = [
   {
