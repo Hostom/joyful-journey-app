@@ -1,32 +1,32 @@
-## Objetivo
+## Problema
 
-Separar a chave do CRM em duas secrets:
+O console mostra `Missing Supabase environment variable(s): SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY` originado de `listProperties`, que importa `@/integrations/supabase/client.server` (service role) para uma simples leitura pública de imóveis. Isso viola duas regras do stack:
 
-- `SITE_TO_CRM_API_KEY` (já existe) — continua autenticando o acesso à tela `/admin/crm`.
-- `CRM_WEBHOOK_TOKEN` (nova) — valor enviado no campo `webhook_token` do body ao criar leads no CRM.
+1. `supabaseAdmin` não deve ser usado como cliente Data API padrão para leituras públicas. As guidelines avisam explicitamente que isso pode quebrar (incluindo o erro de envs ausentes em runtime).
+2. Para listas públicas, deve-se usar o **cliente publishable do servidor** com policy `TO anon SELECT` na tabela.
 
-## Passos
+Hoje o `try/catch` em volta deveria capturar a exceção e cair no fallback `STATIC_PROPERTIES`, mas o erro continua sendo logado/propagado pelo proxy do `supabaseAdmin` antes do catch funcionar como esperado, poluindo o console em produção.
 
-1. Criar a nova secret `CRM_WEBHOOK_TOKEN` via `add_secret` (form seguro para você colar o valor fornecido pelo CRM).
-2. Atualizar `src/routes/admin.crm.tsx`:
-  - Na aba de variáveis de ambiente (`EnvTable`), adicionar uma linha para `CRM_WEBHOOK_TOKEN` descrevendo "Enviado no corpo como `webhook_token` ao criar leads no CRM".
-  - Ajustar a descrição de `SITE_TO_CRM_API_KEY` para deixar claro que ela serve só para autenticar a tela `/admin/crm` (não vai mais no body).
-  - No exemplo de payload (`CodeBlock`), trocar a anotação do `webhook_token` para referenciar `CRM_WEBHOOK_TOKEN` em vez de `SITE_TO_CRM_API_KEY`.
-  - Em qualquer texto do `InfoCard`/integração que cite a origem do `webhook_token`, apontar para `CRM_WEBHOOK_TOKEN`.
+## Plano
 
-## Fora do escopo
+### 1. Trocar `supabaseAdmin` por cliente publishable em `src/lib/properties.functions.ts`
 
-- Não há código no app que efetivamente envie leads ao CRM hoje (a página é documentação/checagem). Se/quando esse envio for implementado, ele deverá ler `process.env.CRM_WEBHOOK_TOKEN` dentro de um server function/route — sem mudanças extras agora.  
-  
-{
-  "name": "Maria Oliveira",
-  "email": "[maria@email.com](mailto:maria@email.com)",
-  "phone": "+5547999999999",
-  "message": "Tenho interesse no apartamento Beira Mar.",
-  "property_id": "prop_abc123",
-  "source": "site",
-  "webhook_token": "wh_tok_xxxxxxxxxxxxxxxx"
-}  
-  
-Esse é o Body que envia os leads ao crm, a ultima lina dele é o webhook_token que estamos criando, esse token deve ficar na secret do lovable e ser usado ali
-- &nbsp;
+Dentro do handler do `listProperties`:
+- Ler `process.env.SUPABASE_URL` e `process.env.SUPABASE_PUBLISHABLE_KEY`.
+- Se qualquer um faltar, retornar `STATIC_PROPERTIES` silenciosamente (sem lançar).
+- Caso contrário, criar um `createClient` local (sem persistência de sessão) e fazer o `select` normalmente.
+- Manter o merge atual com `STATIC_PROPERTIES` por código.
+
+### 2. Garantir policy pública de leitura na tabela `properties`
+
+Verificar (e adicionar via migration se faltar) policy `FOR SELECT TO anon USING (true)` mais `GRANT SELECT ON public.properties TO anon;`. Isso permite a leitura com a chave publishable sem service role.
+
+### 3. Não tocar em `src/routes/api/public/properties/sync.ts`
+
+Esse endpoint é webhook autenticado por bearer e precisa de `supabaseAdmin` para escrita — mantém como está.
+
+## Resultado esperado
+
+- Console limpo na home, `/imoveis` e `/imoveis/$code`.
+- Sem dependência de service role para leitura pública.
+- Fallback estático continua funcionando se o banco estiver indisponível.
