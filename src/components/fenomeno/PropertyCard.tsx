@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { Property } from "@/data/properties";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export function PropertyCard({
   property,
@@ -13,6 +14,13 @@ export function PropertyCard({
 }) {
   const [imgIndex, setImgIndex] = useState(0);
   const [isFav, setIsFav] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const imageWrapRef = useRef<HTMLDivElement>(null);
+
+  const hasImages = property.images.length > 0;
+  const total = property.images.length;
 
   const handleClick = (e: React.MouseEvent) => {
     if (onSelect) {
@@ -21,16 +29,35 @@ export function PropertyCard({
     }
   };
 
+  const scrollToIndex = (i: number) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const target = el.clientWidth * i;
+    el.scrollTo({ left: target, behavior: "smooth" });
+  };
+
+  const goPrev = () => {
+    const next = imgIndex === 0 ? total - 1 : imgIndex - 1;
+    setImgIndex(next);
+    scrollToIndex(next);
+  };
+
+  const goNext = () => {
+    const next = imgIndex === total - 1 ? 0 : imgIndex + 1;
+    setImgIndex(next);
+    scrollToIndex(next);
+  };
+
   const handlePrevImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setImgIndex((prev) => (prev === 0 ? property.images.length - 1 : prev - 1));
+    goPrev();
   };
 
   const handleNextImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setImgIndex((prev) => (prev === property.images.length - 1 ? 0 : prev + 1));
+    goNext();
   };
 
   const handleToggleFav = (e: React.MouseEvent) => {
@@ -39,9 +66,58 @@ export function PropertyCard({
     setIsFav(!isFav);
   };
 
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setLightboxIndex(imgIndex);
+    setLightboxOpen(true);
+  };
+
+  // Sync index from scroll position
+  const handleScroll = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const i = Math.round(el.scrollLeft / el.clientWidth);
+    if (i !== imgIndex) setImgIndex(i);
+  };
+
+  // Keyboard navigation when image area is focused/hovered
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (total <= 1) return;
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      e.stopPropagation();
+      goPrev();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      e.stopPropagation();
+      goNext();
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      e.stopPropagation();
+      setLightboxIndex(imgIndex);
+      setLightboxOpen(true);
+    }
+  };
+
+  // Lightbox keyboard nav
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        setLightboxIndex((i) => (i === 0 ? total - 1 : i - 1));
+      } else if (e.key === "ArrowRight") {
+        setLightboxIndex((i) => (i === total - 1 ? 0 : i + 1));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightboxOpen, total]);
+
   const propertyCode = `IM${property.code}`;
 
   return (
+    <>
     <Link
       to="/imoveis/$code"
       params={{ code: property.code }}
@@ -50,14 +126,44 @@ export function PropertyCard({
       style={{ transitionDelay: `${index * 80}ms` }}
     >
       <div className="h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-400 border border-cream-stone/60 hover:border-gold-classic/40 hover:-translate-y-1">
-        {/* Image wrapper — taller to dominate the card */}
-        <div className="relative overflow-hidden aspect-[4/3] lg:aspect-[16/11] w-full bg-cream-stone/30">
-          <img
-            src={property.images[imgIndex]}
-            alt={property.name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          
+        {/* Image wrapper — horizontal scroll snap strip */}
+        <div
+          ref={imageWrapRef}
+          className="relative overflow-hidden aspect-[4/3] lg:aspect-[16/11] w-full bg-cream-stone/30 outline-none"
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          role="region"
+          aria-label={`Fotos de ${property.name}. Use as setas do teclado para navegar.`}
+        >
+          {hasImages ? (
+            <div
+              ref={scrollerRef}
+              onScroll={handleScroll}
+              className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
+              style={{ scrollbarWidth: "none" }}
+            >
+              {property.images.map((src, i) => (
+                <div
+                  key={`${src}-${i}`}
+                  className="relative shrink-0 w-full h-full snap-center"
+                >
+                  <img
+                    src={src}
+                    alt={`${property.name} — foto ${i + 1}`}
+                    onClick={i === imgIndex ? handleImageClick : undefined}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      i === imgIndex ? "cursor-zoom-in" : ""
+                    }`}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-forest-mid/40 text-xs font-sans">
+              Sem fotos
+            </div>
+          )}
+
           {/* Gradient overlay at bottom of image for readability */}
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
 
@@ -82,7 +188,7 @@ export function PropertyCard({
           </button>
 
           {/* Carousel Arrows */}
-          {property.images.length > 1 && (
+          {total > 1 && (
             <>
               <button
                 type="button"
@@ -104,7 +210,7 @@ export function PropertyCard({
           )}
 
           {/* Image dots */}
-          {property.images.length > 1 && (
+          {total > 1 && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 bg-black/30 px-3 py-1.5 rounded-full backdrop-blur-sm">
               {property.images.map((_, i) => (
                 <span
@@ -174,5 +280,48 @@ export function PropertyCard({
         </div>
       </div>
     </Link>
+
+    {/* Lightbox */}
+    <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+      <DialogContent className="bg-black/95 border-none shadow-none max-w-[96vw] lg:max-w-[90vw] max-h-[92vh] p-0 focus:outline-none">
+        <div className="relative w-full h-[88vh] flex items-center justify-center">
+          {hasImages && (
+            <img
+              src={property.images[lightboxIndex]}
+              alt={`${property.name} — foto ${lightboxIndex + 1}`}
+              className="max-w-full max-h-full object-contain select-none"
+            />
+          )}
+          {total > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={() =>
+                  setLightboxIndex((i) => (i === 0 ? total - 1 : i - 1))
+                }
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm"
+                aria-label="Imagem anterior"
+              >
+                <span className="material-symbols-outlined">chevron_left</span>
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setLightboxIndex((i) => (i === total - 1 ? 0 : i + 1))
+                }
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm"
+                aria-label="Próxima imagem"
+              >
+                <span className="material-symbols-outlined">chevron_right</span>
+              </button>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/80 text-xs font-sans tracking-widest bg-black/40 px-3 py-1.5 rounded-full">
+                {lightboxIndex + 1} / {total}
+              </div>
+            </>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
