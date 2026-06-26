@@ -9,18 +9,18 @@ export function Footer() {
             <img src="/logo.svg" alt="Fenômeno Imóveis" className="h-8 w-auto" />
             <div className="hidden sm:block w-px h-6 bg-gold-champagne/20" />
             <p className="text-xs italic text-cream-foundation/50 max-w-sm leading-relaxed font-sans">
-              "Assim brilhe a luz de vocês diante dos homens, para que vejam as suas boas obras e glorifiquem ao Pai de vocês, que está nos céus" <span className="text-gold-champagne/70 font-semibold not-italic ml-1"> Mateus 5:16</span>
+              "Assim brilhe a luz de vocês diante dos homens, para que vejam as suas boas obras e glorifiquem ao Pai de
+              vocês, que está nos céus"{" "}
+              <span className="text-gold-champagne/70 font-semibold not-italic ml-1"> Mateus 5:16</span>
             </p>
           </div>
           <p className="max-w-md text-sm leading-relaxed">
-            Especialistas em imóveis de alto padrão e investimentos imobiliários
-            em Balneário Camboriú. Compre com segurança e rentabilidade.
+            Especialistas em imóveis de alto padrão e investimentos imobiliários em Balneário Camboriú. Compre com
+            segurança e rentabilidade.
           </p>
         </div>
         <div>
-          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-4">
-            Navegação
-          </div>
+          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-4">Navegação</div>
           <ul className="space-y-2 text-sm">
             <li>
               <Link to="/" className="hover:text-gold-champagne transition-colors">
@@ -50,9 +50,7 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-4">
-            Redes
-          </div>
+          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-4">Redes</div>
           <div className="flex gap-3 mb-8">
             {[
               { icon: "public", label: "Site", href: "#" },
@@ -69,11 +67,9 @@ export function Footer() {
               </a>
             ))}
           </div>
-          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-3">
-            Contato
-          </div>
+          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-3">Contato</div>
           <div className="text-sm space-y-1">
-            <p>+55 (47) 99999-9999</p>
+            <p>+55 (47) 9983-7494</p>
             <p>contato@fenomenoimoveis.com.br</p>
           </div>
         </div>

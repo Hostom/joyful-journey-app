@@ -361,7 +361,7 @@ function Contact() {
             {[
               ["Escritório", "Av. Atlântica, 1500\nBalneário Camboriú · SC"],
               ["Atendimento", "Seg–Sáb · 09h às 20h\nDomingo sob agendamento"],
-              ["Contato Direto", "+55 (47) 99999-9999\ncontato@fenomenoimoveis.com.br"],
+              ["Contato Direto", "+55 (47) 9983-7494\nadm.fenomenoimoveis@gmail.com"],
             ].map(([k, v]) => (
               <div key={k}>
                 <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-3">{k}</div>

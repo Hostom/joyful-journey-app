@@ -151,7 +151,7 @@ export function ContactLeadModal({
               autoComplete="tel"
               maxLength={40}
               className={inputClass(Boolean(errors.phone))}
-              placeholder="+55 (47) 99999-9999"
+              placeholder="+55 (47) 9983-7494
             />
           </Field>
 
