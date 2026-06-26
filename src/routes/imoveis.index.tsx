@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { PROPERTIES, LOCATIONS, TYPES } from "@/data/properties";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { LOCATIONS, TYPES } from "@/data/properties";
 import type { PropertyLocation, PropertyType, Property } from "@/data/properties";
+import { propertiesQueryOptions } from "@/lib/properties.functions";
 import { PropertyCard } from "@/components/fenomeno/PropertyCard";
 import { SidebarFilter } from "@/components/fenomeno/SidebarFilter";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -22,6 +24,7 @@ type Search = {
 };
 
 export const Route = createFileRoute("/imoveis/")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(propertiesQueryOptions),
   validateSearch: (s: Record<string, unknown>): Search => {
     const loc = s.location as string | undefined;
     const typ = s.type as string | undefined;
@@ -61,6 +64,7 @@ export const Route = createFileRoute("/imoveis/")({
 function ListingsPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
+  const { data: PROPERTIES } = useSuspenseQuery(propertiesQueryOptions);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
 

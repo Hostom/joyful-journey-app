@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { findProperty, PROPERTIES } from "@/data/properties";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { propertiesQueryOptions } from "@/lib/properties.functions";
+import type { Property } from "@/data/properties";
 import { PropertyGallery } from "@/components/fenomeno/PropertyGallery";
 import { InquiryCTA } from "@/components/fenomeno/InquiryCTA";
 import { PropertyCard } from "@/components/fenomeno/PropertyCard";
@@ -10,8 +12,9 @@ import { BackToTop } from "@/components/fenomeno/BackToTop";
 import { Footer } from "@/components/fenomeno/Footer";
 
 export const Route = createFileRoute("/imoveis/$code")({
-  loader: ({ params }) => {
-    const property = findProperty(params.code);
+  loader: async ({ params, context }) => {
+    const props = await context.queryClient.ensureQueryData(propertiesQueryOptions);
+    const property = props.find((p) => p.code === params.code);
     if (!property) throw notFound();
     return { property };
   },
@@ -45,6 +48,7 @@ export const Route = createFileRoute("/imoveis/$code")({
 
 function PropertyDetail() {
   const { property } = Route.useLoaderData();
+  const { data: PROPERTIES } = useSuspenseQuery(propertiesQueryOptions);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });

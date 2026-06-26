@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { PROPERTIES as ALL_PROPERTIES } from "@/data/properties";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { propertiesQueryOptions } from "@/lib/properties.functions";
 import { PropertyCard } from "@/components/fenomeno/PropertyCard";
 import { AdvancedFilter } from "@/components/fenomeno/AdvancedFilter";
 import { Navbar } from "@/components/fenomeno/Navbar";
@@ -33,11 +34,11 @@ export const Route = createFileRoute("/")({
     links: [{ rel: "canonical", href: "/" }],
   }),
   component: Index,
+  loader: ({ context }) => context.queryClient.ensureQueryData(propertiesQueryOptions),
 });
 
 const HERO_IMG = "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=2000&q=80";
 
-const PROPERTIES = ALL_PROPERTIES.slice(0, 3);
 
 const SERVICES = [
   {
@@ -180,6 +181,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 function Properties() {
+  const { data: ALL_PROPERTIES } = useSuspenseQuery(propertiesQueryOptions);
+  const PROPERTIES = ALL_PROPERTIES.slice(0, 3);
   return (
     <section id="properties" className="py-32 px-6 lg:px-12 max-w-7xl mx-auto">
       <div className="reveal-up flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-20">
