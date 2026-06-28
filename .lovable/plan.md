@@ -1,11 +1,25 @@
-Plano para destravar o site e limpar esse erro:
+## Disparar evento `lead_enviado_crm` no GTM após sucesso no CRM
 
-1. Remover do `src/start.ts` o `functionMiddleware: [attachSupabaseAuth]`, porque hoje não há nenhuma server function protegida por login no app e esse middleware chama `supabase.auth.getSession()` em toda chamada de server function.
+Adicionar o push no `dataLayer` exatamente no ponto de sucesso da submissão do lead, em `src/components/fenomeno/ContactLeadModal.tsx`, logo após confirmarmos que `result.ok === true` (ou seja, o CRM aceitou) e antes do redirect para WhatsApp/E-mail.
 
-2. Remover o import `attachSupabaseAuth` do mesmo arquivo, eliminando o carregamento do cliente do backend no navegador durante a listagem pública de imóveis.
+### Mudança
 
-3. Manter `listProperties` como está: se as variáveis do backend existirem, ele busca os imóveis no banco; se não existirem, retorna os imóveis estáticos sem quebrar a página.
+Em `src/components/fenomeno/ContactLeadModal.tsx`, dentro de `handleSubmit`, após o bloco `if (!result.ok)` e antes de `onOpenChange(false)`:
 
-4. Validar `/` e `/imoveis` no preview conferindo que a página carrega e que o erro `Missing Supabase environment variable(s): SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY` não aparece mais.
+```js
+if (typeof window !== "undefined") {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: "lead_enviado_crm" });
+}
+```
 
-Detalhe técnico: o stack trace do print mostra que a quebra acontece no browser antes/durante a chamada de `listProperties`; o gatilho mais provável é o middleware global de token importando `@/integrations/supabase/client`, que exige variáveis públicas mesmo para uma página pública sem login.
+### Notas técnicas
+
+- O push só ocorre no caminho de sucesso (lead efetivamente registrado no CRM via `submitLead`), conforme pedido.
+- Guard `typeof window !== "undefined"` para evitar erro em SSR.
+- Tipagem: adicionar `declare global { interface Window { dataLayer: any[] } }` no topo do arquivo para satisfazer o TypeScript estrito.
+- Nenhuma alteração no GTM/gtag já instalado em `__root.tsx`.
+
+### Validação
+
+- Abrir o modal de contato, enviar um lead válido e verificar no console: `window.dataLayer` contém `{ event: 'lead_enviado_crm' }`.

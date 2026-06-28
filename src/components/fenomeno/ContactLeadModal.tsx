@@ -3,6 +3,12 @@ import { useServerFn } from "@tanstack/react-start";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { submitLead } from "@/lib/crm.functions";
 
+declare global {
+  interface Window {
+    dataLayer: Record<string, unknown>[];
+  }
+}
+
 export type ContactChannel = "whatsapp" | "email";
 
 type Props = {
@@ -74,6 +80,11 @@ export function ContactLeadModal({ open, onOpenChange, channel, redirectUrl, def
         setServerError(result.error || "Não foi possível enviar agora.");
         setSubmitting(false);
         return;
+      }
+
+      if (typeof window !== "undefined") {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: "lead_enviado_crm" });
       }
 
       onOpenChange(false);
