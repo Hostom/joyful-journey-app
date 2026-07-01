@@ -29,26 +29,57 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
-const isWhatsAppClick = (e: any) => {
-  const originalEvent = 
-    e.detail?.originalEvent || 
-    e.nativeEvent?.detail?.originalEvent || 
-    e.nativeEvent || 
-    e;
-    
-  if (!originalEvent) return false;
-
-  const path = originalEvent.composedPath?.() || [];
-  const hasClickClass = path.some(
-    (el: any) => el && el.classList && typeof el.classList.contains === "function" && el.classList.contains("whatsapp-clickable")
+let lastPointerDownEl: EventTarget | null = null;
+if (typeof window !== "undefined") {
+  window.addEventListener(
+    "pointerdown",
+    (e) => {
+      lastPointerDownEl = e.target;
+    },
+    true,
   );
-  if (hasClickClass) return true;
-  
-  const target = (originalEvent.target || e.target) as HTMLElement;
-  if (target?.closest?.(".whatsapp-clickable")) return true;
-  
+}
+
+const elementIsInWhatsApp = (el: unknown): boolean => {
+  const node = el as HTMLElement | null | undefined;
+  return !!(node && typeof node.closest === "function" && node.closest(".whatsapp-clickable"));
+};
+
+const isWhatsAppClick = (e: any) => {
+  const originalEvent =
+    e?.detail?.originalEvent ||
+    e?.nativeEvent?.detail?.originalEvent ||
+    e?.nativeEvent ||
+    e;
+
+  if (originalEvent) {
+    const path = originalEvent.composedPath?.() || [];
+    if (
+      path.some(
+        (el: any) =>
+          el && el.classList && typeof el.classList.contains === "function" && el.classList.contains("whatsapp-clickable"),
+      )
+    ) {
+      return true;
+    }
+
+    const target = (originalEvent.target || e?.target) as HTMLElement | undefined;
+    if (elementIsInWhatsApp(target)) return true;
+  }
+
+  if (elementIsInWhatsApp(lastPointerDownEl)) return true;
+
+  if (typeof document !== "undefined") {
+    try {
+      if (document.querySelector(".whatsapp-clickable:hover")) return true;
+    } catch {
+      /* noop */
+    }
+  }
+
   return false;
 };
+
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
