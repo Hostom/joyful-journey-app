@@ -29,19 +29,61 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
+const isWhatsAppClick = (e: any) => {
+  const originalEvent = 
+    e.detail?.originalEvent || 
+    e.nativeEvent?.detail?.originalEvent || 
+    e.nativeEvent || 
+    e;
+    
+  if (!originalEvent) return false;
+
+  const path = originalEvent.composedPath?.() || [];
+  const hasClickClass = path.some(
+    (el: any) => el && el.classList && typeof el.classList.contains === "function" && el.classList.contains("whatsapp-clickable")
+  );
+  if (hasClickClass) return true;
+  
+  const target = (originalEvent.target || e.target) as HTMLElement;
+  if (target?.closest?.(".whatsapp-clickable")) return true;
+  
+  return false;
+};
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, onPointerDownOutside, onInteractOutside, onFocusOutside, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
+      {...props}
       className={cn(
         "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg",
         className,
       )}
-      {...props}
+      onPointerDownOutside={(e) => {
+        if (isWhatsAppClick(e)) {
+          e.preventDefault();
+          return;
+        }
+        onPointerDownOutside?.(e);
+      }}
+      onInteractOutside={(e) => {
+        if (isWhatsAppClick(e)) {
+          e.preventDefault();
+          return;
+        }
+        onInteractOutside?.(e);
+      }}
+      onFocusOutside={(e) => {
+        if (isWhatsAppClick(e)) {
+          e.preventDefault();
+          return;
+        }
+        onFocusOutside?.(e);
+      }}
     >
       {children}
       <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background cursor-pointer transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">

@@ -249,3 +249,41 @@
   -ms-overflow-style: none;
   &::-webkit-scrollbar { display: none; }
 }
+
+@keyframes whatsapp-vibrate {
+  0%, 80%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  82% {
+    transform: scale(1.1) rotate(-10deg);
+  }
+  84% {
+    transform: scale(1.1) rotate(10deg);
+  }
+  86% {
+    transform: scale(1.1) rotate(-8deg);
+  }
+  88% {
+    transform: scale(1.1) rotate(8deg);
+  }
+  90% {
+    transform: scale(1.1) rotate(-4deg);
+  }
+  92% {
+    transform: scale(1.1) rotate(4deg);
+  }
+  94% {
+    transform: scale(1.1) rotate(0deg);
+  }
+}
+
+.animate-whatsapp-vibrate {
+  animation: whatsapp-vibrate 5s infinite;
+}
+
+/* Force WhatsApp button and chat widget to remain clickable even when a modal is open */
+.whatsapp-clickable {
+  pointer-events: auto !important;
+}
+
+
