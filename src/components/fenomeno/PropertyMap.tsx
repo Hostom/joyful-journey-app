@@ -15,6 +15,7 @@ interface PropertyMapProps {
   longitude: number;
   propertyName: string;
   nearbyPlaces?: NearbyPlace[];
+  height?: string;
 }
 
 // Global script loading state
@@ -267,7 +268,7 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
 
   return (
     <div className="relative w-full rounded-lg overflow-hidden border border-gold-champagne/15 shadow-inner">
-      <div ref={mapRef} className="w-full h-80 md:h-[400px] bg-stone-100" />
+      <div ref={mapRef} style={{ height: height || "280px" }} className="w-full bg-stone-100" />
       
       {/* Map legend */}
       {nearbyPlaces.length > 0 && (
