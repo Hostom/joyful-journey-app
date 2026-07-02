@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PropertyGallery } from "@/components/fenomeno/PropertyGallery";
 import { InquiryCTA } from "@/components/fenomeno/InquiryCTA";
 import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
 import type { Property } from "@/data/properties";
+import { PropertyMap } from "@/components/fenomeno/PropertyMap";
+import { supabase } from "@/integrations/supabase/client";
 
 type PropertyDetailModalProps = {
   property: Property | null;
@@ -11,13 +13,84 @@ type PropertyDetailModalProps = {
   onClose: () => void;
 };
 
+const CATEGORY_OPTIONS = [
+  { id: "escola", label: "Escolas", icon: "school", iconColor: "text-blue-400" },
+  { id: "mercado", label: "Mercados", icon: "shopping_cart", iconColor: "text-emerald-400" },
+  { id: "farmacia", label: "Farmácias", icon: "medical_services", iconColor: "text-red-400" },
+  { id: "academia", label: "Academias", icon: "fitness_center", iconColor: "text-purple-400" },
+];
+
+const getCoordinates = (property: Property) => {
+  if (property.latitude !== undefined && property.longitude !== undefined) {
+    return { lat: property.latitude, lng: property.longitude };
+  }
+  // Fallbacks baseados na localização e bairro do imóvel
+  switch (property.location) {
+    case "Balneário Camboriú":
+      if (property.neighborhood?.includes("Barra Sul")) {
+        return { lat: -27.0068, lng: -48.5915 };
+      }
+      return { lat: -26.9926, lng: -48.6346 };
+    case "Itapema":
+      return { lat: -27.0905, lng: -48.6104 };
+    case "Itajaí":
+      if (property.neighborhood?.includes("Praia Brava")) {
+        return { lat: -26.9600, lng: -48.6200 };
+      }
+      return { lat: -26.8926, lng: -48.6531 };
+    default:
+      return { lat: -26.9926, lng: -48.6346 };
+  }
+};
+
 export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetailModalProps) {
   const [leadOpen, setLeadOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(["escola", "mercado", "farmacia", "academia"]);
+  const [places, setPlaces] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Limpa locais ao trocar de imóvel
+  useEffect(() => {
+    setPlaces([]);
+  }, [property?.code]);
+
   if (!property) return null;
 
   const whatsappUrl = `https://wa.me/5547999837494?text=${encodeURIComponent(
     `Olá! Tenho interesse no imóvel "${property.name}" (Código: ${property.code}).`,
   )}`;
+
+  const { lat, lng } = getCoordinates(property);
+
+  const fetchNearbyPlaces = async () => {
+    if (selectedCategories.length === 0) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("nearby-places", {
+        body: {
+          latitude: lat,
+          longitude: lng,
+          categories: selectedCategories,
+        },
+      });
+
+      if (error) {
+        console.error("Erro ao carregar comércios próximos:", error);
+      } else if (Array.isArray(data)) {
+        setPlaces(data);
+      }
+    } catch (err) {
+      console.error("Exceção ao carregar comércios próximos:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleToggleCategory = (id: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id],
+    );
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -91,6 +164,102 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+
+          {/* Map and Nearby Places Section */}
+          <div className="mt-12 pt-10 border-t border-cream-foundation/10">
+            <h3 className="font-display text-2xl mb-6 text-cream-foundation">
+              Localização e <em className="italic text-gold-champagne">Comodidades</em>
+            </h3>
+            
+            <div className="grid lg:grid-cols-[1.6fr_1fr] gap-8 items-start">
+              {/* Map Container */}
+              <div className="w-full">
+                <PropertyMap
+                  latitude={lat}
+                  longitude={lng}
+                  propertyName={property.name}
+                  nearbyPlaces={places}
+                />
+              </div>
+
+              {/* Nearby Places Controls */}
+              <div className="bg-forest-deep/40 border border-gold-champagne/15 p-6 rounded-xl backdrop-blur-md">
+                <h4 className="text-xs uppercase tracking-[0.2em] text-gold-champagne font-bold mb-4 font-sans">
+                  Comércios Próximos
+                </h4>
+                
+                {/* Category selectors */}
+                <div className="grid grid-cols-2 gap-2 mb-5">
+                  {CATEGORY_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => handleToggleCategory(opt.id)}
+                      className={`flex items-center gap-2 p-2.5 border rounded-lg text-xs transition-all duration-300 font-sans cursor-pointer ${
+                        selectedCategories.includes(opt.id)
+                          ? "bg-gold-classic border-gold-classic text-forest-deep font-bold shadow-md"
+                          : "border-gold-champagne/20 hover:border-gold-champagne/40 text-cream-foundation/80 hover:bg-white/5"
+                      }`}
+                    >
+                      <span className={`material-symbols-outlined text-base ${selectedCategories.includes(opt.id) ? "text-forest-deep" : opt.iconColor}`}>
+                        {opt.icon}
+                      </span>
+                      <span>{opt.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Fetch Button */}
+                <button
+                  type="button"
+                  onClick={fetchNearbyPlaces}
+                  disabled={loading || selectedCategories.length === 0}
+                  className="w-full bg-transparent hover:bg-gold-classic border border-gold-classic/50 hover:border-gold-classic text-gold-classic hover:text-forest-deep font-bold text-xs uppercase tracking-[0.2em] py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <span className="animate-spin material-symbols-outlined text-sm">progress_activity</span>
+                      <span>Buscando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-sm">explore</span>
+                      <span>Buscar Próximos</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Places Results List */}
+                <div className="mt-6 space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+                  {places.length > 0 ? (
+                    places.map((place, idx) => {
+                      const opt = CATEGORY_OPTIONS.find((o) => o.id === place.type) || { icon: "place", iconColor: "text-gold-champagne" };
+                      return (
+                        <div key={idx} className="flex items-center justify-between py-2 border-b border-cream-foundation/5 text-xs font-sans">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className={`material-symbols-outlined text-base flex-shrink-0 ${opt.iconColor}`}>
+                              {opt.icon}
+                            </span>
+                            <span className="font-medium text-cream-foundation/90 truncate">{place.name}</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-gold-champagne/90 bg-gold-champagne/5 px-2 py-0.5 rounded flex-shrink-0 ml-2">
+                            {place.distance >= 1000 ? `${(place.distance / 1000).toFixed(1)} km` : `${place.distance} m`}
+                          </span>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center py-6 text-cream-foundation/40 text-xs font-sans">
+                      <span className="material-symbols-outlined text-3xl mb-2 text-gold-champagne/40 block">map</span>
+                      <p className="max-w-[200px] mx-auto leading-relaxed">
+                        Selecione as categorias e clique em buscar para listar os comércios da região.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 

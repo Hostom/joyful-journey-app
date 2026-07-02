@@ -27,6 +27,8 @@ function rowToProperty(row: Record<string, unknown>): Property {
     description: String(row.description ?? ""),
     features,
     images,
+    latitude: row.latitude !== undefined && row.latitude !== null ? Number(row.latitude) : undefined,
+    longitude: row.longitude !== undefined && row.longitude !== null ? Number(row.longitude) : undefined,
   };
 }
 
@@ -43,13 +45,28 @@ export const listProperties = createServerFn({ method: "GET" }).handler(async ()
       auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     });
 
+    // 1. Tenta buscar da Edge Function "fetch-properties"
+    try {
+      const { data: edgeData, error: edgeError } = await supabasePublic.functions.invoke("fetch-properties");
+      if (!edgeError && Array.isArray(edgeData)) {
+        console.log("[listProperties] Imóveis obtidos com sucesso via Edge Function.");
+        return edgeData as Property[];
+      }
+      if (edgeError) {
+        console.warn("[listProperties] Chamada da Edge Function retornou erro, usando fallback:", edgeError);
+      }
+    } catch (e) {
+      console.warn("[listProperties] Falha ao invocar Edge Function, usando fallback do banco:", e);
+    }
+
+    // 2. Fallback para o Banco de Dados
     const { data, error } = await supabasePublic
       .from("properties")
       .select("*")
       .order("updated_at", { ascending: false });
 
     if (error) {
-      console.error("[listProperties] erro ao buscar:", error);
+      console.error("[listProperties] erro ao buscar no banco de dados:", error);
       return STATIC_PROPERTIES;
     }
 
@@ -62,7 +79,7 @@ export const listProperties = createServerFn({ method: "GET" }).handler(async ()
     ];
     return merged;
   } catch (err) {
-    console.error("[listProperties] exceção:", err);
+    console.error("[listProperties] exceção geral:", err);
     return STATIC_PROPERTIES;
   }
 });

@@ -30,6 +30,8 @@ const propertySchema = z.object({
   description: z.string().max(10000).optional().default(""),
   features: z.array(z.string()).optional().default([]),
   images: z.array(z.string().url("URLs de imagem inválidas em 'images'.")).optional().default([]),
+  latitude: z.coerce.number().optional(),
+  longitude: z.coerce.number().optional(),
 });
 
 const deleteSchema = z.object({ code: codeSchema });
@@ -150,6 +152,8 @@ export const Route = createFileRoute("/api/public/properties/sync")({
               description: p.description,
               features: p.features,
               images: p.images,
+              latitude: p.latitude,
+              longitude: p.longitude,
             },
             { onConflict: "code" },
           );

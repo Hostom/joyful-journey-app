@@ -23,6 +23,8 @@ export type Property = {
   description: string;
   features: string[];
   images: string[];
+  latitude?: number;
+  longitude?: number;
 };
 
 const fmt = (n: number) =>
@@ -50,6 +52,8 @@ export const PROPERTIES: Property[] = [
     bedrooms: 4,
     suites: 4,
     parking: 5,
+    latitude: -27.0068,
+    longitude: -48.5915,
     description:
       "Localizado nas torres mais altas residenciais da América Latina, este apartamento oferece vistas panorâmicas do mar e da cidade. Acabamentos italianos e automação completa definem o padrão de excelência.\n\nO empreendimento conta com infraestrutura de resort: spa, piscinas climatizadas, marina privativa e concierge 24 horas.",
     features: [
@@ -80,6 +84,8 @@ export const PROPERTIES: Property[] = [
     bedrooms: 5,
     suites: 5,
     parking: 6,
+    latitude: -26.9880,
+    longitude: -48.6250,
     description:
       "Cobertura duplex frente-mar com piscina privativa em rooftop, deck panorâmico e elevador exclusivo. Cada ambiente foi pensado para receber em alto padrão.\n\nProjeto assinado por escritório premiado, com acabamentos importados e iluminação cênica.",
     features: [
@@ -110,6 +116,8 @@ export const PROPERTIES: Property[] = [
     bedrooms: 4,
     suites: 4,
     parking: 4,
+    latitude: -27.0040,
+    longitude: -48.5950,
     description:
       "Penthouse de altíssimo padrão no coração da cidade, com vista 360° e living integrado ao terraço aquecido.\n\nAcabamentos em mármore travertino, marcenaria sob medida e sistema de som ambiente em todos os ambientes.",
     features: [
@@ -140,6 +148,8 @@ export const PROPERTIES: Property[] = [
     bedrooms: 5,
     suites: 5,
     parking: 4,
+    latitude: -26.9600,
+    longitude: -48.6200,
     description:
       "Casa contemporânea pé-na-areia com projeto biofílico, piscina infinita e SPA privativo. Arquitetura integrada à paisagem.\n\nAmbientes amplos, pé-direito duplo e jardins assinados.",
     features: [
@@ -169,6 +179,8 @@ export const PROPERTIES: Property[] = [
     bedrooms: 4,
     suites: 4,
     parking: 3,
+    latitude: -27.1350,
+    longitude: -48.6050,
     description:
       "Apartamento amplo frente-mar em Itapema, com varanda gourmet integrada e vista deslumbrante para a praia.\n\nLazer completo, segurança 24h e acabamentos premium.",
     features: [
@@ -198,6 +210,8 @@ export const PROPERTIES: Property[] = [
     bedrooms: 4,
     suites: 4,
     parking: 4,
+    latitude: -26.9930,
+    longitude: -48.6220,
     description:
       "Apartamento de altíssimo padrão em uma das torres mais cobiçadas da Avenida Atlântica.\n\nAcabamentos europeus, automação completa e vista privilegiada para o oceano.",
     features: [
