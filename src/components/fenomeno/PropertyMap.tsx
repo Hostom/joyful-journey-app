@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { getGoogleMapsKey } from "@/lib/maps.functions";
+
 
 interface NearbyPlace {
   name: string;
