@@ -50,7 +50,7 @@ export const listProperties = createServerFn({ method: "GET" }).handler(async ()
       const { data: edgeData, error: edgeError } = await supabasePublic.functions.invoke("fetch-properties");
       if (!edgeError && Array.isArray(edgeData)) {
         console.log("[listProperties] Imóveis obtidos com sucesso via Edge Function.");
-        return edgeData as Property[];
+        return edgeData.map((r) => rowToProperty(r as Record<string, unknown>));
       }
       if (edgeError) {
         console.warn("[listProperties] Chamada da Edge Function retornou erro, usando fallback:", edgeError);

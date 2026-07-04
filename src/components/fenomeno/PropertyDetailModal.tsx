@@ -21,7 +21,12 @@ const CATEGORY_OPTIONS = [
 ];
 
 const getCoordinates = (property: Property) => {
-  if (property.latitude !== undefined && property.longitude !== undefined) {
+  if (
+    typeof property.latitude === "number" &&
+    typeof property.longitude === "number" &&
+    !isNaN(property.latitude) &&
+    !isNaN(property.longitude)
+  ) {
     return { lat: property.latitude, lng: property.longitude };
   }
   // Fallbacks baseados na localização e bairro do imóvel

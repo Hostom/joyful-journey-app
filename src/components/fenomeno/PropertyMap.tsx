@@ -245,11 +245,10 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
     map.fitBounds(bounds);
     
     // Set a maximum zoom level so we don't zoom in too close if there's only 1 marker nearby
-    const listener = google.maps.event.addListener(map, "bounds_changed", () => {
+    google.maps.event.addListenerOnce(map, "bounds_changed", () => {
       if (map.getZoom()! > 16) {
         map.setZoom(16);
       }
-      google.maps.event.removeListener(listener);
     });
 
   }, [nearbyPlaces, mapLoaded, latitude, longitude]);
