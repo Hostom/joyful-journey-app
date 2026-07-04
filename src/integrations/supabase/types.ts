@@ -24,7 +24,9 @@ export type Database = {
           features: Json
           id: string
           images: Json
+          latitude: number | null
           location: string
+          longitude: number | null
           name: string
           neighborhood: string
           parking: number
@@ -42,7 +44,9 @@ export type Database = {
           features?: Json
           id?: string
           images?: Json
+          latitude?: number | null
           location: string
+          longitude?: number | null
           name: string
           neighborhood?: string
           parking?: number
@@ -60,7 +64,9 @@ export type Database = {
           features?: Json
           id?: string
           images?: Json
+          latitude?: number | null
           location?: string
+          longitude?: number | null
           name?: string
           neighborhood?: string
           parking?: number
