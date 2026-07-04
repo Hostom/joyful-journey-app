@@ -257,7 +257,7 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
         <h4 className="font-semibold text-stone-700 mb-1">Mapa Indisponível</h4>
         <p className="text-xs text-stone-500 max-w-sm">
           A chave do Google Maps não está configurada no momento. Por favor, configure a variável{" "}
-          <code>VITE_GOOGLE_MAPS_API_KEY</code> para exibir o mapa dinâmico.
+          <code>GOOGLE_MAPS_API_KEY</code> para exibir o mapa dinâmico.
         </p>
       </div>
     );
