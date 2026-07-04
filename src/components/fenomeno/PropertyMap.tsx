@@ -78,7 +78,7 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
   const markersRef = useRef<google.maps.Marker[]>([]);
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
-  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
+  const googleApiKey = import.meta.env.GOOGLE_MAPS_API_KEY || "";
 
   useEffect(() => {
     if (!googleApiKey) {
