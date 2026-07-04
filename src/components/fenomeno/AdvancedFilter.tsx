@@ -10,6 +10,7 @@ type FilterValues = {
   bedrooms?: number;
   suites?: number;
   parking?: number;
+  condominio?: string;
 };
 
 type AdvancedFilterProps = {
@@ -32,6 +33,7 @@ export function AdvancedFilter({
   const [location, setLocation] = useState<string>(initialValues?.location ?? "");
   const [type, setType] = useState<string>(initialValues?.type ?? "");
   const [status, setStatus] = useState<string>("");
+  const [condominio, setCondominio] = useState<string>(initialValues?.condominio ?? "");
   
   const [bedrooms, setBedrooms] = useState<number | undefined>(initialValues?.bedrooms);
   const [suites, setSuites] = useState<number | undefined>(initialValues?.suites);
@@ -56,6 +58,7 @@ export function AdvancedFilter({
       setParking(initialValues.parking);
       setMinPrice(initialValues.minPrice ?? 0);
       setMaxPrice(initialValues.maxPrice ?? 50000000);
+      setCondominio(initialValues.condominio ?? "");
     }
   }, [initialValues]);
 
@@ -85,6 +88,7 @@ export function AdvancedFilter({
       bedrooms: bedrooms || undefined,
       suites: suites || undefined,
       parking: parking || undefined,
+      condominio: condominio || undefined,
     });
   };
 
@@ -116,7 +120,24 @@ export function AdvancedFilter({
         className="w-full text-cream-foundation"
       >
         {/* Row 1: Dropdowns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
+          {/* Condomínio */}
+          <div className="flex flex-col gap-1.5 relative">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-gold-champagne font-semibold font-sans">
+              Condomínio
+            </span>
+            <div className="bg-white rounded-lg px-3.5 py-2 flex items-center border border-cream-stone/40 shadow-sm text-forest-deep focus-within:border-gold-classic focus-within:ring-1 focus-within:ring-gold-classic h-[42px]">
+              <span className="material-symbols-outlined text-gold-classic mr-2 text-lg">search</span>
+              <input
+                type="text"
+                value={condominio}
+                onChange={(e) => setCondominio(e.target.value)}
+                placeholder="Condomínio"
+                className="w-full bg-transparent border-none outline-none focus:ring-0 text-sm font-sans font-medium text-forest-deep placeholder:text-forest-mid/40"
+              />
+            </div>
+          </div>
+
           {/* Localização */}
           <div className="flex flex-col gap-1.5 relative">
             <span className="text-[10px] uppercase tracking-[0.2em] text-gold-champagne font-semibold font-sans">
@@ -346,6 +367,23 @@ export function AdvancedFilter({
         }`}
       >
         <form onSubmit={handleSearchSubmit} className="flex flex-col gap-6" onClick={(e) => e.stopPropagation()}>
+          {/* Nome do Condomínio (Destaque) */}
+          <div className="flex flex-col gap-1.5 relative">
+            <span className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-bold font-sans">
+              Condomínio
+            </span>
+            <div className="bg-white rounded-lg px-4 py-2.5 flex items-center border border-gold-champagne/45 shadow-sm text-forest-deep focus-within:border-gold-classic focus-within:ring-1 focus-within:ring-gold-classic">
+              <span className="material-symbols-outlined text-gold-classic mr-3">search</span>
+              <input
+                type="text"
+                value={condominio}
+                onChange={(e) => setCondominio(e.target.value)}
+                placeholder="Qual condomínio você procura? (Ex: Yachthouse, Iconic, etc.)"
+                className="w-full bg-transparent border-none outline-none focus:ring-0 text-sm md:text-base font-sans font-medium text-forest-deep placeholder:text-forest-mid/50"
+              />
+            </div>
+          </div>
+
           {/* Row 1: Dropdowns */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Localização */}

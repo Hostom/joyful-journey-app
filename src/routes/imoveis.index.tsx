@@ -21,6 +21,7 @@ type Search = {
   bedrooms?: number;
   suites?: number;
   parking?: number;
+  condominio?: string;
 };
 
 export const Route = createFileRoute("/imoveis/")({
@@ -33,6 +34,7 @@ export const Route = createFileRoute("/imoveis/")({
     const bed = Number(s.bedrooms);
     const sui = Number(s.suites);
     const pak = Number(s.parking);
+    const cond = s.condominio as string | undefined;
     return {
       location: LOCATIONS.includes(loc as PropertyLocation) ? (loc as PropertyLocation) : undefined,
       type: TYPES.includes(typ as PropertyType) ? (typ as PropertyType) : undefined,
@@ -41,6 +43,7 @@ export const Route = createFileRoute("/imoveis/")({
       bedrooms: Number.isFinite(bed) && bed > 0 ? bed : undefined,
       suites: Number.isFinite(sui) && sui > 0 ? sui : undefined,
       parking: Number.isFinite(pak) && pak > 0 ? pak : undefined,
+      condominio: typeof cond === "string" && cond.trim() !== "" ? cond.trim() : undefined,
     };
   },
   head: () => ({
@@ -89,6 +92,7 @@ function ListingsPage() {
     if (search.bedrooms && p.bedrooms < search.bedrooms) return false;
     if (search.suites && p.suites < search.suites) return false;
     if (search.parking && p.parking < search.parking) return false;
+    if (search.condominio && !p.name.toLowerCase().includes(search.condominio.toLowerCase())) return false;
     return true;
   });
 
@@ -100,7 +104,8 @@ function ListingsPage() {
     !!search.maxPrice ||
     !!search.bedrooms ||
     !!search.suites ||
-    !!search.parking;
+    !!search.parking ||
+    !!search.condominio;
 
   // Active filter tags for display
   const activeFilters: { label: string; key: keyof Search }[] = [];
@@ -109,6 +114,7 @@ function ListingsPage() {
   if (search.bedrooms) activeFilters.push({ label: `${search.bedrooms}+ quartos`, key: "bedrooms" });
   if (search.suites) activeFilters.push({ label: `${search.suites}+ suítes`, key: "suites" });
   if (search.parking) activeFilters.push({ label: `${search.parking}+ vagas`, key: "parking" });
+  if (search.condominio) activeFilters.push({ label: `Condomínio: "${search.condominio}"`, key: "condominio" });
 
   const removeFilter = (key: keyof Search) => {
     navigate({

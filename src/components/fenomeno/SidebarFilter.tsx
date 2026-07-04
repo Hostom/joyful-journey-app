@@ -10,6 +10,7 @@ type FilterValues = {
   bedrooms?: number;
   suites?: number;
   parking?: number;
+  condominio?: string;
 };
 
 type SidebarFilterProps = {
@@ -26,6 +27,7 @@ export function SidebarFilter({
   const [location, setLocation] = useState<string>(initialValues?.location ?? "");
   const [type, setType] = useState<string>(initialValues?.type ?? "");
   const [status, setStatus] = useState<string>("");
+  const [condominio, setCondominio] = useState<string>(initialValues?.condominio ?? "");
 
   const [bedrooms, setBedrooms] = useState<number | undefined>(initialValues?.bedrooms);
   const [suites, setSuites] = useState<number | undefined>(initialValues?.suites);
@@ -44,6 +46,7 @@ export function SidebarFilter({
       setParking(initialValues.parking);
       setMinPrice(initialValues.minPrice ?? 0);
       setMaxPrice(initialValues.maxPrice ?? 50000000);
+      setCondominio(initialValues.condominio ?? "");
     }
   }, [initialValues]);
 
@@ -57,6 +60,7 @@ export function SidebarFilter({
       bedrooms: bedrooms || undefined,
       suites: suites || undefined,
       parking: parking || undefined,
+      condominio: condominio || undefined,
     });
   };
 
@@ -69,6 +73,7 @@ export function SidebarFilter({
     setParking(undefined);
     setMinPrice(0);
     setMaxPrice(50000000);
+    setCondominio("");
     onClear();
   };
 
@@ -103,6 +108,25 @@ export function SidebarFilter({
         <h2 className="font-display text-2xl text-white font-normal leading-tight">
           Filtrar Imóveis
         </h2>
+      </div>
+
+      {/* Condomínio */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+          Condomínio
+        </label>
+        <div className="relative flex items-center border-b border-cream-foundation/40 focus-within:border-gold-classic transition-colors">
+          <input
+            type="text"
+            value={condominio}
+            onChange={(e) => setCondominio(e.target.value)}
+            placeholder="Buscar por condomínio..."
+            className="w-full bg-transparent text-white outline-none py-2 pr-8 text-sm font-sans font-semibold placeholder:text-cream-foundation/40"
+          />
+          <span className="material-symbols-outlined text-gold-classic absolute right-1 bottom-2 pointer-events-none text-lg select-none">
+            search
+          </span>
+        </div>
       </div>
 
       {/* Localização */}

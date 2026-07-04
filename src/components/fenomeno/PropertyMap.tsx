@@ -69,7 +69,7 @@ const luxuryMapStyle = [
   { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] }
 ];
 
-export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = [] }: PropertyMapProps) {
+export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = [], height }: PropertyMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
