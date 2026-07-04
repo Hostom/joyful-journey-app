@@ -39,7 +39,7 @@ function loadGoogleMapsScript(apiKey: string): Promise<void> {
     script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initGoogleMapCallback&v=weekly`;
     script.async = true;
     script.defer = true;
-    
+
     script.onerror = (err) => {
       isScriptLoading = false;
       scriptLoadPromise = null;
@@ -66,14 +66,14 @@ const luxuryMapStyle = [
   { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#dadada" }] },
   { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
   { featureType: "water", elementType: "geometry", stylers: [{ color: "#e0e6ed" }] },
-  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] }
+  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
 ];
 
 export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = [], height }: PropertyMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
-  
+
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
@@ -82,7 +82,7 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
 
   useEffect(() => {
     if (!googleApiKey) {
-      console.warn("VITE_GOOGLE_MAPS_API_KEY não está configurada no frontend.");
+      console.warn("GOOGLE_MAPS_API_KEY não está configurada no frontend.");
       setLoadError(true);
       return;
     }
@@ -169,27 +169,27 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
         case "escola":
           return {
             color: "#3B82F6", // Blue
-            symbol: "school"
+            symbol: "school",
           };
         case "mercado":
           return {
             color: "#10B981", // Green
-            symbol: "shopping_cart"
+            symbol: "shopping_cart",
           };
         case "farmacia":
           return {
             color: "#EF4444", // Red
-            symbol: "medical_services"
+            symbol: "medical_services",
           };
         case "academia":
           return {
             color: "#8B5CF6", // Purple
-            symbol: "fitness_center"
+            symbol: "fitness_center",
           };
         default:
           return {
             color: "#6B7280", // Grey
-            symbol: "place"
+            symbol: "place",
           };
       }
     };
@@ -200,7 +200,7 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
     // Plot each nearby place
     nearbyPlaces.forEach((place) => {
       const opts = getCategoryMarkerOptions(place.type);
-      
+
       const marker = new google.maps.Marker({
         position: { lat: place.coordinates.latitude, lng: place.coordinates.longitude },
         map: map,
@@ -216,9 +216,7 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
         },
       });
 
-      const distanceLabel = place.distance >= 1000 
-        ? `${(place.distance / 1000).toFixed(1)} km` 
-        : `${place.distance} m`;
+      const distanceLabel = place.distance >= 1000 ? `${(place.distance / 1000).toFixed(1)} km` : `${place.distance} m`;
 
       const typeLabel = place.type.charAt(0).toUpperCase() + place.type.slice(1);
 
@@ -243,14 +241,13 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
 
     // Fit map bounds to show all markers
     map.fitBounds(bounds);
-    
+
     // Set a maximum zoom level so we don't zoom in too close if there's only 1 marker nearby
     google.maps.event.addListenerOnce(map, "bounds_changed", () => {
       if (map.getZoom()! > 16) {
         map.setZoom(16);
       }
     });
-
   }, [nearbyPlaces, mapLoaded, latitude, longitude]);
 
   if (loadError) {
@@ -259,7 +256,8 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
         <span className="material-symbols-outlined text-4xl mb-3 text-stone-400">map</span>
         <h4 className="font-semibold text-stone-700 mb-1">Mapa Indisponível</h4>
         <p className="text-xs text-stone-500 max-w-sm">
-          A chave do Google Maps não está configurada no momento. Por favor, configure a variável <code>VITE_GOOGLE_MAPS_API_KEY</code> para exibir o mapa dinâmico.
+          A chave do Google Maps não está configurada no momento. Por favor, configure a variável{" "}
+          <code>VITE_GOOGLE_MAPS_API_KEY</code> para exibir o mapa dinâmico.
         </p>
       </div>
     );
@@ -268,7 +266,7 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
   return (
     <div className="relative w-full rounded-lg overflow-hidden border border-gold-champagne/15 shadow-inner">
       <div ref={mapRef} style={{ height: height || "280px" }} className="w-full bg-stone-100" />
-      
+
       {/* Map legend */}
       {nearbyPlaces.length > 0 && (
         <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm p-3 rounded shadow-md border border-stone-100 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-stone-700 font-sans font-medium">
