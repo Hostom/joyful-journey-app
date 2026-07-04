@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { getGoogleMapsKey } from "@/lib/maps.functions";
+
 
 interface NearbyPlace {
   name: string;
@@ -78,15 +80,32 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
   const markersRef = useRef<google.maps.Marker[]>([]);
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
-  const googleApiKey = import.meta.env.GOOGLE_MAPS_API_KEY || "";
+  const [googleApiKey, setGoogleApiKey] = useState<string>("");
 
   useEffect(() => {
-    if (!googleApiKey) {
-      console.warn("GOOGLE_MAPS_API_KEY não está configurada no frontend.");
-      setLoadError(true);
-      return;
-    }
+    let cancelled = false;
+    getGoogleMapsKey()
+      .then((res) => {
+        if (cancelled) return;
+        if (!res.key) {
+          console.warn("GOOGLE_MAPS_API_KEY não está configurada no servidor.");
+          setLoadError(true);
+          return;
+        }
+        setGoogleApiKey(res.key);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error("Erro ao obter GOOGLE_MAPS_API_KEY:", err);
+        setLoadError(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
+  useEffect(() => {
+    if (!googleApiKey) return;
     loadGoogleMapsScript(googleApiKey)
       .then(() => {
         setMapLoaded(true);
