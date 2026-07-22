@@ -20,7 +20,7 @@ const CATEGORY_OPTIONS = [
   { id: "academia", label: "Academias", icon: "fitness_center", iconColor: "text-purple-400" },
 ];
 
-const getCoordinates = (property: Property) => {
+const getCoordinates = (property: Property): { lat: number; lng: number } | null => {
   if (
     typeof property.latitude === "number" &&
     typeof property.longitude === "number" &&
@@ -29,23 +29,7 @@ const getCoordinates = (property: Property) => {
   ) {
     return { lat: property.latitude, lng: property.longitude };
   }
-  // Fallbacks baseados na localização e bairro do imóvel
-  switch (property.location) {
-    case "Balneário Camboriú":
-      if (property.neighborhood?.includes("Barra Sul")) {
-        return { lat: -27.0068, lng: -48.5915 };
-      }
-      return { lat: -26.9926, lng: -48.6346 };
-    case "Itapema":
-      return { lat: -27.0905, lng: -48.6104 };
-    case "Itajaí":
-      if (property.neighborhood?.includes("Praia Brava")) {
-        return { lat: -26.9600, lng: -48.6200 };
-      }
-      return { lat: -26.8926, lng: -48.6531 };
-    default:
-      return { lat: -26.9926, lng: -48.6346 };
-  }
+  return null;
 };
 
 export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetailModalProps) {
