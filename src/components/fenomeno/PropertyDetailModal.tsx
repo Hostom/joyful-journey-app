@@ -117,13 +117,12 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                 </div>
 
                 {/* Map and Nearby Places Section */}
-                {/* Map and Nearby Places Section */}
                 {hasCoords && (
                 <div className="mt-6 pt-5 border-t border-cream-foundation/10 space-y-4">
                   <h3 className="font-display text-lg text-gold-champagne">
                     Localização e Comodidades
                   </h3>
-                  </h3>
+                  
                   
                   {/* Compact Map */}
                   <div className="w-full">
