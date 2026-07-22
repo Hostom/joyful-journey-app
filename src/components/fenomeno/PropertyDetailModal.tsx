@@ -49,7 +49,10 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
     `Olá! Tenho interesse no imóvel "${property.name}" (Código: ${property.code}).`,
   )}`;
 
-  const { lat, lng } = getCoordinates(property);
+  const coords = getCoordinates(property);
+  const hasCoords = coords !== null;
+  const lat = coords?.lat ?? 0;
+  const lng = coords?.lng ?? 0;
 
   const fetchNearbyPlaces = async () => {
     if (selectedCategories.length === 0) return;
