@@ -184,6 +184,30 @@ export const Route = createFileRoute("/api/public/properties/sync")({
         }
 
         const p = parsed.data;
+
+        // Se o CRM não enviou coords válidas, geocodifica a partir do endereço.
+        let latitude = p.latitude;
+        let longitude = p.longitude;
+        if (
+          typeof latitude !== "number" ||
+          typeof longitude !== "number" ||
+          isNaN(latitude) ||
+          isNaN(longitude)
+        ) {
+          const geo = await geocodeAddress({
+            name: p.name,
+            neighborhood: p.neighborhood,
+            location: p.location,
+          });
+          if (geo) {
+            latitude = geo.latitude;
+            longitude = geo.longitude;
+          } else {
+            latitude = undefined;
+            longitude = undefined;
+          }
+        }
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { error } = await supabaseAdmin
           .from("properties")
@@ -202,8 +226,8 @@ export const Route = createFileRoute("/api/public/properties/sync")({
               description: p.description,
               features: p.features,
               images: p.images,
-              latitude: p.latitude,
-              longitude: p.longitude,
+              latitude,
+              longitude,
             },
             { onConflict: "code" },
           );
