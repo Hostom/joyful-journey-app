@@ -82,6 +82,56 @@ function formatZodIssues(err: z.ZodError) {
   }));
 }
 
+/**
+ * Geocodifica um endereço usando a Google Geocoding API.
+ * Fallback progressivo: "name, neighborhood, location, Brasil" →
+ * "neighborhood, location, Brasil" → "location, Brasil".
+ * Retorna null se falhar em todas as tentativas.
+ */
+async function geocodeAddress(parts: {
+  name?: string;
+  neighborhood?: string;
+  location: string;
+}): Promise<{ latitude: number; longitude: number } | null> {
+  const apiKey = process.env.GOOGLE_GEOCODING_API_KEY || process.env.GOOGLE_MAPS_API_KEY;
+  if (!apiKey) {
+    console.warn("[properties/sync] Nenhuma chave de Geocoding configurada — pulando geocoding.");
+    return null;
+  }
+
+  const attempts = [
+    [parts.name, parts.neighborhood, parts.location, "Brasil"].filter(Boolean).join(", "),
+    [parts.neighborhood, parts.location, "Brasil"].filter(Boolean).join(", "),
+    [parts.location, "Brasil"].filter(Boolean).join(", "),
+  ].filter((q, i, a) => q.length > 0 && a.indexOf(q) === i);
+
+  for (const address of attempts) {
+    try {
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&region=br&key=${apiKey}`;
+      const res = await fetch(url);
+      const data = (await res.json()) as {
+        status: string;
+        results?: Array<{ geometry?: { location?: { lat: number; lng: number } } }>;
+        error_message?: string;
+      };
+      if (data.status === "OK" && data.results?.[0]?.geometry?.location) {
+        const { lat, lng } = data.results[0].geometry.location;
+        console.log(`[properties/sync] Geocode OK "${address}" → ${lat},${lng}`);
+        return { latitude: lat, longitude: lng };
+      }
+      if (data.status !== "ZERO_RESULTS") {
+        console.warn(
+          `[properties/sync] Geocode "${address}" status=${data.status} msg=${data.error_message ?? "-"}`,
+        );
+      }
+    } catch (err) {
+      console.error(`[properties/sync] Erro geocode "${address}":`, err);
+    }
+  }
+  console.warn("[properties/sync] Geocode falhou para todas as variações:", attempts);
+  return null;
+}
+
 // ─── Route ──────────────────────────────────────────────────────────────────
 
 export const Route = createFileRoute("/api/public/properties/sync")({
@@ -134,6 +184,30 @@ export const Route = createFileRoute("/api/public/properties/sync")({
         }
 
         const p = parsed.data;
+
+        // Se o CRM não enviou coords válidas, geocodifica a partir do endereço.
+        let latitude = p.latitude;
+        let longitude = p.longitude;
+        if (
+          typeof latitude !== "number" ||
+          typeof longitude !== "number" ||
+          isNaN(latitude) ||
+          isNaN(longitude)
+        ) {
+          const geo = await geocodeAddress({
+            name: p.name,
+            neighborhood: p.neighborhood,
+            location: p.location,
+          });
+          if (geo) {
+            latitude = geo.latitude;
+            longitude = geo.longitude;
+          } else {
+            latitude = undefined;
+            longitude = undefined;
+          }
+        }
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { error } = await supabaseAdmin
           .from("properties")
@@ -152,8 +226,8 @@ export const Route = createFileRoute("/api/public/properties/sync")({
               description: p.description,
               features: p.features,
               images: p.images,
-              latitude: p.latitude,
-              longitude: p.longitude,
+              latitude,
+              longitude,
             },
             { onConflict: "code" },
           );
