@@ -93,9 +93,9 @@ async function geocodeAddress(parts: {
   neighborhood?: string;
   location: string;
 }): Promise<{ latitude: number; longitude: number } | null> {
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  const apiKey = process.env.GOOGLE_GEOCODING_API_KEY || process.env.GOOGLE_MAPS_API_KEY;
   if (!apiKey) {
-    console.warn("[properties/sync] GOOGLE_MAPS_API_KEY ausente — pulando geocoding.");
+    console.warn("[properties/sync] Nenhuma chave de Geocoding configurada — pulando geocoding.");
     return null;
   }
 
