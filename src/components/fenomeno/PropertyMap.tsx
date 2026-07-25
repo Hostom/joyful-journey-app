@@ -84,20 +84,29 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
 
   useEffect(() => {
     let cancelled = false;
+
+    // Direct client check fallback
+    const clientKey = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string) || "";
+
     getGoogleMapsKey()
       .then((res) => {
         if (cancelled) return;
-        if (!res.key) {
-          console.warn("GOOGLE_MAPS_API_KEY não está configurada no servidor.");
+        const key = res?.key || clientKey;
+        if (!key) {
+          console.warn("GOOGLE_MAPS_API_KEY não está configurada.");
           setLoadError(true);
           return;
         }
-        setGoogleApiKey(res.key);
+        setGoogleApiKey(key);
       })
       .catch((err) => {
         if (cancelled) return;
-        console.error("Erro ao obter GOOGLE_MAPS_API_KEY:", err);
-        setLoadError(true);
+        if (clientKey) {
+          setGoogleApiKey(clientKey);
+        } else {
+          console.error("Erro ao obter GOOGLE_MAPS_API_KEY:", err);
+          setLoadError(true);
+        }
       });
     return () => {
       cancelled = true;
@@ -138,6 +147,14 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
     mapInstanceRef.current = map;
     infoWindowRef.current = new google.maps.InfoWindow();
 
+    // Re-trigger resize after modal dialog finishes rendering
+    const timer = setTimeout(() => {
+      if (mapInstanceRef.current && window.google?.maps) {
+        google.maps.event.trigger(mapInstanceRef.current, "resize");
+        mapInstanceRef.current.setCenter({ lat: latitude, lng: longitude });
+      }
+    }, 200);
+
     // Create Main Property Marker (Dourado de Luxo)
     const propertyMarker = new google.maps.Marker({
       position: { lat: latitude, lng: longitude },
@@ -168,6 +185,10 @@ export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = 
     });
 
     markersRef.current.push(propertyMarker);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [mapLoaded, latitude, longitude, propertyName]);
 
   // Update/Plot Nearby Places Markers

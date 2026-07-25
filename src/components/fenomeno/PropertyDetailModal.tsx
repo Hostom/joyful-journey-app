@@ -20,16 +20,28 @@ const CATEGORY_OPTIONS = [
   { id: "academia", label: "Academias", icon: "fitness_center", iconColor: "text-purple-400" },
 ];
 
-const getCoordinates = (property: Property): { lat: number; lng: number } | null => {
+const getCoordinates = (property: Property): { lat: number; lng: number } => {
   if (
-    typeof property.latitude === "number" &&
-    typeof property.longitude === "number" &&
-    !isNaN(property.latitude) &&
-    !isNaN(property.longitude)
+    property.latitude !== undefined &&
+    property.latitude !== null &&
+    property.longitude !== undefined &&
+    property.longitude !== null
   ) {
-    return { lat: property.latitude, lng: property.longitude };
+    const lat = Number(property.latitude);
+    const lng = Number(property.longitude);
+    if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+      return { lat, lng };
+    }
   }
-  return null;
+
+  // Coordenadas padrão por localização para garantir que o mapa sempre seja exibido
+  if (property.location === "Itapema") {
+    return { lat: -27.0900, lng: -48.6100 };
+  }
+  if (property.location === "Itajaí") {
+    return { lat: -26.9050, lng: -48.6650 };
+  }
+  return { lat: -26.9930, lng: -48.6300 }; // Balneário Camboriú por padrão
 };
 
 export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetailModalProps) {
@@ -50,9 +62,9 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
   )}`;
 
   const coords = getCoordinates(property);
-  const hasCoords = coords !== null;
-  const lat = coords?.lat ?? 0;
-  const lng = coords?.lng ?? 0;
+  const hasCoords = true;
+  const lat = coords.lat;
+  const lng = coords.lng;
 
   const fetchNearbyPlaces = async () => {
     if (selectedCategories.length === 0) return;
