@@ -21,6 +21,10 @@ const propertySchema = z.object({
   name: z.string().trim().min(1, "Campo 'name' obrigatório.").max(200),
   location: z.string().trim().min(1, "Campo 'location' obrigatório.").max(120),
   neighborhood: z.string().trim().max(160).optional().default(""),
+  address: z.string().trim().max(300).optional(),
+  street: z.string().trim().max(300).optional(),
+  rua: z.string().trim().max(300).optional(),
+  logradouro: z.string().trim().max(300).optional(),
   type: z.string().trim().min(1, "Campo 'type' obrigatório.").max(60),
   price: z.coerce.number().min(0).default(0),
   area: z.coerce.number().min(0).default(0),
@@ -32,6 +36,9 @@ const propertySchema = z.object({
   images: z.array(z.string().url("URLs de imagem inválidas em 'images'.")).optional().default([]),
   latitude: z.coerce.number().optional(),
   longitude: z.coerce.number().optional(),
+  lat: z.coerce.number().optional(),
+  lng: z.coerce.number().optional(),
+  lon: z.coerce.number().optional(),
 });
 
 const deleteSchema = z.object({ code: codeSchema });
@@ -202,9 +209,11 @@ export const Route = createFileRoute("/api/public/properties/sync")({
 
         const p = parsed.data;
 
-        // Se o CRM não enviou coords válidas, geocodifica a partir do endereço.
-        let latitude = p.latitude;
-        let longitude = p.longitude;
+        // Trata aliases para latitude, longitude e endereço
+        const fullAddress = p.address || p.street || p.rua || p.logradouro;
+        let latitude = p.latitude ?? p.lat;
+        let longitude = p.longitude ?? p.lng ?? p.lon;
+
         if (
           typeof latitude !== "number" ||
           typeof longitude !== "number" ||
@@ -212,7 +221,7 @@ export const Route = createFileRoute("/api/public/properties/sync")({
           isNaN(longitude)
         ) {
           const geo = await geocodeAddress({
-            name: p.name,
+            name: fullAddress ? `${fullAddress}, ${p.name}` : p.name,
             neighborhood: p.neighborhood,
             location: p.location,
           });

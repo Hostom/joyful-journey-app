@@ -237,23 +237,26 @@ serve(async (req) => {
 
     // Filtrar e repassar apenas os dados estritamente necessários para o frontend
     const cleanProperties = rawProperties.map((p: any) => {
-      // Formatação básica para o frontend
+      const address = p.address || p.street || p.rua || p.logradouro ? String(p.address || p.street || p.rua || p.logradouro) : undefined;
+      const latVal = p.latitude ?? p.lat;
+      const lngVal = p.longitude ?? p.lng ?? p.lon;
       return {
         code: String(p.code || p.id),
         name: String(p.name || p.title || ""),
-        location: String(p.location || p.city || ""),
-        neighborhood: String(p.neighborhood || ""),
+        location: String(p.location || p.city || p.cidade || ""),
+        neighborhood: String(p.neighborhood || p.bairro || ""),
+        address,
         type: String(p.type || ""),
         price: Number(p.price || 0),
         area: Number(p.area || p.area_total || 0),
         bedrooms: Number(p.bedrooms || 0),
         suites: Number(p.suites || 0),
-        parking: Number(p.parking || p.parking_spots || 0),
+        parking: Number(p.parking || p.parking_spots || p.vagas || 0),
         description: String(p.description || ""),
         features: Array.isArray(p.features) ? p.features : [],
         images: Array.isArray(p.images) ? p.images : (Array.isArray(p.photos) ? p.photos : []),
-        latitude: p.latitude ? Number(p.latitude) : undefined,
-        longitude: p.longitude ? Number(p.longitude) : undefined,
+        latitude: latVal !== undefined && latVal !== null && !isNaN(Number(latVal)) ? Number(latVal) : undefined,
+        longitude: lngVal !== undefined && lngVal !== null && !isNaN(Number(lngVal)) ? Number(lngVal) : undefined,
       };
     });
 

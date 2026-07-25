@@ -12,23 +12,43 @@ function rowToProperty(row: Record<string, unknown>): Property {
   const price = Number(row.price ?? 0);
   const features = Array.isArray(row.features) ? (row.features as string[]) : [];
   const images = Array.isArray(row.images) ? (row.images as string[]) : [];
+
+  const address =
+    row.address || row.street || row.rua || row.logradouro
+      ? String(row.address || row.street || row.rua || row.logradouro)
+      : undefined;
+
+  const latRaw = row.latitude ?? row.lat;
+  const lngRaw = row.longitude ?? row.lng ?? row.lon;
+
+  const latitude =
+    latRaw !== undefined && latRaw !== null && !isNaN(Number(latRaw))
+      ? Number(latRaw)
+      : undefined;
+
+  const longitude =
+    lngRaw !== undefined && lngRaw !== null && !isNaN(Number(lngRaw))
+      ? Number(lngRaw)
+      : undefined;
+
   return {
     code: String(row.code),
     name: String(row.name ?? ""),
-    location: String(row.location ?? "") as PropertyLocation,
-    neighborhood: String(row.neighborhood ?? ""),
+    location: String(row.location ?? row.city ?? "") as PropertyLocation,
+    neighborhood: String(row.neighborhood ?? row.bairro ?? ""),
+    address,
     type: String(row.type ?? "") as PropertyType,
     price,
     priceLabel: fmt(price),
-    area: Number(row.area ?? 0),
+    area: Number(row.area ?? row.area_total ?? 0),
     bedrooms: Number(row.bedrooms ?? 0),
     suites: Number(row.suites ?? 0),
-    parking: Number(row.parking ?? 0),
+    parking: Number(row.parking ?? row.vagas ?? 0),
     description: String(row.description ?? ""),
     features,
     images,
-    latitude: row.latitude !== undefined && row.latitude !== null ? Number(row.latitude) : undefined,
-    longitude: row.longitude !== undefined && row.longitude !== null ? Number(row.longitude) : undefined,
+    latitude,
+    longitude,
   };
 }
 

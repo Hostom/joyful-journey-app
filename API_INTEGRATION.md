@@ -47,17 +47,21 @@ Authorization: Bearer <TOKEN_GERADO_PELO_SITE>
 Corresponde à estrutura interna definida no arquivo [`properties.ts`](file:///c:/Users/Adim/Desktop/joyful-journey-app/src/data/properties.ts).
 
 ```json
+```json
 {
-  "slug": "yachthouse-residence-club",
+  "code": "00001",
   "name": "Yachthouse Residence Club",
   "location": "Balneário Camboriú",
   "neighborhood": "Barra Sul",
+  "address": "Av. Atlântica, 3700",
   "type": "Apartamento",
   "price": 38500000,
   "area": 470,
   "bedrooms": 4,
   "suites": 4,
   "parking": 5,
+  "latitude": -27.0068,
+  "longitude": -48.5915,
   "description": "Localizado nas torres mais altas residenciais da América Latina...",
   "features": [
     "Vista 270° para o mar",
@@ -74,10 +78,13 @@ Corresponde à estrutura interna definida no arquivo [`properties.ts`](file:///c
 
 | Campo | Tipo | Obrigatório | Descrição | Exemplo |
 | :--- | :--- | :--- | :--- | :--- |
-| `slug` | String | **Sim** | Identificador único e amigável para SEO. Apenas letras minúsculas, números e hifens. | `"cobertura-iconic-tower"` |
+| `code` | String | **Sim** | Código de 5 dígitos numéricos (ex.: `"00001"`). | `"00001"` |
 | `name` | String | **Sim** | Nome comercial do empreendimento ou imóvel. | `"Cobertura Iconic Tower"` |
 | `location` | String | **Sim** | Cidade do imóvel. Valores permitidos: `"Balneário Camboriú"`, `"Itapema"`, `"Itajaí"`. | `"Balneário Camboriú"` |
-| `neighborhood` | String | **Sim** | Bairro ou localização detalhada. | `"Av. Atlântica · Frente Mar"` |
+| `neighborhood` | String | **Sim** | Bairro ou localização detalhada. | `"Barra Sul"` |
+| `address` / `street` | String | Recomendado | Endereço com nome da rua/avenida e número para posicionamento exato do mapa. | `"Av. Atlântica, 3200"` |
+| `latitude` | Number | Recomendado | Coordenada de latitude (graus decimais). Evita necessidade de geocodificação. | `-27.0068` |
+| `longitude` | Number | Recomendado | Coordenada de longitude (graus decimais). Evita necessidade de geocodificação. | `-48.5915` |
 | `type` | String | **Sim** | Categoria do imóvel. Valores permitidos: `"Apartamento"`, `"Cobertura"`, `"Penthouse"`, `"Casa"`. | `"Cobertura"` |
 | `price` | Number | **Sim** | Preço de venda em Reais. Utilize `0` para exibir **"Sob consulta"** no site. | `38500000` |
 | `area` | Number | **Sim** | Área útil/privativa em metros quadrados ($m^2$). | `820` |
@@ -89,7 +96,7 @@ Corresponde à estrutura interna definida no arquivo [`properties.ts`](file:///c
 | `images` | Array | **Sim** | Lista de URLs das fotos do imóvel. Recomendado HTTPS e compressão WebP. | `["https://exemplo.com/foto.webp"]` |
 
 > [!NOTE]
-> O campo `priceLabel` presente na UI é gerado e formatado dinamicamente pelo frontend com base no valor numérico enviado em `price`.
+> Se o CRM enviar `address`/`street` ou `latitude`/`longitude`, o mapa exibirá o pino com precisão milimétrica na rua exata do imóvel. Caso omisso, o site aplicará geocodificação automática no endereço/bairro.
 
 ---
 

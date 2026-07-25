@@ -13,6 +13,7 @@ export type Property = {
   name: string;
   location: PropertyLocation;
   neighborhood: string;
+  address?: string;
   type: PropertyType;
   price: number;
   priceLabel: string;
