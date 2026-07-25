@@ -1,7 +1,6 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
-import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -18,12 +17,10 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   }
 });
 
-// NOTE: attachSupabaseAuth foi removido propositalmente.
-// Nenhuma server function deste projeto usa requireSupabaseAuth, e o attacher
-// acessa supabase.auth.getSession() no cliente — o proxy do client.ts lança
-// "Missing Supabase environment variable(s)" quando VITE_SUPABASE_* não estão
-// disponíveis no bundle, quebrando o preview inteiro.
+// attachSupabaseAuth NÃO é registrado: nenhuma serverFn usa requireSupabaseAuth,
+// e o attacher chama supabase.auth.getSession() no cliente, o que dispara o proxy
+// do client.ts e quebra o preview quando as VITE_SUPABASE_* não estão no bundle.
 export const startInstance = createStart(() => ({
-  functionMiddleware: [attachSupabaseAuth],
   requestMiddleware: [errorMiddleware],
 }));
+
