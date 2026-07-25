@@ -1,6 +1,7 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
+import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -21,6 +22,7 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
 // e o attacher chama supabase.auth.getSession() no cliente, o que dispara o proxy
 // do client.ts e quebra o preview quando as VITE_SUPABASE_* não estão no bundle.
 export const startInstance = createStart(() => ({
+  functionMiddleware: [attachSupabaseAuth],
   requestMiddleware: [errorMiddleware],
 }));
 
