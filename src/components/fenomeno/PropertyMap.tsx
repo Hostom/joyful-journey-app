@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { getGoogleMapsKey } from "@/lib/maps.functions";
 
 interface NearbyPlace {
   name: string;
@@ -18,214 +19,277 @@ interface PropertyMapProps {
   height?: string;
 }
 
-let leafletLoadPromise: Promise<void> | null = null;
+let scriptLoadPromise: Promise<void> | null = null;
 
-function loadLeafletScript(): Promise<void> {
+function loadGoogleMapsScript(apiKey: string): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
-  if ((window as any).L) return Promise.resolve();
-  if (leafletLoadPromise) return leafletLoadPromise;
+  if (window.google?.maps) return Promise.resolve();
+  if (scriptLoadPromise) return scriptLoadPromise;
 
-  leafletLoadPromise = new Promise((resolve, reject) => {
-    // Inject Leaflet CSS
-    if (!document.getElementById("leaflet-css")) {
-      const link = document.createElement("link");
-      link.id = "leaflet-css";
-      link.rel = "stylesheet";
-      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-      document.head.appendChild(link);
-    }
+  scriptLoadPromise = new Promise((resolve, reject) => {
+    (window as any).initGoogleMapCallback = () => {
+      resolve();
+    };
 
-    // Inject Leaflet JS
     const script = document.createElement("script");
-    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initGoogleMapCallback&v=weekly`;
     script.async = true;
+    script.defer = true;
 
-    script.onload = () => resolve();
     script.onerror = (err) => {
-      leafletLoadPromise = null;
+      scriptLoadPromise = null;
       reject(err);
     };
 
     document.head.appendChild(script);
   });
 
-  return leafletLoadPromise;
+  return scriptLoadPromise;
 }
+
+const luxuryMapStyle = [
+  { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+  { elementType: "labels.icon", stylers: [{ visibility: "on" }, { saturation: -100 }, { lightness: 20 }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
+  { featureType: "administrative.land_parcel", elementType: "labels.text.fill", stylers: [{ color: "#bdbdbd" }] },
+  { featureType: "poi", elementType: "geometry", stylers: [{ color: "#eeeeee" }] },
+  { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+  { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#dadada" }] },
+  { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#e0e6ed" }] },
+  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+];
 
 export function PropertyMap({ latitude, longitude, propertyName, nearbyPlaces = [], height }: PropertyMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [loadError, setLoadError] = useState(false);
+  const [useIframeFallback, setUseIframeFallback] = useState(false);
+
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
+  const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
+
+  const [googleApiKey, setGoogleApiKey] = useState<string>("");
 
   useEffect(() => {
-    loadLeafletScript()
-      .then(() => setMapLoaded(true))
-      .catch((err) => {
-        console.error("Erro ao carregar Leaflet:", err);
-        setLoadError(true);
+    let cancelled = false;
+
+    // Escuta falha de autorização nativa da API do Google Maps para fallback instantâneo no Embed
+    (window as any).gm_authFailure = () => {
+      console.warn("[PropertyMap] Chave Google Maps JS API não autorizada — ativando Google Maps Embed.");
+      setUseIframeFallback(true);
+    };
+
+    const clientKey = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string) || "";
+
+    getGoogleMapsKey()
+      .then((res) => {
+        if (cancelled) return;
+        const key = res?.key || clientKey;
+        if (key) {
+          setGoogleApiKey(key);
+        } else {
+          setUseIframeFallback(true);
+        }
+      })
+      .catch(() => {
+        if (cancelled) return;
+        if (clientKey) {
+          setGoogleApiKey(clientKey);
+        } else {
+          setUseIframeFallback(true);
+        }
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // Helper para ícones de marcadores Leaflet
-  const createCustomIcon = (color: string, iconSymbol: string, isMain = false) => {
-    const L = (window as any).L;
-    if (!L) return null;
-    const size = isMain ? 34 : 26;
-    const html = `
-      <div style="
-        width: ${size}px;
-        height: ${size}px;
-        background-color: ${color};
-        border: 2px solid ${isMain ? "#1A3020" : "#ffffff"};
-        border-radius: 50% 50% 50% 0;
-        transform: rotate(-45deg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.35);
-      ">
-        <span class="material-symbols-outlined" style="
-          transform: rotate(45deg);
-          color: ${isMain ? "#1A3020" : "#ffffff"};
-          font-size: ${isMain ? 18 : 14}px;
-          line-height: 1;
-        ">${iconSymbol}</span>
-      </div>
-    `;
-    return L.divIcon({
-      className: "custom-leaflet-pin",
-      html,
-      iconSize: [size, size],
-      iconAnchor: [size / 2, size],
-      popupAnchor: [0, -size],
-    });
-  };
-
-  // Inicializa o Mapa Leaflet com tiles luxuosos CARTO Positron
   useEffect(() => {
-    if (!mapLoaded || !mapRef.current || !(window as any).L) return;
-    const L = (window as any).L;
+    if (!googleApiKey || useIframeFallback) return;
+    loadGoogleMapsScript(googleApiKey)
+      .then(() => {
+        setMapLoaded(true);
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar Google Maps JS API, usando modo embed:", err);
+        setUseIframeFallback(true);
+      });
+  }, [googleApiKey, useIframeFallback]);
 
-    // Destrói instância anterior se existir
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.remove();
-      mapInstanceRef.current = null;
-    }
+  // Inicializa o Mapa Google Maps JS API
+  useEffect(() => {
+    if (!mapLoaded || useIframeFallback || !mapRef.current || !window.google?.maps) return;
 
-    const map = L.map(mapRef.current, {
-      center: [latitude, longitude],
+    markersRef.current.forEach((m) => m.setMap(null));
+    markersRef.current = [];
+
+    const mapOptions: google.maps.MapOptions = {
+      center: { lat: latitude, lng: longitude },
       zoom: 15,
+      styles: luxuryMapStyle,
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: true,
       zoomControl: true,
-      attributionControl: false,
-    });
+    };
 
-    // CARTO Positron Light map style (luxuoso, limpo, cinza claro)
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-      maxZoom: 19,
-      subdomains: "abcd",
-    }).addTo(map);
-
+    const map = new google.maps.Map(mapRef.current, mapOptions);
     mapInstanceRef.current = map;
+    infoWindowRef.current = new google.maps.InfoWindow();
 
-    // Garante que o mapa redesenhe corretamente dentro de modais/dialogs
     const timer = setTimeout(() => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.invalidateSize();
+      if (mapInstanceRef.current && window.google?.maps) {
+        google.maps.event.trigger(mapInstanceRef.current, "resize");
+        mapInstanceRef.current.setCenter({ lat: latitude, lng: longitude });
       }
     }, 250);
 
-    // Marcador do Imóvel Principal (Dourado de Luxo)
-    const mainIcon = createCustomIcon("#C5A880", "home", true);
-    const mainMarker = L.marker([latitude, longitude], { icon: mainIcon }).addTo(map);
-    mainMarker.bindPopup(`
-      <div style="font-family: sans-serif; padding: 4px 8px; color: #1A3020;">
-        <h4 style="margin: 0 0 2px 0; font-size: 13px; font-weight: 700; color: #1A3020;">${propertyName}</h4>
-        <p style="margin: 0; font-size: 10px; color: #C5A880; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Imóvel Selecionado</p>
-      </div>
-    `);
+    const propertyMarker = new google.maps.Marker({
+      position: { lat: latitude, lng: longitude },
+      map: map,
+      title: propertyName,
+      icon: {
+        path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+        fillColor: "#C5A880",
+        fillOpacity: 1.0,
+        strokeColor: "#1A3020",
+        strokeWeight: 1.5,
+        scale: 2,
+        anchor: new google.maps.Point(12, 21),
+      },
+      zIndex: 999,
+    });
 
-    markersRef.current = [mainMarker];
+    propertyMarker.addListener("click", () => {
+      if (infoWindowRef.current) {
+        infoWindowRef.current.setContent(`
+          <div style="font-family: sans-serif; padding: 6px 12px; color: #1A3020;">
+            <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: bold;">${propertyName}</h4>
+            <p style="margin: 0; font-size: 11px; color: #C5A880; text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em;">Imóvel Selecionado</p>
+          </div>
+        `);
+        infoWindowRef.current.open(map, propertyMarker);
+      }
+    });
+
+    markersRef.current.push(propertyMarker);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [mapLoaded, latitude, longitude, propertyName]);
+  }, [mapLoaded, useIframeFallback, latitude, longitude, propertyName]);
 
-  // Atualiza Marcadores de Comércios Próximos
+  // Atualiza marcadores de comércios próximos
   useEffect(() => {
     const map = mapInstanceRef.current;
-    const L = (window as any).L;
-    if (!map || !mapLoaded || !L) return;
+    if (!map || !mapLoaded || useIframeFallback || !window.google?.maps) return;
 
-    // Limpa marcadores anteriores (mantendo apenas o principal)
-    const [mainMarker, ...oldNearby] = markersRef.current;
-    oldNearby.forEach((m) => map.removeLayer(m));
-    markersRef.current = mainMarker ? [mainMarker] : [];
+    const [propertyMarker, ...oldNearbyMarkers] = markersRef.current;
+    oldNearbyMarkers.forEach((m) => m.setMap(null));
+    markersRef.current = propertyMarker ? [propertyMarker] : [];
 
     if (nearbyPlaces.length === 0) return;
 
-    const bounds = L.latLngBounds([[latitude, longitude]]);
-
-    const getCategoryConfig = (type: string) => {
+    const getCategoryMarkerOptions = (type: string) => {
       switch (type) {
         case "escola":
-          return { color: "#3B82F6", icon: "school" };
+          return { color: "#3B82F6", symbol: "school" };
         case "mercado":
-          return { color: "#10B981", icon: "shopping_cart" };
+          return { color: "#10B981", symbol: "shopping_cart" };
         case "farmacia":
-          return { color: "#EF4444", icon: "medical_services" };
+          return { color: "#EF4444", symbol: "medical_services" };
         case "academia":
-          return { color: "#8B5CF6", icon: "fitness_center" };
+          return { color: "#8B5CF6", symbol: "fitness_center" };
         default:
-          return { color: "#6B7280", icon: "place" };
+          return { color: "#6B7280", symbol: "place" };
       }
     };
 
-    nearbyPlaces.forEach((place) => {
-      const cfg = getCategoryConfig(place.type);
-      const icon = createCustomIcon(cfg.color, cfg.icon, false);
-      const pos: [number, number] = [place.coordinates.latitude, place.coordinates.longitude];
+    const bounds = new google.maps.LatLngBounds();
+    bounds.extend({ lat: latitude, lng: longitude });
 
-      const marker = L.marker(pos, { icon }).addTo(map);
-      const distStr = place.distance >= 1000 ? `${(place.distance / 1000).toFixed(1)} km` : `${place.distance} m`;
+    nearbyPlaces.forEach((place) => {
+      const opts = getCategoryMarkerOptions(place.type);
+
+      const marker = new google.maps.Marker({
+        position: { lat: place.coordinates.latitude, lng: place.coordinates.longitude },
+        map: map,
+        title: place.name,
+        icon: {
+          path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
+          fillColor: opts.color,
+          fillOpacity: 0.9,
+          strokeColor: "#ffffff",
+          strokeWeight: 1.0,
+          scale: 1.5,
+          anchor: new google.maps.Point(12, 21),
+        },
+      });
+
+      const distanceLabel = place.distance >= 1000 ? `${(place.distance / 1000).toFixed(1)} km` : `${place.distance} m`;
       const typeLabel = place.type.charAt(0).toUpperCase() + place.type.slice(1);
 
-      marker.bindPopup(`
-        <div style="font-family: sans-serif; padding: 4px 8px; color: #1A3020; min-width: 130px;">
-          <h4 style="margin: 0 0 4px 0; font-size: 12px; font-weight: 700;">${place.name}</h4>
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px;">
-            <span style="color: #6B7280;">${typeLabel}</span>
-            <span style="color: #C5A880; font-weight: 700; background: #FAF7F2; padding: 2px 4px; border-radius: 3px;">${distStr}</span>
-          </div>
-        </div>
-      `);
+      marker.addListener("click", () => {
+        if (infoWindowRef.current) {
+          infoWindowRef.current.setContent(`
+            <div style="font-family: sans-serif; padding: 6px 12px; color: #1A3020; min-width: 140px;">
+              <h4 style="margin: 0 0 4px 0; font-size: 13px; font-weight: 700;">${place.name}</h4>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 11px;">
+                <span style="color: #6B7280; font-weight: 500;">${typeLabel}</span>
+                <span style="color: #C5A880; font-weight: 700; background: #FAF7F2; padding: 2px 6px; border-radius: 4px;">${distanceLabel}</span>
+              </div>
+            </div>
+          `);
+          infoWindowRef.current.open(map, marker);
+        }
+      });
 
       markersRef.current.push(marker);
-      bounds.extend(pos);
+      bounds.extend({ lat: place.coordinates.latitude, lng: place.coordinates.longitude });
     });
 
-    map.fitBounds(bounds, { padding: [35, 35], maxZoom: 16 });
-  }, [nearbyPlaces, mapLoaded, latitude, longitude]);
+    map.fitBounds(bounds);
 
-  if (loadError) {
+    google.maps.event.addListenerOnce(map, "bounds_changed", () => {
+      if (map.getZoom()! > 16) {
+        map.setZoom(16);
+      }
+    });
+  }, [nearbyPlaces, mapLoaded, useIframeFallback, latitude, longitude]);
+
+  // Fallback Google Maps Embed se a chave JS API não tiver permissão no Google Cloud Console
+  if (useIframeFallback) {
+    const embedUrl = googleApiKey
+      ? `https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${latitude},${longitude}&zoom=15`
+      : `https://maps.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
+
     return (
-      <div className="w-full h-80 bg-stone-100 rounded-lg flex flex-col items-center justify-center border border-stone-200 text-stone-500 font-sans p-6 text-center">
-        <span className="material-symbols-outlined text-4xl mb-3 text-stone-400">map</span>
-        <h4 className="font-semibold text-stone-700 mb-1">Mapa Indisponível</h4>
-        <p className="text-xs text-stone-500 max-w-sm">Não foi possível carregar o mapa interativo no momento.</p>
+      <div className="relative w-full rounded-lg overflow-hidden border border-gold-champagne/15 shadow-inner bg-stone-100">
+        <iframe
+          title={`Mapa de ${propertyName}`}
+          width="100%"
+          height={height || "280px"}
+          style={{ border: 0 }}
+          loading="lazy"
+          allowFullScreen
+          src={embedUrl}
+        />
       </div>
     );
   }
 
   return (
-    <div className="relative w-full rounded-lg overflow-hidden border border-gold-champagne/15 shadow-inner z-0">
-      <div ref={mapRef} style={{ height: height || "280px" }} className="w-full bg-stone-100 z-0" />
+    <div className="relative w-full rounded-lg overflow-hidden border border-gold-champagne/15 shadow-inner">
+      <div ref={mapRef} style={{ height: height || "280px" }} className="w-full bg-stone-100" />
 
       {/* Legenda do Mapa */}
       {nearbyPlaces.length > 0 && (
-        <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm p-2.5 rounded-lg shadow-md border border-stone-200 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-stone-700 font-sans font-medium z-[1000]">
+        <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm p-3 rounded shadow-md border border-stone-100 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-stone-700 font-sans font-medium z-10">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: "#C5A880" }} />
             <span>Imóvel</span>
