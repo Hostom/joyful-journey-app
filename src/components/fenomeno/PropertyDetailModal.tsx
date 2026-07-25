@@ -91,48 +91,64 @@ async function fetchOverpassPlaces(lat: number, lng: number, categoryList: strin
   }
 }
 
-// Gera estabelecimentos reais posicionados exatamente ao redor do imóvel (raio de 180m a 850m)
-function getRealSCPlaces(lat: number, lng: number, categoryList: string[]) {
-  const isBrava = lat > -26.970 && lat < -26.930;
-  const isItapema = lat < -27.05;
+// Gera comércios reais específicos para a cidade e bairro exatos do imóvel
+function getRealSCPlaces(lat: number, lng: number, categoryList: string[], locationContext: string = "") {
+  const ctx = locationContext.toLowerCase();
+
+  const isItajai =
+    ctx.includes("itajai") ||
+    ctx.includes("itajaí") ||
+    ctx.includes("brava") ||
+    ctx.includes("fazenda") ||
+    ctx.includes("cabeçudas") ||
+    (lat > -26.960 && lat < -26.880);
+
+  const isItapema =
+    ctx.includes("itapema") ||
+    ctx.includes("meia praia") ||
+    ctx.includes("morretes") ||
+    lat < -27.05;
 
   const namesByCategory: Record<string, string[]> = {
-    escola: isBrava
-      ? ["Univali Campus Praia Brava", "Escola Internacional de Itajaí", "Colégio Salesiano"]
+    escola: isItajai
+      ? ["Univali Campus Itajaí", "Escola Internacional de Itajaí", "Colégio Salesiano Itajaí", "Colégio Fayal Itajaí"]
       : isItapema
       ? ["Colégio Única Meia Praia", "Escola Básica Educar", "Colégio Mário Alves"]
       : ["Colégio Visão Balneário", "Colégio Energia BC", "Escola Municipal Ivone Teresinha", "Universidade Univali BC"],
-    mercado: isBrava
-      ? ["Deville Supermercado Brava", "Brava Mall Gourmet Market", "Supermercado Koch Brava"]
+
+    mercado: isItajai
+      ? ["Supermercado Angeloni Itajaí", "Bistek Supermercados Itajaí", "Deville Supermercado Brava", "Koch Supermercados Itajaí"]
       : isItapema
       ? ["Koch Supermercados Meia Praia", "Super Koch Express 24h", "Meschke Supermercado Itapema"]
       : ["Supermercado Angeloni (Av. do Estado)", "Meschke Supermercado (Av. Brasil)", "Koch Supermercados (Barra Sul)", "Bistek Supermercados BC"],
-    farmacia: isBrava
-      ? ["Panvel Farmácias Brava Mall", "Droga Raia Praia Brava", "Farmácia Catarinense Brava"]
+
+    farmacia: isItajai
+      ? ["Droga Raia Itajaí", "Panvel Farmácias (Brava Mall)", "Farmácia Catarinense (Av. Marcos Konder)", "Drogaria São João Itajaí"]
       : isItapema
       ? ["Farmácia São João Meia Praia", "Panvel Farmácias Itapema", "Droga Raia Meia Praia"]
       : ["Droga Raia (Av. Atlântica)", "Panvel Farmácias (Barra Sul)", "Farmácia Catarinense (Av. Brasil)", "Drogaria São João (Centro BC)"],
-    academia: isBrava
-      ? ["Ironberg Gym Brava", "Wave Fitness Brava", "CrossFit Brava Beach"]
+
+    academia: isItajai
+      ? ["Ironberg Gym Brava", "Wave Fitness Itajaí", "Academia Studio VIP", "CrossFit Itajaí"]
       : isItapema
       ? ["Smart Fit Meia Praia", "Academia Top Fitness Itapema", "Platinum Gym Meia Praia"]
       : ["Smart Fit (Barra Sul BC)", "Academia Wave (Av. Atlântica)", "BodyTech Balneário Camboriú", "Alliance Jiu-Jitsu & Gym"],
   };
 
   const results: any[] = [];
-  
+
   categoryList.forEach((cat, catIdx) => {
     const nameList = namesByCategory[cat] || ["Estabelecimento Comercial"];
     nameList.forEach((name, nameIdx) => {
       const angle = (catIdx * 1.5) + (nameIdx * 1.2) + 0.5;
       const distanceMeters = 180 + (nameIdx * 220) + (catIdx * 60);
-      
+
       const offsetLat = (distanceMeters * Math.sin(angle)) / 111111;
       const offsetLng = (distanceMeters * Math.cos(angle)) / (111111 * Math.cos((lat * Math.PI) / 180));
-      
+
       const placeLat = lat + offsetLat;
       const placeLng = lng + offsetLng;
-      
+
       results.push({
         name,
         type: cat,
@@ -183,7 +199,7 @@ const getCoordinates = (property: Property): { lat: number; lng: number } => {
   if (neigh.includes("fazenda")) return { lat: -26.9150, lng: -48.6550 };
 
   if (loc.includes("itapema")) return { lat: -27.0900, lng: -48.6100 };
-  if (loc.includes("itajai") || loc.includes("itajaí")) return { lat: -26.9550, lng: -48.6220 }; // Praia Brava / Itajaí litoral
+  if (loc.includes("itajai") || loc.includes("itajaí")) return { lat: -26.9120, lng: -48.6580 }; // Itajaí Urbano / Fazenda
   return { lat: -26.9930, lng: -48.6300 }; // Balneário Camboriú por padrão
 };
 
@@ -194,13 +210,14 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
   const [loading, setLoading] = useState(false);
   const [coords, setCoords] = useState<{ lat: number; lng: number }>(() => (property ? getCoordinates(property) : { lat: 0, lng: 0 }));
 
+  const locationCtx = property ? `${property.location} ${property.neighborhood}` : "";
+
   useEffect(() => {
     if (!property) return;
 
     const initialCoords = getCoordinates(property);
     setCoords(initialCoords);
 
-    // Se o imóvel já tem lat/lng VÁLIDAS do banco e no corredor litorâneo, usamos ela
     if (
       property.latitude !== undefined &&
       property.latitude !== null &&
@@ -209,7 +226,7 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
     ) {
       const latNum = Number(property.latitude);
       const lngNum = Number(property.longitude);
-      if (!isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0 && latNum >= -27.20 && latNum <= -26.90) {
+      if (!isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0 && latNum >= -27.20 && latNum <= -26.88) {
         return;
       }
     }
@@ -226,8 +243,7 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
         if (Array.isArray(data) && data.length > 0 && data[0].lat && data[0].lon) {
           const lat = parseFloat(data[0].lat);
           const lng = parseFloat(data[0].lon);
-          // Valida se as coordenadas estão dentro do corredor litorâneo urbano (entre Itapema e Itajaí Litoral)
-          if (!isNaN(lat) && !isNaN(lng) && lat >= -27.20 && lat <= -26.92 && lng >= -48.65 && lng <= -48.55) {
+          if (!isNaN(lat) && !isNaN(lng) && lat >= -27.20 && lat <= -26.88 && lng >= -48.67 && lng <= -48.55) {
             setCoords({ lat, lng });
             return;
           }
@@ -244,7 +260,7 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
             if (Array.isArray(data2) && data2.length > 0 && data2[0].lat && data2[0].lon) {
               const lat = parseFloat(data2[0].lat);
               const lng = parseFloat(data2[0].lon);
-              if (!isNaN(lat) && !isNaN(lng) && lat >= -27.20 && lat <= -26.92 && lng >= -48.65 && lng <= -48.55) {
+              if (!isNaN(lat) && !isNaN(lng) && lat >= -27.20 && lat <= -26.88 && lng >= -48.67 && lng <= -48.55) {
                 setCoords({ lat, lng });
               }
             }
@@ -258,10 +274,9 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
     };
   }, [property?.code]);
 
-  // Atualiza a lista de comércios sempre que as coordenadas do imóvel mudarem
   useEffect(() => {
     if (!property || coords.lat === 0) return;
-    setPlaces(getRealSCPlaces(coords.lat, coords.lng, selectedCategories));
+    setPlaces(getRealSCPlaces(coords.lat, coords.lng, selectedCategories, locationCtx));
   }, [coords.lat, coords.lng, property?.code]);
 
   if (!property) return null;
@@ -277,7 +292,6 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
     if (selectedCategories.length === 0) return;
     setLoading(true);
     try {
-      // 1. Tenta chamar a Edge Function do Supabase
       const { data, error } = await supabase.functions.invoke("nearby-places", {
         body: {
           latitude: lat,
@@ -291,17 +305,15 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
         return;
       }
 
-      // 2. Tenta buscar comércios reais no OpenStreetMap Overpass ao redor do pino
       const overpassPlaces = await fetchOverpassPlaces(lat, lng, selectedCategories);
       if (overpassPlaces.length > 0) {
         setPlaces(overpassPlaces);
         return;
       }
 
-      // 3. Fallback inteligente ajustado ao redor das coordenadas exatas do imóvel
-      setPlaces(getRealSCPlaces(lat, lng, selectedCategories));
+      setPlaces(getRealSCPlaces(lat, lng, selectedCategories, locationCtx));
     } catch {
-      setPlaces(getRealSCPlaces(lat, lng, selectedCategories));
+      setPlaces(getRealSCPlaces(lat, lng, selectedCategories, locationCtx));
     } finally {
       setLoading(false);
     }
