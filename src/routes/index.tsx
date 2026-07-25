@@ -9,6 +9,7 @@ import { WhatsAppButton } from "@/components/fenomeno/WhatsAppButton";
 import { BackToTop } from "@/components/fenomeno/BackToTop";
 import { Footer } from "@/components/fenomeno/Footer";
 import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
+import { Building2, Handshake, TrendingUp, Headphones, ArrowRight, MessageSquare, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -41,22 +42,22 @@ const HERO_IMG = "https://images.unsplash.com/photo-1582407947304-fd86f028f716?a
 
 const SERVICES = [
   {
-    icon: "real_estate_agent",
+    Icon: Building2,
     title: "Imóveis Exclusivos",
     body: "Acesso antecipado a lançamentos de alto padrão e oportunidades fora do mercado convencional.",
   },
   {
-    icon: "handshake",
+    Icon: Handshake,
     title: "Consultoria Imobiliária",
     body: "Apoio jurídica e comercial especializado para garantir uma compra segura e sem burocracia.",
   },
   {
-    icon: "trending_up",
+    Icon: TrendingUp,
     title: "Retorno sobre Investimento",
     body: "Análise detalhada de rentabilidade e projeção de valorização para multiplicar seu patrimônio.",
   },
   {
-    icon: "support_agent",
+    Icon: Headphones,
     title: "Suporte Pós-Venda",
     body: "Acompanhamento contínuo após o fechamento do negócio para sua total tranquilidade.",
   },
@@ -105,8 +106,6 @@ function Index() {
     </div>
   );
 }
-
-/* Nav is now the shared <Navbar /> component */
 
 function Hero() {
   const navigate = useNavigate();
@@ -161,7 +160,7 @@ function Hero() {
             className="inline-flex items-center gap-3 bg-gold-classic text-forest-deep px-8 py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors"
           >
             Explorar Imóveis
-            <span className="material-symbols-outlined text-base">arrow_forward</span>
+            <ArrowRight className="w-4 h-4" />
           </a>
           <a
             href="#contact"
@@ -207,7 +206,7 @@ function Properties() {
           className="inline-flex items-center gap-3 border border-forest-deep/40 px-8 py-4 text-xs uppercase tracking-[0.25em] hover:bg-forest-deep hover:text-cream-foundation transition-colors"
         >
           Ver todos os imóveis
-          <span className="material-symbols-outlined text-base">arrow_forward</span>
+          <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
     </section>
@@ -267,19 +266,20 @@ function Services() {
         </h2>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-forest-deep/10">
-        {SERVICES.map((s, i) => (
-          <div
-            key={s.title}
-            className="reveal-up bg-cream-foundation p-10 hover:bg-cream-stone transition-colors"
-            style={{ transitionDelay: `${i * 100}ms` }}
-          >
-            <span className="material-symbols-outlined text-gold-classic mb-8" style={{ fontSize: 36 }}>
-              {s.icon}
-            </span>
-            <h3 className="font-display text-2xl mb-4">{s.title}</h3>
-            <p className="text-sm text-forest-mid/70 leading-relaxed">{s.body}</p>
-          </div>
-        ))}
+        {SERVICES.map((s, i) => {
+          const IconComp = s.Icon;
+          return (
+            <div
+              key={s.title}
+              className="reveal-up bg-cream-foundation p-10 hover:bg-cream-stone transition-colors"
+              style={{ transitionDelay: `${i * 100}ms` }}
+            >
+              <IconComp className="text-gold-classic mb-8 w-9 h-9" />
+              <h3 className="font-display text-2xl mb-4">{s.title}</h3>
+              <p className="text-sm text-forest-mid/70 leading-relaxed">{s.body}</p>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -345,17 +345,17 @@ function Contact() {
             <button
               type="button"
               onClick={() => setModal("whatsapp")}
-              className="inline-flex items-center gap-3 bg-gold-classic text-forest-deep px-10 py-5 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors"
+              className="inline-flex items-center gap-3 bg-gold-classic text-forest-deep px-10 py-5 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined text-base">chat</span>
+              <MessageSquare className="w-4 h-4" />
               Falar no WhatsApp
             </button>
             <button
               type="button"
               onClick={() => setModal("email")}
-              className="inline-flex items-center gap-3 border border-cream-foundation/30 px-10 py-5 text-xs uppercase tracking-[0.25em] hover:border-gold-champagne hover:text-gold-champagne transition-colors"
+              className="inline-flex items-center gap-3 border border-cream-foundation/30 px-10 py-5 text-xs uppercase tracking-[0.25em] hover:border-gold-champagne hover:text-gold-champagne transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined text-base">mail</span>
+              <Mail className="w-4 h-4" />
               Enviar E-mail
             </button>
           </div>
@@ -383,5 +383,3 @@ function Contact() {
     </section>
   );
 }
-
-/* Footer is now the shared <Footer /> component */

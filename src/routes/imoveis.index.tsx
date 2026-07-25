@@ -12,6 +12,7 @@ import { Navbar } from "@/components/fenomeno/Navbar";
 import { WhatsAppButton } from "@/components/fenomeno/WhatsAppButton";
 import { BackToTop } from "@/components/fenomeno/BackToTop";
 import { Footer } from "@/components/fenomeno/Footer";
+import { X, SearchX, MessageSquare, SlidersHorizontal } from "lucide-react";
 
 type Search = {
   location?: PropertyLocation;
@@ -107,7 +108,6 @@ function ListingsPage() {
     !!search.parking ||
     !!search.condominio;
 
-  // Active filter tags for display
   const activeFilters: { label: string; key: keyof Search }[] = [];
   if (search.location) activeFilters.push({ label: search.location, key: "location" });
   if (search.type) activeFilters.push({ label: search.type, key: "type" });
@@ -128,7 +128,6 @@ function ListingsPage() {
 
   return (
     <div className="bg-cream-foundation text-forest-deep min-h-screen relative overflow-hidden">
-      {/* Background ambient glows */}
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-gold-champagne/8 rounded-full blur-[140px] pointer-events-none -translate-x-1/2 z-0" />
       <div className="absolute top-2/3 right-0 w-[600px] h-[600px] bg-forest-mid/4 rounded-full blur-[160px] pointer-events-none translate-x-1/3 z-0" />
       <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] bg-gold-champagne/5 rounded-full blur-[120px] pointer-events-none z-0" />
@@ -136,7 +135,6 @@ function ListingsPage() {
       <Navbar />
 
       <div className="relative">
-        {/* Watermark logo symbol peaking in from the left edge — spans the entire white content area, stops exactly at the footer */}
         <div
           className="absolute bottom-0 left-0 w-auto opacity-25 md:opacity-40 pointer-events-none z-0 select-none -translate-x-[20%]"
           style={{
@@ -146,7 +144,6 @@ function ListingsPage() {
           <img src="/bg-logo-symbol.svg" alt="" className="w-auto h-full object-contain object-left-bottom" />
         </div>
 
-        {/* Parallax Header Banner */}
         <section className="relative h-[40vh] min-h-[340px] overflow-hidden flex flex-col justify-end pb-10 pt-28">
           <div className="absolute inset-0">
             <img
@@ -169,7 +166,6 @@ function ListingsPage() {
 
         <section className="py-12 px-6 lg:px-12 max-w-[1600px] mx-auto z-10 relative">
           <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-10 items-start relative z-10">
-            {/* Sidebar - Desktop Only */}
             <aside className="hidden lg:block sticky top-[100px] h-[calc(100vh-140px)] max-h-[780px] glass3d bg-transparent border border-gold-champagne/30 rounded-lg flex flex-col overflow-hidden">
               <div className="overflow-y-auto p-6 h-full">
                 <SidebarFilter
@@ -180,9 +176,7 @@ function ListingsPage() {
               </div>
             </aside>
 
-            {/* Right Column: Active filter summary & Grid */}
             <div className="flex flex-col gap-6">
-              {/* Header info / Toolbar equivalent */}
               <div className="flex items-center justify-between pb-4 border-b border-forest-deep/10">
                 <span className="text-sm font-sans font-bold text-forest-deep">
                   {filtered.length} {filtered.length === 1 ? "imóvel" : "imóveis"}{" "}
@@ -196,13 +190,12 @@ function ListingsPage() {
                     onClick={clear}
                     className="text-xs uppercase tracking-[0.15em] text-forest-deep hover:text-gold-classic font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
                   >
-                    <span className="material-symbols-outlined text-sm">close</span>
+                    <X className="w-4 h-4" />
                     Limpar Filtros
                   </button>
                 )}
               </div>
 
-              {/* Active filter tags */}
               {activeFilters.length > 0 && (
                 <div className="flex items-center gap-2 flex-wrap">
                   {activeFilters.map((f) => (
@@ -213,16 +206,15 @@ function ListingsPage() {
                       className="inline-flex items-center gap-1.5 bg-forest-deep/8 text-forest-deep px-3 py-1.5 rounded-full text-[11px] font-sans font-semibold hover:bg-red-100 hover:text-red-700 transition-colors cursor-pointer"
                     >
                       {f.label}
-                      <span className="material-symbols-outlined text-xs">close</span>
+                      <X className="w-3 h-3" />
                     </button>
                   ))}
                 </div>
               )}
 
-              {/* Listings Grid */}
               {filtered.length === 0 ? (
                 <div className="py-24 text-center bg-white/60 backdrop-blur-sm border border-gold-champagne/20 rounded-2xl p-8 shadow-sm max-w-2xl mx-auto w-full">
-                  <span className="material-symbols-outlined text-gold-champagne text-5xl mb-6 block">search_off</span>
+                  <SearchX className="w-12 h-12 text-gold-champagne mb-6 block mx-auto" />
                   <p className="font-display text-2xl mb-4 text-forest-deep">Nenhum imóvel encontrado.</p>
                   <p className="text-forest-mid/70 text-sm mb-8 max-w-md mx-auto leading-relaxed">
                     Ajuste os seus filtros ou converse com nossos consultores para conhecer oportunidades exclusivas
@@ -244,7 +236,6 @@ function ListingsPage() {
                 </div>
               )}
 
-              {/* Concierge Off-Market Card */}
               <div className="mt-16 bg-forest-deep text-cream-foundation rounded-2xl p-8 md:p-12 relative overflow-hidden border border-gold-champagne/30 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
                 <div
                   className="absolute inset-0 opacity-10 pointer-events-none mix-blend-overlay"
@@ -267,14 +258,13 @@ function ListingsPage() {
                     penthouse ou cobertura em Balneário Camboriú com assessoria jurídica e comercial completa. Fale com
                     a nossa equipe no WhatsApp.
                   </p>
-
                 </div>
                 <div className="relative z-10 shrink-0 w-full md:w-auto">
                   <a
                     href="https://api.whatsapp.com/send?phone=5547999837494"
                     className="w-full md:w-auto inline-flex items-center justify-center gap-3 bg-gold-classic hover:bg-gold-champagne text-forest-deep px-8 py-4 text-xs uppercase tracking-[0.25em] font-medium transition-colors shadow-lg shadow-black/20"
                   >
-                    <span className="material-symbols-outlined text-base">chat</span>
+                    <MessageSquare className="w-4 h-4" />
                     Falar no WhatsApp
                   </a>
                 </div>
@@ -283,19 +273,17 @@ function ListingsPage() {
           </div>
         </section>
 
-        {/* Floating Filter Button - Mobile Only */}
         <div className="fixed bottom-6 right-6 z-40 lg:hidden">
           <button
             type="button"
             onClick={() => setIsMobileFilterOpen(true)}
             className="flex items-center gap-2 bg-forest-deep text-gold-classic border border-gold-classic px-5 py-3 rounded-full shadow-xl font-bold font-sans text-xs uppercase tracking-[0.15em] hover:bg-forest-mid transition-all active:scale-95 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-sm">tune</span>
+            <SlidersHorizontal className="w-4 h-4" />
             Filtrar {hasFilters && `(${activeFilters.length})`}
           </button>
         </div>
 
-        {/* Mobile Filter Drawer (Sheet) */}
         <Sheet open={isMobileFilterOpen} onOpenChange={setIsMobileFilterOpen}>
           <SheetContent
             side="left"
@@ -328,5 +316,3 @@ function ListingsPage() {
     </div>
   );
 }
-
-/* ListingsNav removed — using shared <Navbar /> */

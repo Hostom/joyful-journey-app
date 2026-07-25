@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { Property } from "@/data/properties";
 import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Heart, ChevronLeft, ChevronRight, MapPin, Ruler, Bed, Car } from "lucide-react";
 
 export function PropertyCard({
   property,
@@ -73,7 +74,6 @@ export function PropertyCard({
     setLightboxOpen(true);
   };
 
-  // Sync index from scroll position
   const handleScroll = () => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -81,7 +81,6 @@ export function PropertyCard({
     if (i !== imgIndex) setImgIndex(i);
   };
 
-  // Keyboard navigation when image area is focused/hovered
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (total <= 1) return;
     if (e.key === "ArrowLeft") {
@@ -100,7 +99,6 @@ export function PropertyCard({
     }
   };
 
-  // Lightbox keyboard nav
   useEffect(() => {
     if (!lightboxOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -126,7 +124,7 @@ export function PropertyCard({
       style={{ transitionDelay: `${index * 80}ms` }}
     >
       <div className="h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-400 border border-cream-stone/60 hover:border-gold-classic/40 hover:-translate-y-1">
-        {/* Image wrapper — horizontal scroll snap strip */}
+        {/* Image wrapper */}
         <div
           ref={imageWrapRef}
           className="relative overflow-hidden aspect-[4/3] lg:aspect-[16/11] w-full bg-cream-stone/30 outline-none"
@@ -164,7 +162,6 @@ export function PropertyCard({
             </div>
           )}
 
-          {/* Gradient overlay at bottom of image for readability */}
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
 
           {/* Tag */}
@@ -179,12 +176,7 @@ export function PropertyCard({
             className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md flex items-center justify-center text-forest-deep transition-all duration-200 z-10 cursor-pointer hover:scale-110"
             aria-label="Adicionar aos favoritos"
           >
-            <span
-              className={`material-symbols-outlined text-lg ${isFav ? "text-red-500" : "text-forest-deep/60"}`}
-              style={isFav ? { fontVariationSettings: "'FILL' 1" } : {}}
-            >
-              favorite
-            </span>
+            <Heart className={`w-4 h-4 ${isFav ? "fill-red-500 text-red-500" : "text-forest-deep/60"}`} />
           </button>
 
           {/* Carousel Arrows */}
@@ -196,7 +188,7 @@ export function PropertyCard({
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-forest-deep shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 cursor-pointer hover:scale-110"
                 aria-label="Imagem anterior"
               >
-                <span className="material-symbols-outlined text-base">chevron_left</span>
+                <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 type="button"
@@ -204,7 +196,7 @@ export function PropertyCard({
                 className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-forest-deep shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 cursor-pointer hover:scale-110"
                 aria-label="Próxima imagem"
               >
-                <span className="material-symbols-outlined text-base">chevron_right</span>
+                <ChevronRight className="w-4 h-4" />
               </button>
             </>
           )}
@@ -224,43 +216,38 @@ export function PropertyCard({
           )}
         </div>
 
-        {/* Content details — spacious with bold typography */}
+        {/* Content details */}
         <div className="flex-1 flex flex-col justify-between p-5 lg:p-6">
           <div>
-            {/* Location row */}
             <div className="flex items-center gap-1.5 mb-2">
-              <span className="material-symbols-outlined text-gold-classic text-sm">location_on</span>
+              <MapPin className="w-3.5 h-3.5 text-gold-classic shrink-0" />
               <span className="text-xs font-sans font-semibold text-forest-mid/70 tracking-wide">
                 {property.neighborhood} · {property.location}
               </span>
             </div>
 
-            {/* Title — larger, bolder */}
             <h3 className="text-lg md:text-xl font-sans font-extrabold text-forest-deep group-hover:text-gold-classic transition-colors duration-300 line-clamp-2 leading-tight mb-3">
               {property.name} em {property.location}
             </h3>
 
-            {/* Code */}
             <span className="text-[10px] text-forest-mid/40 font-mono tracking-widest block mb-3">{propertyCode}</span>
 
-            {/* Specifications — with icons */}
             <div className="flex items-center gap-3 text-xs text-forest-mid/80 font-sans font-semibold flex-wrap mb-1">
               <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-forest-mid/40 text-sm">straighten</span>
+                <Ruler className="w-3.5 h-3.5 text-forest-mid/40 shrink-0" />
                 {property.area}m²
               </span>
               <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-forest-mid/40 text-sm">bed</span>
+                <Bed className="w-3.5 h-3.5 text-forest-mid/40 shrink-0" />
                 {property.bedrooms} {property.bedrooms === 1 ? "quarto" : "quartos"}
               </span>
               <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-forest-mid/40 text-sm">directions_car</span>
+                <Car className="w-3.5 h-3.5 text-forest-mid/40 shrink-0" />
                 {property.parking} {property.parking === 1 ? "vaga" : "vagas"}
               </span>
             </div>
           </div>
 
-          {/* Price & Action */}
           <div className="flex items-center justify-between pt-5 border-t border-forest-deep/8 mt-4">
             <div className="flex flex-col">
               <span className="text-[9px] uppercase tracking-[0.2em] text-forest-mid/50 font-sans font-bold mb-0.5">
@@ -302,7 +289,7 @@ export function PropertyCard({
                 className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm"
                 aria-label="Imagem anterior"
               >
-                <span className="material-symbols-outlined">chevron_left</span>
+                <ChevronLeft className="w-6 h-6" />
               </button>
               <button
                 type="button"
@@ -312,7 +299,7 @@ export function PropertyCard({
                 className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm"
                 aria-label="Próxima imagem"
               >
-                <span className="material-symbols-outlined">chevron_right</span>
+                <ChevronRight className="w-6 h-6" />
               </button>
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/80 text-xs font-sans tracking-widest bg-black/40 px-3 py-1.5 rounded-full">
                 {lightboxIndex + 1} / {total}

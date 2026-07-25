@@ -10,6 +10,7 @@ import { Navbar } from "@/components/fenomeno/Navbar";
 import { WhatsAppButton } from "@/components/fenomeno/WhatsAppButton";
 import { BackToTop } from "@/components/fenomeno/BackToTop";
 import { Footer } from "@/components/fenomeno/Footer";
+import { Check, ArrowLeft, MessageSquare, Ruler, Bed, Bath, Car } from "lucide-react";
 
 export const Route = createFileRoute("/imoveis/$code")({
   loader: async ({ params, context }) => {
@@ -67,7 +68,7 @@ function PropertyDetail() {
           to="/imoveis"
           className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-forest-mid/70 hover:text-gold-classic mb-8"
         >
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
+          <ArrowLeft className="w-4 h-4" />
           Voltar ao portfólio
         </Link>
 
@@ -82,18 +83,18 @@ function PropertyDetail() {
             </p>
             <div className="font-display text-3xl text-gold-classic mb-8">{property.priceLabel}</div>
             <div className="grid grid-cols-2 gap-y-5 gap-x-6 py-6 border-y border-forest-deep/10">
-              <Spec icon="straighten" label="Área" value={`${property.area} m²`} />
-              <Spec icon="bed" label="Dormitórios" value={String(property.bedrooms)} />
-              <Spec icon="shower" label="Suítes" value={String(property.suites)} />
-              <Spec icon="garage" label="Vagas" value={String(property.parking)} />
+              <Spec iconType="area" label="Área" value={`${property.area} m²`} />
+              <Spec iconType="bedrooms" label="Dormitórios" value={String(property.bedrooms)} />
+              <Spec iconType="suites" label="Suítes" value={String(property.suites)} />
+              <Spec iconType="parking" label="Vagas" value={String(property.parking)} />
             </div>
             <a
               href={`https://wa.me/5547999837494?text=${encodeURIComponent(
                 `Olá! Tenho interesse no imóvel "${property.name}".`,
               )}`}
-              className="mt-8 w-full inline-flex items-center justify-center gap-3 bg-gold-classic text-forest-deep px-8 py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors"
+              className="mt-8 w-full inline-flex items-center justify-center gap-3 bg-gold-classic text-forest-deep px-8 py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined text-base">chat</span>
+              <MessageSquare className="w-4 h-4" />
               Falar com Concierge
             </a>
           </aside>
@@ -113,7 +114,7 @@ function PropertyDetail() {
           <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
             {property.features.map((f: string) => (
               <li key={f} className="flex items-start gap-3 text-sm">
-                <span className="material-symbols-outlined text-gold-classic text-base mt-0.5">check</span>
+                <Check className="w-4 h-4 text-gold-classic mt-0.5 shrink-0" />
                 <span>{f}</span>
               </li>
             ))}
@@ -147,10 +148,19 @@ function PropertyDetail() {
   );
 }
 
-function Spec({ icon, label, value }: { icon: string; label: string; value: string }) {
+function Spec({ iconType, label, value }: { iconType: "area" | "bedrooms" | "suites" | "parking"; label: string; value: string }) {
+  const IconComponent =
+    iconType === "area"
+      ? Ruler
+      : iconType === "bedrooms"
+      ? Bed
+      : iconType === "suites"
+      ? Bath
+      : Car;
+
   return (
     <div className="flex items-center gap-3">
-      <span className="material-symbols-outlined text-gold-classic">{icon}</span>
+      <IconComponent className="w-5 h-5 text-gold-classic shrink-0" />
       <div>
         <div className="text-[10px] uppercase tracking-[0.2em] text-forest-mid/60">{label}</div>
         <div className="font-medium">{value}</div>
@@ -158,8 +168,6 @@ function Spec({ icon, label, value }: { icon: string; label: string; value: stri
     </div>
   );
 }
-
-/* DetailNav removed — using shared <Navbar /> */
 
 function NotFoundPage() {
   return (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { PropertyLocation, PropertyType } from "@/data/properties";
 import { LOCATIONS, TYPES } from "@/data/properties";
+import { Search, ChevronDown, X } from "lucide-react";
 
 type FilterValues = {
   location?: PropertyLocation;
@@ -36,7 +37,6 @@ export function SidebarFilter({
   const [minPrice, setMinPrice] = useState<number>(initialValues?.minPrice ?? 0);
   const [maxPrice, setMaxPrice] = useState<number>(initialValues?.maxPrice ?? 50000000);
 
-  // Sync state if initialValues change
   useEffect(() => {
     if (initialValues) {
       setLocation(initialValues.location ?? "");
@@ -103,14 +103,12 @@ export function SidebarFilter({
 
   return (
     <form onSubmit={handleSearchSubmit} className="flex flex-col gap-6 w-full text-cream-foundation">
-      {/* Title */}
       <div className="pb-4 border-b border-cream-foundation/15">
         <h2 className="font-display text-2xl text-white font-normal leading-tight">
           Filtrar Imóveis
         </h2>
       </div>
 
-      {/* Condomínio */}
       <div className="flex flex-col gap-1.5">
         <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Condomínio
@@ -123,13 +121,10 @@ export function SidebarFilter({
             placeholder="Buscar por condomínio..."
             className="w-full bg-transparent text-white outline-none py-2 pr-8 text-sm font-sans font-semibold placeholder:text-cream-foundation/40"
           />
-          <span className="material-symbols-outlined text-gold-classic absolute right-1 bottom-2 pointer-events-none text-lg select-none">
-            search
-          </span>
+          <Search className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" />
         </div>
       </div>
 
-      {/* Localização */}
       <div className="flex flex-col gap-1.5">
         <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Localização
@@ -147,13 +142,10 @@ export function SidebarFilter({
               </option>
             ))}
           </select>
-          <span className="material-symbols-outlined text-gold-classic absolute right-1 bottom-2 pointer-events-none text-lg select-none">
-            expand_more
-          </span>
+          <ChevronDown className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" />
         </div>
       </div>
 
-      {/* Tipo do Imóvel */}
       <div className="flex flex-col gap-1.5">
         <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Tipo do Imóvel
@@ -171,13 +163,10 @@ export function SidebarFilter({
               </option>
             ))}
           </select>
-          <span className="material-symbols-outlined text-gold-classic absolute right-1 bottom-2 pointer-events-none text-lg select-none">
-            expand_more
-          </span>
+          <ChevronDown className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" />
         </div>
       </div>
 
-      {/* Status */}
       <div className="flex flex-col gap-1.5">
         <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Status
@@ -193,13 +182,10 @@ export function SidebarFilter({
             <option value="construcao" className="bg-forest-deep text-cream-foundation">Em construção</option>
             <option value="lancamento" className="bg-forest-deep text-cream-foundation">Lançamento</option>
           </select>
-          <span className="material-symbols-outlined text-gold-classic absolute right-1 bottom-2 pointer-events-none text-lg select-none">
-            expand_more
-          </span>
+          <ChevronDown className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" />
         </div>
       </div>
 
-      {/* Quartos */}
       <div className="flex flex-col gap-2.5">
         <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Quartos mínimo
@@ -218,7 +204,6 @@ export function SidebarFilter({
         </div>
       </div>
 
-      {/* Suítes */}
       <div className="flex flex-col gap-2.5">
         <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Suítes mínimo
@@ -237,7 +222,6 @@ export function SidebarFilter({
         </div>
       </div>
 
-      {/* Vagas */}
       <div className="flex flex-col gap-2.5">
         <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Vagas de Garagem mínimo
@@ -256,7 +240,6 @@ export function SidebarFilter({
         </div>
       </div>
 
-      {/* Preço */}
       <div className="flex flex-col gap-3">
         <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Valor
@@ -288,7 +271,6 @@ export function SidebarFilter({
           </div>
         </div>
         
-        {/* Slider for Max Price */}
         <div className="mt-2 flex flex-col gap-2">
           <input
             type="range"
@@ -306,13 +288,12 @@ export function SidebarFilter({
         </div>
       </div>
 
-      {/* Buttons */}
       <div className="flex flex-col gap-2 mt-4">
         <button
           type="submit"
           className="w-full bg-gold-classic hover:bg-gold-champagne text-forest-deep hover:scale-[1.01] transition-all duration-300 font-bold px-4 py-3 rounded text-xs uppercase tracking-[0.15em] flex items-center justify-center gap-2 cursor-pointer shadow-md h-[42px]"
         >
-          <span className="material-symbols-outlined text-sm select-none">search</span>
+          <Search className="w-4 h-4" />
           Aplicar Filtros
         </button>
 
@@ -321,7 +302,7 @@ export function SidebarFilter({
           onClick={handleClearClick}
           className="w-full bg-transparent hover:bg-cream-foundation/5 text-cream-foundation/80 border border-cream-foundation/25 hover:border-cream-foundation transition-all duration-300 font-bold px-4 py-3 rounded text-xs uppercase tracking-[0.15em] flex items-center justify-center gap-2 cursor-pointer h-[42px]"
         >
-          <span className="material-symbols-outlined text-sm select-none">close</span>
+          <X className="w-4 h-4" />
           Limpar Filtros
         </button>
       </div>
