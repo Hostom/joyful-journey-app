@@ -93,42 +93,59 @@ async function geocodeAddress(parts: {
   neighborhood?: string;
   location: string;
 }): Promise<{ latitude: number; longitude: number } | null> {
-  const apiKey = process.env.GOOGLE_GEOCODING_API_KEY || process.env.GOOGLE_MAPS_API_KEY;
-  if (!apiKey) {
-    console.warn("[properties/sync] Nenhuma chave de Geocoding configurada — pulando geocoding.");
-    return null;
-  }
+  const apiKey = process.env.GOOGLE_GEOCODING_API_KEY || process.env.GOOGLE_MAPS_API_KEY || process.env.VITE_GOOGLE_MAPS_API_KEY;
 
-  const attempts = [
-    [parts.name, parts.neighborhood, parts.location, "Brasil"].filter(Boolean).join(", "),
-    [parts.neighborhood, parts.location, "Brasil"].filter(Boolean).join(", "),
-    [parts.location, "Brasil"].filter(Boolean).join(", "),
-  ].filter((q, i, a) => q.length > 0 && a.indexOf(q) === i);
+  if (apiKey) {
+    const attempts = [
+      [parts.name, parts.neighborhood, parts.location, "Santa Catarina", "Brasil"].filter(Boolean).join(", "),
+      [parts.neighborhood, parts.location, "Santa Catarina", "Brasil"].filter(Boolean).join(", "),
+      [parts.location, "Santa Catarina", "Brasil"].filter(Boolean).join(", "),
+    ].filter((q, i, a) => q.length > 0 && a.indexOf(q) === i);
 
-  for (const address of attempts) {
-    try {
-      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&region=br&key=${apiKey}`;
-      const res = await fetch(url);
-      const data = (await res.json()) as {
-        status: string;
-        results?: Array<{ geometry?: { location?: { lat: number; lng: number } } }>;
-        error_message?: string;
-      };
-      if (data.status === "OK" && data.results?.[0]?.geometry?.location) {
-        const { lat, lng } = data.results[0].geometry.location;
-        console.log(`[properties/sync] Geocode OK "${address}" → ${lat},${lng}`);
-        return { latitude: lat, longitude: lng };
+    for (const address of attempts) {
+      try {
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&region=br&key=${apiKey}`;
+        const res = await fetch(url);
+        const data = (await res.json()) as {
+          status: string;
+          results?: Array<{ geometry?: { location?: { lat: number; lng: number } } }>;
+          error_message?: string;
+        };
+        if (data.status === "OK" && data.results?.[0]?.geometry?.location) {
+          const { lat, lng } = data.results[0].geometry.location;
+          console.log(`[properties/sync] Google Geocode OK "${address}" → ${lat},${lng}`);
+          return { latitude: lat, longitude: lng };
+        }
+      } catch (err) {
+        console.error(`[properties/sync] Erro Google geocode "${address}":`, err);
       }
-      if (data.status !== "ZERO_RESULTS") {
-        console.warn(
-          `[properties/sync] Geocode "${address}" status=${data.status} msg=${data.error_message ?? "-"}`,
-        );
-      }
-    } catch (err) {
-      console.error(`[properties/sync] Erro geocode "${address}":`, err);
     }
   }
-  console.warn("[properties/sync] Geocode falhou para todas as variações:", attempts);
+
+  // Fallback para OpenStreetMap Nominatim (gratuito) caso a chave Google não esteja configurada ou falhe
+  const attemptsOSM = [
+    [parts.name, parts.neighborhood, parts.location, "Santa Catarina", "Brasil"].filter(Boolean).join(", "),
+    [parts.neighborhood, parts.location, "Santa Catarina", "Brasil"].filter(Boolean).join(", "),
+  ];
+
+  for (const address of attemptsOSM) {
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1&countrycodes=br`;
+      const res = await fetch(url, { headers: { "User-Agent": "FenomenoImoveis/1.0" } });
+      const data = (await res.json()) as Array<{ lat: string; lon: string }>;
+      if (Array.isArray(data) && data[0]?.lat && data[0]?.lon) {
+        const lat = parseFloat(data[0].lat);
+        const lng = parseFloat(data[0].lon);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          console.log(`[properties/sync] Nominatim Geocode OK "${address}" → ${lat},${lng}`);
+          return { latitude: lat, longitude: lng };
+        }
+      }
+    } catch (err) {
+      console.error(`[properties/sync] Erro Nominatim geocode "${address}":`, err);
+    }
+  }
+
   return null;
 }
 

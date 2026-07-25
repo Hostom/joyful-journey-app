@@ -34,13 +34,31 @@ const getCoordinates = (property: Property): { lat: number; lng: number } => {
     }
   }
 
-  // Coordenadas padrão por localização para garantir que o mapa sempre seja exibido
-  if (property.location === "Itapema") {
-    return { lat: -27.0900, lng: -48.6100 };
-  }
-  if (property.location === "Itajaí") {
-    return { lat: -26.9050, lng: -48.6650 };
-  }
+  const name = (property.name || "").toLowerCase();
+  const neigh = (property.neighborhood || "").toLowerCase();
+  const loc = (property.location || "").toLowerCase();
+
+  // Mapeamento específico por nome de empreendimento / rua principal
+  if (name.includes("yachthouse")) return { lat: -27.0068, lng: -48.5915 };
+  if (name.includes("iconic")) return { lat: -26.9880, lng: -48.6250 };
+  if (name.includes("one tower")) return { lat: -27.0040, lng: -48.5950 };
+  if (name.includes("praia brava") || neigh.includes("praia brava")) return { lat: -26.9600, lng: -48.6200 };
+  if (name.includes("meia praia") || neigh.includes("meia praia")) return { lat: -27.1350, lng: -48.6050 };
+
+  // Mapeamento preciso por bairro e vias principais
+  if (neigh.includes("barra sul")) return { lat: -27.0055, lng: -48.5925 };
+  if (neigh.includes("pioneiros") || neigh.includes("barra norte")) return { lat: -26.9740, lng: -48.6350 };
+  if (neigh.includes("atlântica") || neigh.includes("atlantica")) return { lat: -26.9880, lng: -48.6250 };
+  if (neigh.includes("centro") && loc.includes("balneário")) return { lat: -26.9910, lng: -48.6270 };
+  if (neigh.includes("nações") || neigh.includes("nacoes")) return { lat: -26.9800, lng: -48.6380 };
+  if (neigh.includes("canto da praia")) return { lat: -27.0780, lng: -48.6000 };
+  if (neigh.includes("morretes")) return { lat: -27.1420, lng: -48.6180 };
+  if (neigh.includes("cabeçudas") || neigh.includes("cabecudas")) return { lat: -26.9200, lng: -48.6360 };
+  if (neigh.includes("fazenda")) return { lat: -26.9150, lng: -48.6550 };
+
+  // Coordenadas padrão por localização
+  if (property.location === "Itapema") return { lat: -27.0900, lng: -48.6100 };
+  if (property.location === "Itajaí") return { lat: -26.9050, lng: -48.6650 };
   return { lat: -26.9930, lng: -48.6300 }; // Balneário Camboriú por padrão
 };
 
@@ -49,10 +67,74 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
   const [selectedCategories, setSelectedCategories] = useState<string[]>(["escola", "mercado", "farmacia", "academia"]);
   const [places, setPlaces] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [coords, setCoords] = useState<{ lat: number; lng: number }>(() => (property ? getCoordinates(property) : { lat: 0, lng: 0 }));
 
-  // Limpa locais ao trocar de imóvel
+  // Atualiza e geocodifica dinamicamente a rua exata quando o imóvel muda
   useEffect(() => {
+    if (!property) return;
     setPlaces([]);
+
+    // 1. Define inicialmente com as coordenadas conhecidas / dicionário
+    const initialCoords = getCoordinates(property);
+    setCoords(initialCoords);
+
+    // Se o imóvel já possui latitude/longitude válidas no banco, não precisa buscar no OpenStreetMap
+    if (
+      property.latitude !== undefined &&
+      property.latitude !== null &&
+      property.longitude !== undefined &&
+      property.longitude !== null
+    ) {
+      const latNum = Number(property.latitude);
+      const lngNum = Number(property.longitude);
+      if (!isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0) {
+        return;
+      }
+    }
+
+    // 2. Tenta geocodificar a rua/endereço exato via OpenStreetMap Nominatim API
+    let cancelled = false;
+    const queryStreet = [property.name, property.neighborhood, property.location, "Santa Catarina", "Brasil"]
+      .filter(Boolean)
+      .join(", ");
+
+    fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryStreet)}&format=json&limit=1&countrycodes=br`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (Array.isArray(data) && data.length > 0 && data[0].lat && data[0].lon) {
+          const lat = parseFloat(data[0].lat);
+          const lng = parseFloat(data[0].lon);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            setCoords({ lat, lng });
+            return;
+          }
+        }
+
+        // Tenta apenas com Bairro + Cidade caso o nome do condomínio não esteja no OpenStreetMap
+        const queryNeigh = [property.neighborhood, property.location, "Santa Catarina", "Brasil"]
+          .filter(Boolean)
+          .join(", ");
+
+        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryNeigh)}&format=json&limit=1&countrycodes=br`)
+          .then((res) => res.json())
+          .then((data2) => {
+            if (cancelled) return;
+            if (Array.isArray(data2) && data2.length > 0 && data2[0].lat && data2[0].lon) {
+              const lat = parseFloat(data2[0].lat);
+              const lng = parseFloat(data2[0].lon);
+              if (!isNaN(lat) && !isNaN(lng)) {
+                setCoords({ lat, lng });
+              }
+            }
+          })
+          .catch(() => {});
+      })
+      .catch((err) => console.warn("Geocoding Nominatim:", err));
+
+    return () => {
+      cancelled = true;
+    };
   }, [property?.code]);
 
   if (!property) return null;
@@ -61,10 +143,9 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
     `Olá! Tenho interesse no imóvel "${property.name}" (Código: ${property.code}).`,
   )}`;
 
-  const coords = getCoordinates(property);
-  const hasCoords = true;
   const lat = coords.lat;
   const lng = coords.lng;
+  const hasCoords = true;
 
   const fetchNearbyPlaces = async () => {
     if (selectedCategories.length === 0) return;
