@@ -6,6 +6,21 @@ import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
 import type { Property } from "@/data/properties";
 import { PropertyMap } from "@/components/fenomeno/PropertyMap";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  GraduationCap,
+  ShoppingCart,
+  HeartPulse,
+  Dumbbell,
+  Compass,
+  MapPin,
+  Check,
+  MessageSquare,
+  Ruler,
+  Bed,
+  Bath,
+  Car,
+  Loader2,
+} from "lucide-react";
 
 type PropertyDetailModalProps = {
   property: Property | null;
@@ -14,10 +29,10 @@ type PropertyDetailModalProps = {
 };
 
 const CATEGORY_OPTIONS = [
-  { id: "escola", label: "Escolas", icon: "school", iconColor: "text-blue-400" },
-  { id: "mercado", label: "Mercados", icon: "shopping_cart", iconColor: "text-emerald-400" },
-  { id: "farmacia", label: "Farmácias", icon: "medical_services", iconColor: "text-red-400" },
-  { id: "academia", label: "Academias", icon: "fitness_center", iconColor: "text-purple-400" },
+  { id: "escola", label: "Escolas", Icon: GraduationCap, iconColor: "text-blue-400" },
+  { id: "mercado", label: "Mercados", Icon: ShoppingCart, iconColor: "text-emerald-400" },
+  { id: "farmacia", label: "Farmácias", Icon: HeartPulse, iconColor: "text-red-400" },
+  { id: "academia", label: "Academias", Icon: Dumbbell, iconColor: "text-purple-400" },
 ];
 
 const getCoordinates = (property: Property): { lat: number; lng: number } => {
@@ -38,14 +53,12 @@ const getCoordinates = (property: Property): { lat: number; lng: number } => {
   const neigh = (property.neighborhood || "").toLowerCase();
   const loc = (property.location || "").toLowerCase();
 
-  // Mapeamento específico por nome de empreendimento / rua principal
   if (name.includes("yachthouse")) return { lat: -27.0068, lng: -48.5915 };
   if (name.includes("iconic")) return { lat: -26.9880, lng: -48.6250 };
   if (name.includes("one tower")) return { lat: -27.0040, lng: -48.5950 };
   if (name.includes("praia brava") || neigh.includes("praia brava")) return { lat: -26.9600, lng: -48.6200 };
   if (name.includes("meia praia") || neigh.includes("meia praia")) return { lat: -27.1350, lng: -48.6050 };
 
-  // Mapeamento preciso por bairro e vias principais
   if (neigh.includes("barra sul")) return { lat: -27.0055, lng: -48.5925 };
   if (neigh.includes("pioneiros") || neigh.includes("barra norte")) return { lat: -26.9740, lng: -48.6350 };
   if (neigh.includes("atlântica") || neigh.includes("atlantica")) return { lat: -26.9880, lng: -48.6250 };
@@ -56,10 +69,9 @@ const getCoordinates = (property: Property): { lat: number; lng: number } => {
   if (neigh.includes("cabeçudas") || neigh.includes("cabecudas")) return { lat: -26.9200, lng: -48.6360 };
   if (neigh.includes("fazenda")) return { lat: -26.9150, lng: -48.6550 };
 
-  // Coordenadas padrão por localização
   if (property.location === "Itapema") return { lat: -27.0900, lng: -48.6100 };
   if (property.location === "Itajaí") return { lat: -26.9050, lng: -48.6650 };
-  return { lat: -26.9930, lng: -48.6300 }; // Balneário Camboriú por padrão
+  return { lat: -26.9930, lng: -48.6300 };
 };
 
 export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetailModalProps) {
@@ -69,16 +81,13 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
   const [loading, setLoading] = useState(false);
   const [coords, setCoords] = useState<{ lat: number; lng: number }>(() => (property ? getCoordinates(property) : { lat: 0, lng: 0 }));
 
-  // Atualiza e geocodifica dinamicamente a rua exata quando o imóvel muda
   useEffect(() => {
     if (!property) return;
     setPlaces([]);
 
-    // 1. Define inicialmente com as coordenadas conhecidas / dicionário
     const initialCoords = getCoordinates(property);
     setCoords(initialCoords);
 
-    // Se o imóvel já possui latitude/longitude válidas no banco, não precisa buscar no OpenStreetMap
     if (
       property.latitude !== undefined &&
       property.latitude !== null &&
@@ -92,7 +101,6 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
       }
     }
 
-    // 2. Tenta geocodificar a rua/endereço exato via OpenStreetMap Nominatim API
     let cancelled = false;
     const queryStreet = [property.name, property.neighborhood, property.location, "Santa Catarina", "Brasil"]
       .filter(Boolean)
@@ -111,7 +119,6 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
           }
         }
 
-        // Tenta apenas com Bairro + Cidade caso o nome do condomínio não esteja no OpenStreetMap
         const queryNeigh = [property.neighborhood, property.location, "Santa Catarina", "Brasil"]
           .filter(Boolean)
           .join(", ");
@@ -145,7 +152,6 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
 
   const lat = coords.lat;
   const lng = coords.lng;
-  const hasCoords = true;
 
   const fetchNearbyPlaces = async () => {
     if (selectedCategories.length === 0) return;
@@ -203,20 +209,18 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                 <div className="font-display text-3xl text-gold-champagne mb-6 font-medium">{property.priceLabel}</div>
 
                 <div className="grid grid-cols-2 gap-y-4 gap-x-6 py-5 border-y border-cream-foundation/10">
-                  <Spec icon="straighten" label="Área" value={`${property.area} m²`} />
-                  <Spec icon="bed" label="Dormitórios" value={String(property.bedrooms)} />
-                  <Spec icon="shower" label="Suítes" value={String(property.suites)} />
-                  <Spec icon="garage" label="Vagas" value={String(property.parking)} />
+                  <Spec iconType="area" label="Área" value={`${property.area} m²`} />
+                  <Spec iconType="bedrooms" label="Dormitórios" value={String(property.bedrooms)} />
+                  <Spec iconType="suites" label="Suítes" value={String(property.suites)} />
+                  <Spec iconType="parking" label="Vagas" value={String(property.parking)} />
                 </div>
 
                 {/* Map and Nearby Places Section */}
-                {hasCoords && (
                 <div className="mt-6 pt-5 border-t border-cream-foundation/10 space-y-4">
                   <h3 className="font-display text-lg text-gold-champagne">
                     Localização e Comodidades
                   </h3>
-                  
-                  
+
                   {/* Compact Map */}
                   <div className="w-full">
                     <PropertyMap
@@ -233,26 +237,28 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                     <h4 className="text-[10px] uppercase tracking-[0.2em] text-gold-champagne font-bold mb-3 font-sans">
                       Comércios Próximos
                     </h4>
-                    
+
                     {/* Category selectors */}
                     <div className="grid grid-cols-2 gap-2 mb-4">
-                      {CATEGORY_OPTIONS.map((opt) => (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          onClick={() => handleToggleCategory(opt.id)}
-                          className={`flex items-center gap-2 p-2 border rounded-lg text-[11px] transition-all duration-300 font-sans cursor-pointer ${
-                            selectedCategories.includes(opt.id)
-                              ? "bg-gold-classic border-gold-classic text-forest-deep font-bold"
-                              : "border-gold-champagne/20 hover:border-gold-champagne/40 text-cream-foundation/80 hover:bg-white/5"
-                          }`}
-                        >
-                          <span className={`material-symbols-outlined text-sm ${selectedCategories.includes(opt.id) ? "text-forest-deep" : opt.iconColor}`}>
-                            {opt.icon}
-                          </span>
-                          <span>{opt.label}</span>
-                        </button>
-                      ))}
+                      {CATEGORY_OPTIONS.map((opt) => {
+                        const IconComponent = opt.Icon;
+                        const isSelected = selectedCategories.includes(opt.id);
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => handleToggleCategory(opt.id)}
+                            className={`flex items-center gap-2 p-2 border rounded-lg text-[11px] transition-all duration-300 font-sans cursor-pointer ${
+                              isSelected
+                                ? "bg-gold-classic border-gold-classic text-forest-deep font-bold"
+                                : "border-gold-champagne/20 hover:border-gold-champagne/40 text-cream-foundation/80 hover:bg-white/5"
+                            }`}
+                          >
+                            <IconComponent className={`w-4 h-4 shrink-0 ${isSelected ? "text-forest-deep" : opt.iconColor}`} />
+                            <span>{opt.label}</span>
+                          </button>
+                        );
+                      })}
                     </div>
 
                     {/* Fetch Button */}
@@ -264,12 +270,12 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                     >
                       {loading ? (
                         <>
-                          <span className="animate-spin material-symbols-outlined text-xs">progress_activity</span>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
                           <span>Buscando...</span>
                         </>
                       ) : (
                         <>
-                          <span className="material-symbols-outlined text-xs">explore</span>
+                          <Compass className="w-3.5 h-3.5" />
                           <span>Buscar Próximos</span>
                         </>
                       )}
@@ -279,13 +285,12 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                     <div className="mt-4 space-y-2 max-h-[140px] overflow-y-auto pr-1">
                       {places.length > 0 ? (
                         places.map((place, idx) => {
-                          const opt = CATEGORY_OPTIONS.find((o) => o.id === place.type) || { icon: "place", iconColor: "text-gold-champagne" };
+                          const opt = CATEGORY_OPTIONS.find((o) => o.id === place.type) || { Icon: MapPin, iconColor: "text-gold-champagne" };
+                          const IconComponent = opt.Icon;
                           return (
                             <div key={idx} className="flex items-center justify-between py-1.5 border-b border-cream-foundation/5 text-[11px] font-sans">
                               <div className="flex items-center gap-2 min-w-0">
-                                <span className={`material-symbols-outlined text-sm flex-shrink-0 ${opt.iconColor}`}>
-                                  {opt.icon}
-                                </span>
+                                <IconComponent className={`w-3.5 h-3.5 shrink-0 ${opt.iconColor}`} />
                                 <span className="font-medium text-cream-foundation/90 truncate">{place.name}</span>
                               </div>
                               <span className="text-[9px] font-mono text-gold-champagne/90 bg-gold-champagne/5 px-2 py-0.5 rounded flex-shrink-0 ml-2">
@@ -296,7 +301,7 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                         })
                       ) : (
                         <div className="text-center py-4 text-cream-foundation/40 text-[10px] font-sans">
-                          <span className="material-symbols-outlined text-2xl mb-1 text-gold-champagne/40 block">map</span>
+                          <MapPin className="w-6 h-6 mb-1 text-gold-champagne/40 block mx-auto" />
                           <p className="max-w-[180px] mx-auto leading-relaxed">
                             Selecione as categorias e busque para listar comércios da região.
                           </p>
@@ -305,17 +310,15 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                     </div>
                   </div>
                 </div>
-                )}
               </div>
 
-
-              {/* CTA WhatsApp - opens lead capture before WhatsApp */}
+              {/* CTA WhatsApp */}
               <button
                 type="button"
                 onClick={() => setLeadOpen(true)}
-                className="mt-8 w-full inline-flex items-center justify-center gap-3 bg-gold-classic hover:bg-gold-champagne text-forest-deep hover:scale-[1.01] transition-all duration-300 font-bold px-8 py-4 text-xs uppercase tracking-[0.25em] shadow-lg h-[52px] rounded"
+                className="mt-8 w-full inline-flex items-center justify-center gap-3 bg-gold-classic hover:bg-gold-champagne text-forest-deep hover:scale-[1.01] transition-all duration-300 font-bold px-8 py-4 text-xs uppercase tracking-[0.25em] shadow-lg h-[52px] rounded cursor-pointer"
               >
-                <span className="material-symbols-outlined text-base">chat</span>
+                <MessageSquare className="w-4 h-4" />
                 Falar com Consultor
               </button>
             </div>
@@ -341,9 +344,7 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
               <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-3.5">
                 {property.features.map((f: string) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm font-sans">
-                    <span className="material-symbols-outlined text-gold-champagne text-base mt-0.5 select-none">
-                      check
-                    </span>
+                    <Check className="w-4 h-4 text-gold-champagne mt-0.5 shrink-0" />
                     <span className="text-cream-foundation/90 font-medium">{f}</span>
                   </li>
                 ))}
@@ -369,10 +370,19 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
   );
 }
 
-function Spec({ icon, label, value }: { icon: string; label: string; value: string }) {
+function Spec({ iconType, label, value }: { iconType: "area" | "bedrooms" | "suites" | "parking"; label: string; value: string }) {
+  const IconComponent =
+    iconType === "area"
+      ? Ruler
+      : iconType === "bedrooms"
+      ? Bed
+      : iconType === "suites"
+      ? Bath
+      : Car;
+
   return (
     <div className="flex items-center gap-3">
-      <span className="material-symbols-outlined text-gold-champagne text-xl select-none">{icon}</span>
+      <IconComponent className="w-5 h-5 text-gold-champagne shrink-0" />
       <div>
         <div className="text-[10px] uppercase tracking-[0.2em] text-cream-foundation/60 font-sans font-bold">
           {label}
