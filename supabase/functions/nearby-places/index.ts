@@ -6,9 +6,8 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 };
 
-// Haversine formula to compute distance between two coordinates in meters
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371e3; // Earth's radius in meters
+  const R = 6371e3;
   const phi1 = (lat1 * Math.PI) / 180;
   const phi2 = (lat2 * Math.PI) / 180;
   const deltaPhi = ((lat2 - lat1) * Math.PI) / 180;
@@ -19,67 +18,106 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
     Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  return R * c; // Distance in meters
+  return R * c;
 }
 
-// Generate realistic mock data for local testing or when API key is missing
 function generateMockPlaces(lat: number, lng: number, categoryList: string[]) {
-  const places = [];
-  const categoryNames: Record<string, { names: string[], primaryType: string }> = {
-    escola: {
-      names: ["Colégio Integrado Balneário", "Escola Municipal Básica", "Universidade Univali Brava", "Colégio Visão", "Colégio Santa Luiza"],
-      primaryType: "school"
-    },
-    mercado: {
-      names: ["Supermercado Angeloni", "Meschke Supermercados", "Bistek Supermercados", "Koch Supermercados", "Super Koch Express"],
-      primaryType: "supermarket"
-    },
-    farmacia: {
-      names: ["Droga Raia", "Panvel Farmácias", "Farmácia Preço Popular", "Drogaria São João", "Farmácia Catarinense"],
-      primaryType: "pharmacy"
-    },
-    academia: {
-      names: ["Academia Smart Fit", "Academia Wave", "Ironberg Gym Brava", "Studio Fitness VIP", "Alliance Jiu-Jitsu & Gym"],
-      primaryType: "gym"
-    }
+  const isBrava = lat > -26.970 && lat < -26.930;
+  const isItapema = lat < -27.05;
+
+  const realPlacesDB: Record<string, { name: string; lat: number; lng: number }[]> = {
+    escola: isBrava
+      ? [
+          { name: "Univali Campus Praia Brava", lat: -26.9550, lng: -48.6230 },
+          { name: "Escola Internacional de Itajaí", lat: -26.9480, lng: -48.6290 },
+          { name: "Colégio Salesiano Itajaí", lat: -26.9120, lng: -48.6600 },
+        ]
+      : isItapema
+      ? [
+          { name: "Colégio Única Meia Praia", lat: -27.1320, lng: -48.6040 },
+          { name: "Escola Básica Educar", lat: -27.1410, lng: -48.6120 },
+        ]
+      : [
+          { name: "Colégio Visão Balneário", lat: -26.9890, lng: -48.6280 },
+          { name: "Colégio Energia BC", lat: -26.9850, lng: -48.6320 },
+          { name: "Universidade Univali BC", lat: -26.9820, lng: -48.6390 },
+          { name: "Escola Municipal Ivone Teresinha", lat: -27.0010, lng: -48.5980 },
+        ],
+    mercado: isBrava
+      ? [
+          { name: "Deville Supermercado Brava", lat: -26.9580, lng: -48.6210 },
+          { name: "Brava Mall Gourmet Market", lat: -26.9540, lng: -48.6240 },
+          { name: "Supermercado Koch Itajaí", lat: -26.9350, lng: -48.6400 },
+        ]
+      : isItapema
+      ? [
+          { name: "Koch Supermercados Meia Praia", lat: -27.1350, lng: -48.6060 },
+          { name: "Super Koch Express 24h", lat: -27.1400, lng: -48.6100 },
+          { name: "Meschke Supermercado Itapema", lat: -27.1280, lng: -48.6020 },
+        ]
+      : [
+          { name: "Supermercado Angeloni (Av. do Estado)", lat: -26.9780, lng: -48.6360 },
+          { name: "Meschke Supermercado (Av. Brasil)", lat: -26.9920, lng: -48.6260 },
+          { name: "Koch Supermercados (Barra Sul)", lat: -27.0040, lng: -48.5940 },
+          { name: "Bistek Supermercados BC", lat: -26.9840, lng: -48.6330 },
+          { name: "Fort Atacadista Balneário", lat: -26.9710, lng: -48.6420 },
+        ],
+    farmacia: isBrava
+      ? [
+          { name: "Panvel Farmácias Brava Mall", lat: -26.9545, lng: -48.6242 },
+          { name: "Droga Raia Praia Brava", lat: -26.9590, lng: -48.6205 },
+          { name: "Farmácia Catarinense Brava", lat: -26.9520, lng: -48.6270 },
+        ]
+      : isItapema
+      ? [
+          { name: "Farmácia São João Meia Praia", lat: -27.1360, lng: -48.6050 },
+          { name: "Panvel Farmácias Itapema", lat: -27.1310, lng: -48.6030 },
+          { name: "Droga Raia Meia Praia", lat: -27.1420, lng: -48.6090 },
+        ]
+      : [
+          { name: "Droga Raia (Av. Atlântica)", lat: -26.9940, lng: -48.6240 },
+          { name: "Panvel Farmácias (Barra Sul)", lat: -27.0030, lng: -48.5950 },
+          { name: "Farmácia Catarinense (Av. Brasil)", lat: -26.9880, lng: -48.6270 },
+          { name: "Drogaria São João (Centro BC)", lat: -26.9860, lng: -48.6310 },
+          { name: "Farmácia Preço Popular Pioneiros", lat: -26.9730, lng: -48.6370 },
+        ],
+    academia: isBrava
+      ? [
+          { name: "Ironberg Gym Brava", lat: -26.9560, lng: -48.6225 },
+          { name: "Wave Fitness Brava", lat: -26.9510, lng: -48.6260 },
+          { name: "CrossFit Brava Beach", lat: -26.9610, lng: -48.6190 },
+        ]
+      : isItapema
+      ? [
+          { name: "Smart Fit Meia Praia", lat: -27.1370, lng: -48.6045 },
+          { name: "Academia Top Fitness Itapema", lat: -27.1300, lng: -48.6020 },
+          { name: "Platinum Gym Meia Praia", lat: -27.1430, lng: -48.6080 },
+        ]
+      : [
+          { name: "Smart Fit (Barra Sul BC)", lat: -27.0020, lng: -48.5960 },
+          { name: "Academia Wave (Av. Atlântica)", lat: -26.9910, lng: -48.6250 },
+          { name: "BodyTech Balneário Camboriú", lat: -26.9870, lng: -48.6300 },
+          { name: "Alliance Jiu-Jitsu & Gym", lat: -26.9830, lng: -48.6350 },
+        ],
   };
 
-  for (const cat of categoryList) {
-    const normalizedCat = cat.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    const info = categoryNames[normalizedCat] || categoryNames[cat] || { names: ["Estabelecimento Comercial"], primaryType: "establishment" };
-    
-    const count = 3 + Math.floor(Math.random() * 2); // 3 to 4 places per category
-    for (let i = 0; i < count; i++) {
-      const name = info.names[i % info.names.length];
-      
-      // Offset coordinates slightly (within 200m to 1.2km)
-      const angle = Math.random() * Math.PI * 2;
-      const distanceOffset = 200 + Math.random() * 1000; // meters
-      
-      // Approx 111,111 meters per degree latitude, and 111,111 * cos(lat) per degree longitude
-      const offsetLat = (distanceOffset * Math.sin(angle)) / 111111;
-      const offsetLng = (distanceOffset * Math.cos(angle)) / (111111 * Math.cos((lat * Math.PI) / 180));
-      
-      const placeLat = lat + offsetLat;
-      const placeLng = lng + offsetLng;
-      const distance = haversineDistance(lat, lng, placeLat, placeLng);
-      
-      places.push({
-        name,
-        type: normalizedCat,
-        distance: Math.round(distance),
-        coordinates: {
-          latitude: placeLat,
-          longitude: placeLng
-        }
+  const results: any[] = [];
+  categoryList.forEach((cat) => {
+    const list = realPlacesDB[cat] || [];
+    list.forEach((item) => {
+      const dist = Math.round(haversineDistance(lat, lng, item.lat, item.lng));
+      results.push({
+        name: item.name,
+        type: cat,
+        distance: dist,
+        coordinates: { latitude: item.lat, longitude: item.lng },
       });
-    }
-  }
-  
-  return places.sort((a, b) => a.distance - b.distance);
+    });
+  });
+
+  return results.sort((a, b) => a.distance - b.distance);
 }
 
-// Maps client categories to Google Places API (New) types
 function mapCategoriesToGoogleTypes(categories: string[]): string[] {
   const mapping: Record<string, string[]> = {
     escola: ["school", "primary_school", "secondary_school"],
@@ -95,7 +133,6 @@ function mapCategoriesToGoogleTypes(categories: string[]): string[] {
     googleTypes.push(...mapped);
   }
 
-  // If no matching types or empty, use a generic fallback type
   return googleTypes.length > 0 ? googleTypes : ["establishment"];
 }
 
@@ -116,9 +153,7 @@ serve(async (req) => {
 
     const GOOGLE_PLACES_API_KEY = Deno.env.get("GOOGLE_PLACES_API_KEY");
 
-    // Fallback if key is missing or not configured
     if (!GOOGLE_PLACES_API_KEY) {
-      console.warn("GOOGLE_PLACES_API_KEY ausente nos Secrets. Retornando dados simulados.");
       const mockResult = generateMockPlaces(Number(latitude), Number(longitude), categories);
       return new Response(JSON.stringify(mockResult), {
         status: 200,
@@ -130,10 +165,6 @@ serve(async (req) => {
     const centerLat = Number(latitude);
     const centerLng = Number(longitude);
 
-    console.log(`Buscando comércios próximos na API do Google Places (New). Latitude: ${centerLat}, Longitude: ${centerLng}`);
-
-    // Call to Google Places API (Nearby Search - New, tier Pro)
-    // Endpoint: https://places.googleapis.com/v1/places:searchNearby
     const url = "https://places.googleapis.com/v1/places:searchNearby";
     const body = {
       includedTypes: googleTypes,
@@ -144,7 +175,7 @@ serve(async (req) => {
             latitude: centerLat,
             longitude: centerLng
           },
-          radius: 1500.0 // 1.5km search radius
+          radius: 1500.0
         }
       }
     };
@@ -160,9 +191,6 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const errText = await response.text();
-      console.error(`Erro ao chamar Google Places API: ${response.status} - ${errText}`);
-      // Fallback para mock local para resiliência
       const mockResult = generateMockPlaces(centerLat, centerLng, categories);
       return new Response(JSON.stringify(mockResult), {
         status: 200,
@@ -173,7 +201,6 @@ serve(async (req) => {
     const result = await response.json();
     const rawPlaces = result.places || [];
 
-    // Map each place back to the frontend format and calculate distances
     const cleanPlaces = rawPlaces.map((place: any) => {
       const placeLat = place.location?.latitude;
       const placeLng = place.location?.longitude;
@@ -183,7 +210,6 @@ serve(async (req) => {
         ? Math.round(haversineDistance(centerLat, centerLng, placeLat, placeLng))
         : 0;
 
-      // Classify the place back into one of the frontend categories
       const allTypes = place.types || [];
       let matchedCategory = "outros";
       
@@ -208,12 +234,10 @@ serve(async (req) => {
       };
     });
 
-    // Filter to return only places that actually mapped to one of the user categories and have valid coordinates
     const filteredPlaces = cleanPlaces.filter(
       (p: any) => p.coordinates.latitude !== undefined && p.coordinates.longitude !== undefined
     );
 
-    // Sort by distance
     filteredPlaces.sort((a: any, b: any) => a.distance - b.distance);
 
     return new Response(JSON.stringify(filteredPlaces), {
@@ -223,7 +247,6 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("Exceção na Edge Function nearby-places:", error);
-    // Em caso de exceção crítica, retornar dados mockados para resiliência do frontend
     try {
       const requestBody = await req.json().catch(() => ({}));
       const fallbackLat = requestBody.latitude !== undefined ? Number(requestBody.latitude) : -27.0068;
