@@ -7,6 +7,14 @@ import type { Property } from "@/data/properties";
 import { PropertyMap } from "@/components/fenomeno/PropertyMap";
 import { supabase } from "@/integrations/supabase/client";
 import {
+  cacheGet,
+  cacheSet,
+  nearbyCacheKey,
+  geocodeCacheKey,
+  NEARBY_TTL_MS,
+  GEOCODE_TTL_MS,
+} from "@/lib/lookup-cache";
+import {
   GraduationCap,
   ShoppingCart,
   HeartPulse,
