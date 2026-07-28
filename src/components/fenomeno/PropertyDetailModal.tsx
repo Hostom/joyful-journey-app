@@ -259,7 +259,9 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                   <Spec iconType="parking" label="Vagas" value={String(property.parking)} />
                 </div>
 
+                {hasCoords && (
                 {/* Map and Nearby Places Section */}
+
                 <div className="mt-6 pt-5 border-t border-cream-foundation/10 space-y-4">
                   <h3 className="font-display text-lg text-gold-champagne">
                     Localização e Comodidades
