@@ -16,8 +16,8 @@ const bodySchema = z.object({
 });
 
 const OVERPASS_ENDPOINTS = [
-  "https://overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass-api.de/api/interpreter",
 ];
 
 function haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
