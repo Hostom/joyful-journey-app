@@ -120,7 +120,7 @@ export const Route = createFileRoute("/api/public/nearby-overpass")({
             const pLng = el.lon;
             if (!name || typeof pLat !== "number" || typeof pLng !== "number") return null;
             const type = classify(el.tags);
-            if (!type || !cats.includes(type)) return null;
+            if (!type || !(cats as string[]).includes(type)) return null;
             return {
               name,
               type,
