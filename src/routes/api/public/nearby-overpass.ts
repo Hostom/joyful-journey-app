@@ -77,6 +77,16 @@ async function callOverpass(query: string): Promise<any | null> {
   return null;
 }
 
+// Cache in-memory por instância do worker (TTL 24h, max 200 entradas)
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const CACHE_MAX = 200;
+const cache = new Map<string, { at: number; data: unknown }>();
+
+function cacheKey(lat: number, lng: number, radius: number, cats: string[]): string {
+  const r = (n: number) => Math.round(n * 10000) / 10000;
+  return `${r(lat)}:${r(lng)}:${radius}:${[...cats].sort().join(",")}`;
+}
+
 export const Route = createFileRoute("/api/public/nearby-overpass")({
   server: {
     handlers: {
@@ -95,6 +105,15 @@ export const Route = createFileRoute("/api/public/nearby-overpass")({
         const { latitude, longitude } = parsed;
         const radius = parsed.radius ?? 3000;
         const cats = parsed.categories ?? ["escola", "mercado", "farmacia", "academia"];
+
+        const key = cacheKey(latitude, longitude, radius, cats);
+        const hit = cache.get(key);
+        if (hit && Date.now() - hit.at < CACHE_TTL_MS) {
+          return new Response(JSON.stringify(hit.data), {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "HIT" },
+          });
+        }
 
         const query = `
           [out:json][timeout:8];
@@ -132,9 +151,15 @@ export const Route = createFileRoute("/api/public/nearby-overpass")({
           .sort((a: any, b: any) => a.distance - b.distance)
           .slice(0, 20);
 
+        if (cache.size >= CACHE_MAX) {
+          const oldestKey = cache.keys().next().value;
+          if (oldestKey) cache.delete(oldestKey);
+        }
+        cache.set(key, { at: Date.now(), data: places });
+
         return new Response(JSON.stringify(places), {
           status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "MISS" },
         });
       },
     },
