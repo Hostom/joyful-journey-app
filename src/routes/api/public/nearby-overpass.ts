@@ -93,7 +93,7 @@ export const Route = createFileRoute("/api/public/nearby-overpass")({
         }
 
         const { latitude, longitude } = parsed;
-        const radius = parsed.radius ?? 1600;
+        const radius = parsed.radius ?? 3000;
         const cats = parsed.categories ?? ["escola", "mercado", "farmacia", "academia"];
 
         const query = `
