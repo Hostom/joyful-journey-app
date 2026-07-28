@@ -113,7 +113,7 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
   const [selectedCategories, setSelectedCategories] = useState<string[]>(["escola", "mercado", "farmacia", "academia"]);
   const [places, setPlaces] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [coords, setCoords] = useState<{ lat: number; lng: number }>(() => (property ? getCoordinates(property) : { lat: 0, lng: 0 }));
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(() => (property ? getCoordinates(property) : null));
 
   const locationCtx = property ? `${property.location} ${property.neighborhood}` : "";
 
