@@ -91,80 +91,7 @@ async function fetchOverpassPlaces(lat: number, lng: number, categoryList: strin
   }
 }
 
-// Gera comércios reais específicos para a cidade e bairro exatos do imóvel
-function getRealSCPlaces(lat: number, lng: number, categoryList: string[], locationContext: string = "") {
-  const ctx = locationContext.toLowerCase();
-
-  const isItajai =
-    ctx.includes("itajai") ||
-    ctx.includes("itajaí") ||
-    ctx.includes("brava") ||
-    ctx.includes("fazenda") ||
-    ctx.includes("cabeçudas") ||
-    (lat > -26.960 && lat < -26.880);
-
-  const isItapema =
-    ctx.includes("itapema") ||
-    ctx.includes("meia praia") ||
-    ctx.includes("morretes") ||
-    lat < -27.05;
-
-  const namesByCategory: Record<string, string[]> = {
-    escola: isItajai
-      ? ["Univali Campus Itajaí", "Escola Internacional de Itajaí", "Colégio Salesiano Itajaí", "Colégio Fayal Itajaí"]
-      : isItapema
-      ? ["Colégio Única Meia Praia", "Escola Básica Educar", "Colégio Mário Alves"]
-      : ["Colégio Visão Balneário", "Colégio Energia BC", "Escola Municipal Ivone Teresinha", "Universidade Univali BC"],
-
-    mercado: isItajai
-      ? ["Supermercado Angeloni Itajaí", "Bistek Supermercados Itajaí", "Deville Supermercado Brava", "Koch Supermercados Itajaí"]
-      : isItapema
-      ? ["Koch Supermercados Meia Praia", "Super Koch Express 24h", "Meschke Supermercado Itapema"]
-      : ["Supermercado Angeloni (Av. do Estado)", "Meschke Supermercado (Av. Brasil)", "Koch Supermercados (Barra Sul)", "Bistek Supermercados BC"],
-
-    farmacia: isItajai
-      ? ["Droga Raia Itajaí", "Panvel Farmácias (Brava Mall)", "Farmácia Catarinense (Av. Marcos Konder)", "Drogaria São João Itajaí"]
-      : isItapema
-      ? ["Farmácia São João Meia Praia", "Panvel Farmácias Itapema", "Droga Raia Meia Praia"]
-      : ["Droga Raia (Av. Atlântica)", "Panvel Farmácias (Barra Sul)", "Farmácia Catarinense (Av. Brasil)", "Drogaria São João (Centro BC)"],
-
-    academia: isItajai
-      ? ["Ironberg Gym Brava", "Wave Fitness Itajaí", "Academia Studio VIP", "CrossFit Itajaí"]
-      : isItapema
-      ? ["Smart Fit Meia Praia", "Academia Top Fitness Itapema", "Platinum Gym Meia Praia"]
-      : ["Smart Fit (Barra Sul BC)", "Academia Wave (Av. Atlântica)", "BodyTech Balneário Camboriú", "Alliance Jiu-Jitsu & Gym"],
-  };
-
-  const results: any[] = [];
-
-  categoryList.forEach((cat, catIdx) => {
-    const nameList = namesByCategory[cat] || ["Estabelecimento Comercial"];
-    nameList.forEach((name, nameIdx) => {
-      const angle = (catIdx * 1.5) + (nameIdx * 1.2) + 0.5;
-      const distanceMeters = 180 + (nameIdx * 220) + (catIdx * 60);
-
-      const offsetLat = (distanceMeters * Math.sin(angle)) / 111111;
-      const offsetLng = (distanceMeters * Math.cos(angle)) / (111111 * Math.cos((lat * Math.PI) / 180));
-
-      const placeLat = lat + offsetLat;
-      const placeLng = lng + offsetLng;
-
-      results.push({
-        name,
-        type: cat,
-        distance: Math.round(distanceMeters),
-        coordinates: {
-          latitude: placeLat,
-          longitude: placeLng,
-        },
-      });
-    });
-  });
-
-  return results.sort((a, b) => a.distance - b.distance);
-}
-
-const getCoordinates = (property: Property): { lat: number; lng: number } => {
+const getCoordinates = (property: Property): { lat: number; lng: number } | null => {
   if (
     property.latitude !== undefined &&
     property.latitude !== null &&
@@ -177,38 +104,16 @@ const getCoordinates = (property: Property): { lat: number; lng: number } => {
       return { lat, lng };
     }
   }
-
-  const name = (property.name || "").toLowerCase();
-  const neigh = (property.neighborhood || "").toLowerCase();
-  const loc = (property.location || "").toLowerCase();
-
-  if (name.includes("yachthouse")) return { lat: -27.0068, lng: -48.5915 };
-  if (name.includes("iconic")) return { lat: -26.9880, lng: -48.6250 };
-  if (name.includes("one tower")) return { lat: -27.0040, lng: -48.5950 };
-  if (name.includes("praia brava") || neigh.includes("praia brava")) return { lat: -26.9600, lng: -48.6200 };
-  if (name.includes("meia praia") || neigh.includes("meia praia")) return { lat: -27.1350, lng: -48.6050 };
-
-  if (neigh.includes("barra sul")) return { lat: -27.0055, lng: -48.5925 };
-  if (neigh.includes("pioneiros") || neigh.includes("barra norte")) return { lat: -26.9740, lng: -48.6350 };
-  if (neigh.includes("atlântica") || neigh.includes("atlantica")) return { lat: -26.9880, lng: -48.6250 };
-  if (neigh.includes("centro") && loc.includes("balneário")) return { lat: -26.9910, lng: -48.6270 };
-  if (neigh.includes("nações") || neigh.includes("nacoes")) return { lat: -26.9800, lng: -48.6380 };
-  if (neigh.includes("canto da praia")) return { lat: -27.0780, lng: -48.6000 };
-  if (neigh.includes("morretes")) return { lat: -27.1420, lng: -48.6180 };
-  if (neigh.includes("cabeçudas") || neigh.includes("cabecudas")) return { lat: -26.9200, lng: -48.6360 };
-  if (neigh.includes("fazenda")) return { lat: -26.9150, lng: -48.6550 };
-
-  if (loc.includes("itapema")) return { lat: -27.0900, lng: -48.6100 };
-  if (loc.includes("itajai") || loc.includes("itajaí")) return { lat: -26.9120, lng: -48.6580 }; // Itajaí Urbano / Fazenda
-  return { lat: -26.9930, lng: -48.6300 }; // Balneário Camboriú por padrão
+  return null;
 };
+
 
 export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetailModalProps) {
   const [leadOpen, setLeadOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(["escola", "mercado", "farmacia", "academia"]);
   const [places, setPlaces] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [coords, setCoords] = useState<{ lat: number; lng: number }>(() => (property ? getCoordinates(property) : { lat: 0, lng: 0 }));
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(() => (property ? getCoordinates(property) : null));
 
   const locationCtx = property ? `${property.location} ${property.neighborhood}` : "";
 
@@ -275,9 +180,9 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
   }, [property?.code]);
 
   useEffect(() => {
-    if (!property || coords.lat === 0) return;
-    setPlaces(getRealSCPlaces(coords.lat, coords.lng, selectedCategories, locationCtx));
-  }, [coords.lat, coords.lng, property?.code]);
+    // Reset places whenever the property changes; only real API results should populate.
+    setPlaces([]);
+  }, [property?.code]);
 
   if (!property) return null;
 
@@ -285,11 +190,12 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
     `Olá! Tenho interesse no imóvel "${property.name}" (Código: ${property.code}).`,
   )}`;
 
-  const lat = coords.lat;
-  const lng = coords.lng;
+  const lat = coords?.lat ?? 0;
+  const lng = coords?.lng ?? 0;
+  const hasCoords = coords !== null;
 
   const fetchNearbyPlaces = async () => {
-    if (selectedCategories.length === 0) return;
+    if (selectedCategories.length === 0 || !hasCoords) return;
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("nearby-places", {
@@ -306,18 +212,14 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
       }
 
       const overpassPlaces = await fetchOverpassPlaces(lat, lng, selectedCategories);
-      if (overpassPlaces.length > 0) {
-        setPlaces(overpassPlaces);
-        return;
-      }
-
-      setPlaces(getRealSCPlaces(lat, lng, selectedCategories, locationCtx));
+      setPlaces(overpassPlaces);
     } catch {
-      setPlaces(getRealSCPlaces(lat, lng, selectedCategories, locationCtx));
+      setPlaces([]);
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleToggleCategory = (id: string) => {
     setSelectedCategories((prev) =>
@@ -357,8 +259,9 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                   <Spec iconType="parking" label="Vagas" value={String(property.parking)} />
                 </div>
 
-                {/* Map and Nearby Places Section */}
+                {hasCoords && (
                 <div className="mt-6 pt-5 border-t border-cream-foundation/10 space-y-4">
+
                   <h3 className="font-display text-lg text-gold-champagne">
                     Localização e Comodidades
                   </h3>
@@ -452,6 +355,8 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                     </div>
                   </div>
                 </div>
+                )}
+
               </div>
 
               {/* CTA WhatsApp */}
