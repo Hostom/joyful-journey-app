@@ -65,21 +65,7 @@ export const listProperties = createServerFn({ method: "GET" }).handler(async ()
       auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     });
 
-    // 1. Tenta buscar da Edge Function "fetch-properties"
-    try {
-      const { data: edgeData, error: edgeError } = await supabasePublic.functions.invoke("fetch-properties");
-      if (!edgeError && Array.isArray(edgeData)) {
-        console.log("[listProperties] Imóveis obtidos com sucesso via Edge Function.");
-        return edgeData.map((r) => rowToProperty(r as Record<string, unknown>));
-      }
-      if (edgeError) {
-        console.warn("[listProperties] Chamada da Edge Function retornou erro, usando fallback:", edgeError);
-      }
-    } catch (e) {
-      console.warn("[listProperties] Falha ao invocar Edge Function, usando fallback do banco:", e);
-    }
-
-    // 2. Fallback para o Banco de Dados
+    // Fonte de verdade: banco de dados (populado pelo webhook do CRM em /api/public/properties/sync).
     const { data, error } = await supabasePublic
       .from("properties")
       .select("*")
@@ -91,13 +77,11 @@ export const listProperties = createServerFn({ method: "GET" }).handler(async ()
     }
 
     const dbProps = (data ?? []).map((r) => rowToProperty(r as Record<string, unknown>));
-    const dbByCode = new Map(dbProps.map((p) => [p.code, p]));
-
-    const merged: Property[] = [
-      ...dbProps,
-      ...STATIC_PROPERTIES.filter((p) => !dbByCode.has(p.code)),
-    ];
-    return merged;
+    if (dbProps.length === 0) {
+      // Banco vazio: mantém os mocks estáticos para não quebrar a vitrine.
+      return STATIC_PROPERTIES;
+    }
+    return dbProps;
   } catch (err) {
     console.error("[listProperties] exceção geral:", err);
     return STATIC_PROPERTIES;
