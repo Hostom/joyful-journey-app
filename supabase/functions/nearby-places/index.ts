@@ -46,6 +46,16 @@ function emptyResponse() {
   });
 }
 
+// Cache in-memory por instância (TTL 24h, max 200 entradas)
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const CACHE_MAX = 200;
+const cache = new Map<string, { at: number; data: unknown }>();
+
+function cacheKey(lat: number, lng: number, cats: string[]): string {
+  const r = (n: number) => Math.round(n * 10000) / 10000;
+  return `${r(lat)}:${r(lng)}:${[...cats].sort().join(",")}`;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { status: 200, headers: corsHeaders });
@@ -67,9 +77,18 @@ serve(async (req) => {
       return emptyResponse();
     }
 
-    const googleTypes = mapCategoriesToGoogleTypes(categories);
     const centerLat = Number(latitude);
     const centerLng = Number(longitude);
+    const key = cacheKey(centerLat, centerLng, categories);
+    const hit = cache.get(key);
+    if (hit && Date.now() - hit.at < CACHE_TTL_MS) {
+      return new Response(JSON.stringify(hit.data), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "HIT" },
+      });
+    }
+
+    const googleTypes = mapCategoriesToGoogleTypes(categories);
 
     const url = "https://places.googleapis.com/v1/places:searchNearby";
     const body = {
@@ -134,9 +153,15 @@ serve(async (req) => {
 
     cleanPlaces.sort((a: any, b: any) => a.distance - b.distance);
 
+    if (cache.size >= CACHE_MAX) {
+      const oldestKey = cache.keys().next().value;
+      if (oldestKey) cache.delete(oldestKey);
+    }
+    cache.set(key, { at: Date.now(), data: cleanPlaces });
+
     return new Response(JSON.stringify(cleanPlaces), {
       status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "MISS" },
     });
   } catch (error) {
     console.error("Exceção na Edge Function nearby-places:", error);
