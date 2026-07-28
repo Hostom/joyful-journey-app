@@ -180,9 +180,9 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
   }, [property?.code]);
 
   useEffect(() => {
-    if (!property || coords.lat === 0) return;
-    setPlaces(getRealSCPlaces(coords.lat, coords.lng, selectedCategories, locationCtx));
-  }, [coords.lat, coords.lng, property?.code]);
+    // Reset places whenever the property changes; only real API results should populate.
+    setPlaces([]);
+  }, [property?.code]);
 
   if (!property) return null;
 
@@ -190,11 +190,12 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
     `Olá! Tenho interesse no imóvel "${property.name}" (Código: ${property.code}).`,
   )}`;
 
-  const lat = coords.lat;
-  const lng = coords.lng;
+  const lat = coords?.lat ?? 0;
+  const lng = coords?.lng ?? 0;
+  const hasCoords = coords !== null;
 
   const fetchNearbyPlaces = async () => {
-    if (selectedCategories.length === 0) return;
+    if (selectedCategories.length === 0 || !hasCoords) return;
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("nearby-places", {
@@ -211,18 +212,14 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
       }
 
       const overpassPlaces = await fetchOverpassPlaces(lat, lng, selectedCategories);
-      if (overpassPlaces.length > 0) {
-        setPlaces(overpassPlaces);
-        return;
-      }
-
-      setPlaces(getRealSCPlaces(lat, lng, selectedCategories, locationCtx));
+      setPlaces(overpassPlaces);
     } catch {
-      setPlaces(getRealSCPlaces(lat, lng, selectedCategories, locationCtx));
+      setPlaces([]);
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleToggleCategory = (id: string) => {
     setSelectedCategories((prev) =>
