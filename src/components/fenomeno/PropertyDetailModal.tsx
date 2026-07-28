@@ -62,6 +62,10 @@ async function fetchOverpassPlaces(lat: number, lng: number, categoryList: strin
   }
 }
 
+// Deduplica requisições concorrentes idênticas dentro da mesma aba
+const inflightNearby = new Map<string, Promise<any[]>>();
+const inflightGeocode = new Map<string, Promise<{ lat: number; lng: number } | null>>();
+
 
 const getCoordinates = (property: Property): { lat: number; lng: number } | null => {
   if (
