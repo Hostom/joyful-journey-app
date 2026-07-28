@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ImoveisIndexRouteImport } from './routes/imoveis.index'
 import { Route as ImoveisCodeRouteImport } from './routes/imoveis.$code'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
+import { Route as ApiPublicNearbyOverpassRouteImport } from './routes/api/public/nearby-overpass'
 import { Route as ApiPublicPropertiesSyncRouteImport } from './routes/api/public/properties/sync'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -41,6 +42,11 @@ const AdminCrmRoute = AdminCrmRouteImport.update({
   path: '/admin/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicNearbyOverpassRoute = ApiPublicNearbyOverpassRouteImport.update({
+  id: '/api/public/nearby-overpass',
+  path: '/api/public/nearby-overpass',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPropertiesSyncRoute = ApiPublicPropertiesSyncRouteImport.update({
   id: '/api/public/properties/sync',
   path: '/api/public/properties/sync',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis/': typeof ImoveisIndexRoute
+  '/api/public/nearby-overpass': typeof ApiPublicNearbyOverpassRoute
   '/api/public/properties/sync': typeof ApiPublicPropertiesSyncRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis': typeof ImoveisIndexRoute
+  '/api/public/nearby-overpass': typeof ApiPublicNearbyOverpassRoute
   '/api/public/properties/sync': typeof ApiPublicPropertiesSyncRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/admin/crm': typeof AdminCrmRoute
   '/imoveis/$code': typeof ImoveisCodeRoute
   '/imoveis/': typeof ImoveisIndexRoute
+  '/api/public/nearby-overpass': typeof ApiPublicNearbyOverpassRoute
   '/api/public/properties/sync': typeof ApiPublicPropertiesSyncRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/imoveis/$code'
     | '/imoveis/'
+    | '/api/public/nearby-overpass'
     | '/api/public/properties/sync'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/imoveis/$code'
     | '/imoveis'
+    | '/api/public/nearby-overpass'
     | '/api/public/properties/sync'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/imoveis/$code'
     | '/imoveis/'
+    | '/api/public/nearby-overpass'
     | '/api/public/properties/sync'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   AdminCrmRoute: typeof AdminCrmRoute
   ImoveisCodeRoute: typeof ImoveisCodeRoute
   ImoveisIndexRoute: typeof ImoveisIndexRoute
+  ApiPublicNearbyOverpassRoute: typeof ApiPublicNearbyOverpassRoute
   ApiPublicPropertiesSyncRoute: typeof ApiPublicPropertiesSyncRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCrmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/nearby-overpass': {
+      id: '/api/public/nearby-overpass'
+      path: '/api/public/nearby-overpass'
+      fullPath: '/api/public/nearby-overpass'
+      preLoaderRoute: typeof ApiPublicNearbyOverpassRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/properties/sync': {
       id: '/api/public/properties/sync'
       path: '/api/public/properties/sync'
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCrmRoute: AdminCrmRoute,
   ImoveisCodeRoute: ImoveisCodeRoute,
   ImoveisIndexRoute: ImoveisIndexRoute,
+  ApiPublicNearbyOverpassRoute: ApiPublicNearbyOverpassRoute,
   ApiPublicPropertiesSyncRoute: ApiPublicPropertiesSyncRoute,
 }
 export const routeTree = rootRouteImport

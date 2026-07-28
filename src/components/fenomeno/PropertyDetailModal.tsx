@@ -45,51 +45,23 @@ function haversineDist(lat1: number, lon1: number, lat2: number, lon2: number): 
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Busca comércios reais na API pública do OpenStreetMap Overpass
+// Chama nosso proxy backend (evita CORS/rate-limit no browser)
 async function fetchOverpassPlaces(lat: number, lng: number, categoryList: string[]) {
-  const query = `
-    [out:json][timeout:6];
-    (
-      node["amenity"="school"](around:1600,${lat},${lng});
-      node["shop"="supermarket"](around:1600,${lat},${lng});
-      node["shop"="convenience"](around:1600,${lat},${lng});
-      node["amenity"="pharmacy"](around:1600,${lat},${lng});
-      node["leisure"="fitness_centre"](around:1600,${lat},${lng});
-      node["sport"="fitness"](around:1600,${lat},${lng});
-    );
-    out body 25;
-  `;
   try {
-    const res = await fetch("https://overpass-api.de/api/interpreter", {
+    const res = await fetch("/api/public/nearby-overpass", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: "data=" + encodeURIComponent(query),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ latitude: lat, longitude: lng, categories: categoryList }),
     });
     if (!res.ok) return [];
     const data = await res.json();
-    if (!Array.isArray(data.elements)) return [];
-
-    return data.elements
-      .map((el: any) => {
-        const pLat = el.lat;
-        const pLng = el.lon;
-        const name = el.tags?.name;
-        if (!name || !pLat || !pLng) return null;
-        const dist = Math.round(haversineDist(lat, lng, pLat, pLng));
-        const tags = el.tags || {};
-        let type = "outros";
-        if (tags.amenity === "school") type = "escola";
-        else if (tags.shop === "supermarket" || tags.shop === "convenience") type = "mercado";
-        else if (tags.amenity === "pharmacy") type = "farmacia";
-        else if (tags.leisure === "fitness_centre" || tags.sport === "fitness") type = "academia";
-        
-        return { name, type, distance: dist, coordinates: { latitude: pLat, longitude: pLng } };
-      })
-      .filter((p: any) => p && categoryList.includes(p.type));
+    if (!Array.isArray(data)) return [];
+    return data.filter((p: any) => p && categoryList.includes(p.type));
   } catch {
     return [];
   }
 }
+
 
 const getCoordinates = (property: Property): { lat: number; lng: number } | null => {
   if (
