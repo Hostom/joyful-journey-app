@@ -124,39 +124,48 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
     const queryStreet = [property.name, property.neighborhood, property.location, "Santa Catarina", "Brasil"]
       .filter(Boolean)
       .join(", ");
+    const queryNeigh = [property.neighborhood, property.location, "Santa Catarina", "Brasil"]
+      .filter(Boolean)
+      .join(", ");
 
-    fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryStreet)}&format=json&limit=1&countrycodes=br`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (cancelled) return;
-        if (Array.isArray(data) && data.length > 0 && data[0].lat && data[0].lon) {
-          const lat = parseFloat(data[0].lat);
-          const lng = parseFloat(data[0].lon);
-          if (!isNaN(lat) && !isNaN(lng) && lat >= -27.20 && lat <= -26.88 && lng >= -48.67 && lng <= -48.55) {
-            setCoords({ lat, lng });
-            return;
-          }
-        }
+    const inRange = (lat: number, lng: number) =>
+      !isNaN(lat) && !isNaN(lng) && lat >= -27.20 && lat <= -26.88 && lng >= -48.67 && lng <= -48.55;
 
-        const queryNeigh = [property.neighborhood, property.location, "Santa Catarina", "Brasil"]
-          .filter(Boolean)
-          .join(", ");
-
-        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryNeigh)}&format=json&limit=1&countrycodes=br`)
-          .then((res) => res.json())
-          .then((data2) => {
-            if (cancelled) return;
-            if (Array.isArray(data2) && data2.length > 0 && data2[0].lat && data2[0].lon) {
-              const lat = parseFloat(data2[0].lat);
-              const lng = parseFloat(data2[0].lon);
-              if (!isNaN(lat) && !isNaN(lng) && lat >= -27.20 && lat <= -26.88 && lng >= -48.67 && lng <= -48.55) {
-                setCoords({ lat, lng });
+    const geocodeOnce = async (q: string): Promise<{ lat: number; lng: number } | null> => {
+      const key = geocodeCacheKey(q);
+      const cached = cacheGet<{ lat: number; lng: number } | null>(key);
+      if (cached !== null) return cached;
+      let promise = inflightGeocode.get(key);
+      if (!promise) {
+        promise = (async () => {
+          try {
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=br`,
+            );
+            const data = await res.json();
+            if (Array.isArray(data) && data.length > 0 && data[0].lat && data[0].lon) {
+              const lat = parseFloat(data[0].lat);
+              const lng = parseFloat(data[0].lon);
+              if (inRange(lat, lng)) {
+                const value = { lat, lng };
+                cacheSet(key, value, GEOCODE_TTL_MS);
+                return value;
               }
             }
-          })
-          .catch(() => {});
-      })
-      .catch((err) => console.warn("Geocoding Nominatim:", err));
+          } catch (err) {
+            console.warn("Geocoding Nominatim:", err);
+          }
+          return null;
+        })().finally(() => inflightGeocode.delete(key));
+        inflightGeocode.set(key, promise);
+      }
+      return promise;
+    };
+
+    (async () => {
+      const found = (await geocodeOnce(queryStreet)) ?? (await geocodeOnce(queryNeigh));
+      if (!cancelled && found) setCoords(found);
+    })();
 
     return () => {
       cancelled = true;
@@ -180,23 +189,30 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
 
   const fetchNearbyPlaces = async () => {
     if (selectedCategories.length === 0 || !hasCoords) return;
+    const key = nearbyCacheKey(lat, lng, selectedCategories);
+
+    const cached = cacheGet<any[]>(key);
+    if (cached) {
+      setPlaces(cached);
+      return;
+    }
+
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("nearby-places", {
-        body: {
-          latitude: lat,
-          longitude: lng,
-          categories: selectedCategories,
-        },
-      });
-
-      if (!error && Array.isArray(data) && data.length > 0) {
-        setPlaces(data);
-        return;
+      let promise = inflightNearby.get(key);
+      if (!promise) {
+        promise = (async (): Promise<any[]> => {
+          const { data, error } = await supabase.functions.invoke("nearby-places", {
+            body: { latitude: lat, longitude: lng, categories: selectedCategories },
+          });
+          if (!error && Array.isArray(data) && data.length > 0) return data;
+          return await fetchOverpassPlaces(lat, lng, selectedCategories);
+        })().finally(() => inflightNearby.delete(key));
+        inflightNearby.set(key, promise);
       }
-
-      const overpassPlaces = await fetchOverpassPlaces(lat, lng, selectedCategories);
-      setPlaces(overpassPlaces);
+      const result = await promise;
+      cacheSet(key, result, NEARBY_TTL_MS);
+      setPlaces(result);
     } catch {
       setPlaces([]);
     } finally {
