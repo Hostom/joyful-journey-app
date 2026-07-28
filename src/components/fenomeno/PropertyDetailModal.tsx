@@ -355,6 +355,8 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                     </div>
                   </div>
                 </div>
+                )}
+
               </div>
 
               {/* CTA WhatsApp */}
