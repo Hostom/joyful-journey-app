@@ -10,6 +10,7 @@ import { BackToTop } from "@/components/fenomeno/BackToTop";
 import { Footer } from "@/components/fenomeno/Footer";
 import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
 import { Building2, Handshake, TrendingUp, Headphones, ArrowRight, MessageSquare, Mail } from "lucide-react";
+import balnearioAsset from "@/assets/balneario.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(propertiesQueryOptions),
 });
 
-const HERO_IMG = "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=2000&q=80";
+const HERO_IMG = balnearioAsset.url;
 
 const SERVICES = [
   {
