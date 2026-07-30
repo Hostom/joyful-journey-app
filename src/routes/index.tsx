@@ -38,7 +38,7 @@ export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(propertiesQueryOptions),
 });
 
-const HERO_IMG = "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=2000&q=80";
+const HERO_IMG = balnearioAsset.url;
 
 const SERVICES = [
   {
