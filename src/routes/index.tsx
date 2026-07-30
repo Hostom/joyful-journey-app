@@ -10,6 +10,7 @@ import { BackToTop } from "@/components/fenomeno/BackToTop";
 import { Footer } from "@/components/fenomeno/Footer";
 import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
 import { Building2, Handshake, TrendingUp, Headphones, ArrowRight, MessageSquare, Mail } from "lucide-react";
+import balnearioAsset from "@/assets/balneario.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
