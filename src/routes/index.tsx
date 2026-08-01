@@ -43,24 +43,32 @@ const HERO_IMG = balnearioAsset.url;
 
 const SERVICES = [
   {
+    number: "01",
     Icon: Building2,
     title: "Imóveis Exclusivos",
-    body: "Acesso antecipado a lançamentos de alto padrão e oportunidades fora do mercado convencional.",
+    body: "Acesso privilegiado e antecipado às melhores coberturas, unidades frente mar e oportunidades off-market.",
+    highlight: "Off-Market & Luxo",
   },
   {
+    number: "02",
     Icon: Handshake,
-    title: "Consultoria Imobiliária",
-    body: "Apoio jurídica e comercial especializado para garantir uma compra segura e sem burocracia.",
+    title: "Consultoria Dedicada",
+    body: "Assessoria jurídica e comercial especializada para garantir uma transação ágil, transparente e segura.",
+    highlight: "Segurança Jurídica",
   },
   {
+    number: "03",
     Icon: TrendingUp,
-    title: "Retorno sobre Investimento",
-    body: "Análise detalhada de rentabilidade e projeção de valorização para multiplicar seu patrimônio.",
+    title: "Inteligência de Mercado",
+    body: "Análise profunda de rentabilidade e projeção estratégica de valorização para multiplicar seu patrimônio.",
+    highlight: "Alto Retorno",
   },
   {
+    number: "04",
     Icon: Headphones,
-    title: "Suporte Pós-Venda",
-    body: "Acompanhamento contínuo após o fechamento do negócio para sua total tranquilidade.",
+    title: "Atendimento Concierge",
+    body: "Acompanhamento privativo e pós-venda contínuo para total tranquilidade em todas as etapas.",
+    highlight: "Experiência VIP",
   },
 ];
 
@@ -241,12 +249,12 @@ function About() {
           </p>
           <div className="grid grid-cols-3 gap-6 border-t border-gold-champagne/20 pt-8">
             {[
-              ["+R$ 2,8 bi", "VGV Negociado"],
-              ["15 anos", "Experiência"],
-              ["320+", "Clientes Satisfeitos"],
+              ["Curadoria", "Imóveis Selecionados"],
+              ["15+ Anos", "Expertise de Mercado"],
+              ["100%", "Discrição & Sigilo"],
             ].map(([n, l]) => (
               <div key={l}>
-                <div className="font-display text-3xl text-gold-champagne">{n}</div>
+                <div className="font-display text-2xl lg:text-3xl text-gold-champagne">{n}</div>
                 <div className="text-[11px] uppercase tracking-[0.2em] text-cream-foundation/60 mt-2">{l}</div>
               </div>
             ))}
@@ -259,25 +267,57 @@ function About() {
 
 function Services() {
   return (
-    <section id="services" className="py-32 px-6 lg:px-12 max-w-7xl mx-auto">
-      <div className="reveal-up text-center max-w-2xl mx-auto mb-20">
-        <SectionLabel>Nossos Serviços</SectionLabel>
-        <h2 className="font-display text-5xl md:text-6xl leading-tight">
-          Consultoria completa para <em className="italic text-gold-classic">comprar e investir</em>.
+    <section id="services" className="relative py-32 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold-champagne/5 blur-[140px] rounded-full pointer-events-none" />
+
+      <div className="relative z-10 reveal-up text-center max-w-3xl mx-auto mb-20">
+        <SectionLabel>Por Que Escolher a Fenômeno</SectionLabel>
+        <h2 className="font-display text-4xl md:text-6xl leading-tight text-forest-deep mb-6">
+          Excelência e inteligência imobiliária <em className="italic text-gold-classic">em cada detalhe</em>.
         </h2>
+        <p className="text-forest-mid/80 text-base md:text-lg leading-relaxed">
+          Oferecemos uma consultoria imobiliária privativa e discreta, desenhada sob medida para proteger e multiplicar seu patrimônio no mercado de alto padrão.
+        </p>
       </div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-forest-deep/10">
+
+      <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         {SERVICES.map((s, i) => {
           const IconComp = s.Icon;
           return (
             <div
               key={s.title}
-              className="reveal-up bg-cream-foundation p-10 hover:bg-cream-stone transition-colors"
+              className="reveal-up group relative bg-white/80 backdrop-blur-md border border-forest-deep/10 hover:border-gold-classic/40 p-8 lg:p-9 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col justify-between"
               style={{ transitionDelay: `${i * 100}ms` }}
             >
-              <IconComp className="text-gold-classic mb-8 w-9 h-9" />
-              <h3 className="font-display text-2xl mb-4">{s.title}</h3>
-              <p className="text-sm text-forest-mid/70 leading-relaxed">{s.body}</p>
+              <div className="absolute top-0 left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-gold-classic/0 to-transparent group-hover:via-gold-classic/60 transition-all duration-500" />
+
+              <div>
+                <div className="flex items-center justify-between mb-8">
+                  <div className="w-14 h-14 rounded-xl bg-forest-deep/5 group-hover:bg-gold-classic/10 flex items-center justify-center transition-colors duration-300">
+                    <IconComp className="text-gold-classic group-hover:scale-110 transition-transform duration-300 w-7 h-7" />
+                  </div>
+                  <span className="font-display text-3xl text-forest-deep/20 group-hover:text-gold-classic/40 transition-colors duration-300 font-light">
+                    {s.number}
+                  </span>
+                </div>
+
+                <span className="inline-block text-[10px] uppercase tracking-[0.2em] font-semibold text-gold-classic bg-gold-champagne/15 px-3 py-1 rounded-full mb-4">
+                  {s.highlight}
+                </span>
+
+                <h3 className="font-display text-xl lg:text-2xl text-forest-deep mb-4 group-hover:text-gold-classic transition-colors">
+                  {s.title}
+                </h3>
+
+                <p className="text-xs md:text-sm text-forest-mid/75 leading-relaxed">
+                  {s.body}
+                </p>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-forest-deep/5 flex items-center justify-between text-xs font-medium text-forest-deep/60 group-hover:text-gold-classic transition-colors">
+                <span>Saiba mais</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </div>
             </div>
           );
         })}
