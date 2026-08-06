@@ -251,7 +251,7 @@ function About() {
             {[
               ["Curadoria", "Imóveis Selecionados"],
               ["15+ Anos", "Expertise de Mercado"],
-              ["100%", "Discrição & Sigilo"],
+              ["100%", "Atendimento Personalizado"],
             ].map(([n, l]) => (
               <div key={l}>
                 <div className="font-display text-2xl lg:text-3xl text-gold-champagne">{n}</div>
