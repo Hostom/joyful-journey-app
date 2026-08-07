@@ -254,9 +254,9 @@ function ListingsPage() {
                   <p className="text-[10px] uppercase tracking-[0.3em] text-gold-champagne mb-3">
                     Oportunidades Exclusivas
                   </p>
-                  <h3 className="font-display text-2xl md:text-3xl mb-4 leading-tight">
+                  <h2 className="font-display text-2xl md:text-3xl mb-4 leading-tight">
                     Lançamentos e Coberturas de Alto Padrão
-                  </h3>
+                  </h2>
                   <p className="text-cream-foundation/75 text-sm max-w-xl leading-relaxed font-sans">
                     Invista no mercado imobiliário que mais valoriza no Brasil. Compre seu apartamento frente mar,
                     penthouse ou cobertura em Balneário Camboriú com assessoria jurídica e comercial completa. Fale com
