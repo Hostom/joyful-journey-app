@@ -72,6 +72,29 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+const WEBSITE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Fenômeno Imóveis",
+  url: "https://fenomenoimoveis.lovable.app",
+  inLanguage: "pt-BR",
+  publisher: {
+    "@type": "RealEstateAgent",
+    name: "Fenômeno Imóveis",
+    url: "https://fenomenoimoveis.lovable.app",
+    logo: "https://fenomenoimoveis.lovable.app/logo.svg",
+    telephone: "+55 47 9983-7494",
+    email: "adm.fenomenoimoveis@gmail.com",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Av. Atlântica, 3230",
+      addressLocality: "Balneário Camboriú",
+      addressRegion: "SC",
+      addressCountry: "BR",
+    },
+  },
+};
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
@@ -95,6 +118,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(WEBSITE_SCHEMA),
+      },
     ],
   }),
   shellComponent: RootShell,
