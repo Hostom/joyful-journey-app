@@ -22,6 +22,27 @@ export const Route = createFileRoute("/imoveis/$code")({
   head: ({ loaderData }) => {
     const p = loaderData?.property;
     if (!p) return { meta: [{ title: "Imóvel | Fenômeno Imóveis" }] };
+    const canonicalUrl = `https://fenomenoimoveis.lovable.app/imoveis/${p.code}`;
+    const productSchema = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: p.name,
+      image: p.images,
+      description: `${p.type} em ${p.neighborhood}, ${p.location}. ${p.area} m², ${p.bedrooms} suítes. ${p.priceLabel}.`,
+      brand: {
+        "@type": "Brand",
+        name: "Fenômeno Imóveis",
+      },
+      offers: p.price && p.price > 0
+        ? {
+            "@type": "Offer",
+            priceCurrency: "BRL",
+            price: String(p.price),
+            availability: "https://schema.org/InStock",
+            url: canonicalUrl,
+          }
+        : undefined,
+    };
     return {
       meta: [
         { title: `${p.name} | Fenômeno Imóveis` },
@@ -29,16 +50,20 @@ export const Route = createFileRoute("/imoveis/$code")({
           name: "description",
           content: `${p.name} em ${p.neighborhood}, ${p.location}. ${p.area} m², ${p.bedrooms} suítes. ${p.priceLabel}.`,
         },
-        {
-          property: "og:title",
-          content: `${p.name} | Fenômeno Imóveis`,
-        },
-        {
-          property: "og:description",
-          content: `${p.type} em ${p.location} — ${p.area} m², ${p.priceLabel}.`,
-        },
+        { property: "og:title", content: `${p.name} | Fenômeno Imóveis` },
+        { property: "og:description", content: `${p.type} em ${p.location} — ${p.area} m², ${p.priceLabel}.` },
         { property: "og:image", content: p.images[0] },
-        { property: "twitter:image", content: p.images[0] },
+        { property: "og:url", content: canonicalUrl },
+        { property: "og:site_name", content: "Fenômeno Imóveis" },
+        { property: "og:type", content: "product" },
+        { name: "twitter:image", content: p.images[0] },
+      ],
+      links: [{ rel: "canonical", href: canonicalUrl }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(productSchema),
+        },
       ],
     };
   },
