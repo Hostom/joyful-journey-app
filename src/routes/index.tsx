@@ -12,28 +12,60 @@ import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
 import { Building2, Handshake, TrendingUp, Headphones, ArrowRight, MessageSquare, Mail } from "lucide-react";
 import balnearioAsset from "@/assets/balneario.jpg.asset.json";
 
+const REAL_ESTATE_AGENT_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  name: "Fenômeno Imóveis",
+  url: "https://fenomenoimoveis.lovable.app",
+  logo: "https://fenomenoimoveis.lovable.app/logo.svg",
+  image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1600&q=80",
+  telephone: "+55 47 9983-7494",
+  email: "adm.fenomenoimoveis@gmail.com",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Av. Atlântica, 3230",
+    addressLocality: "Balneário Camboriú",
+    addressRegion: "SC",
+    addressCountry: "BR",
+  },
+  areaServed: {
+    "@type": "City",
+    name: "Balneário Camboriú",
+  },
+  sameAs: [
+    "https://www.fenomenoimoveis.com.br",
+  ],
+};
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Fenômeno Imóveis | Apartamentos de Luxo em Balneário Camboriú" },
+      { title: "Fenômeno Imóveis | Luxo em Balneário Camboriú" },
       {
         name: "description",
         content:
           "Imóveis de alto padrão e apartamentos de luxo em Balneário Camboriú. Encontre coberturas exclusivas, imóveis frente mar e oportunidades de investimento.",
       },
-      { property: "og:title", content: "Fenômeno Imóveis | Apartamentos de Luxo em Balneário Camboriú" },
+      { property: "og:title", content: "Fenômeno Imóveis | Luxo em Balneário Camboriú" },
       {
         property: "og:description",
         content:
           "Imóveis de alto padrão e apartamentos de luxo em Balneário Camboriú. Encontre coberturas exclusivas e imóveis frente mar.",
       },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: "https://fenomenoimoveis.lovable.app/" },
+      { property: "og:site_name", content: "Fenômeno Imóveis" },
       {
         property: "og:image",
         content: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1600&q=80",
       },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: "https://fenomenoimoveis.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(REAL_ESTATE_AGENT_SCHEMA),
+      },
+    ],
   }),
   component: Index,
   loader: ({ context }) => context.queryClient.ensureQueryData(propertiesQueryOptions),
