@@ -111,6 +111,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "Imóveis de altíssimo padrão em Balneário Camboriú. Coberturas, apartamentos e residências exclusivas no destino mais luxuoso do Brasil." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/CtogEPl6bAMjmkaJ1MeXQkQL9dz1/social-images/social-1782265535304-Captura_de_tela_2026-06-23_224523.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/CtogEPl6bAMjmkaJ1MeXQkQL9dz1/social-images/social-1782265535304-Captura_de_tela_2026-06-23_224523.webp" },
+      { name: "google-site-verification", content: "DQvFQq2tIcVsN00zCkVf53AQUj1AdduQg4yL9ehEL7Y" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
