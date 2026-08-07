@@ -397,11 +397,9 @@ function Contact() {
   return (
     <section id="contact" className="relative py-32 bg-forest-deep text-cream-foundation overflow-hidden">
       <div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-20 bg-contain bg-center bg-no-repeat"
         style={{
           backgroundImage: `url(${lojaFenomenoAsset.url})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
         }}
       />
       <div className="relative max-w-4xl mx-auto px-6 lg:px-12 text-center">
