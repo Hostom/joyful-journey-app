@@ -399,8 +399,7 @@ function Contact() {
       <div
         className="absolute inset-0 opacity-20"
         style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1542361345-89e58247f2d5?auto=format&fit=crop&w=2000&q=80)",
+          backgroundImage: `url(${lojaFenomenoAsset.url})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
