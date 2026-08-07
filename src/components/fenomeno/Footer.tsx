@@ -50,27 +50,17 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-4">Redes</div>
-          <div className="flex gap-3 mb-8">
-            {[
-              { icon: "public", label: "Site", href: "#" },
-              { icon: "share", label: "Social", href: "#" },
-              { icon: "mail", label: "Email", href: "mailto:adm.fenomenoimoveis@gmail.com" },
-            ].map((item) => (
-              <a
-                key={item.icon}
-                href={item.href}
-                aria-label={item.label}
-                className="w-10 h-10 border border-gold-champagne/30 flex items-center justify-center text-gold-classic hover:bg-gold-classic hover:text-forest-deep transition-all"
-              >
-                <span className="material-symbols-outlined text-base">{item.icon}</span>
-              </a>
-            ))}
-          </div>
-          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-3">Contato</div>
-          <div className="text-sm space-y-1">
+          <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-4">Contato</div>
+          <div className="text-sm space-y-2">
             <p>+55 (47) 9983-7494</p>
-            <p>adm.fenomenoimovies@gmail.com</p>
+            <p>
+              <a
+                href="mailto:adm.fenomenoimoveis@gmail.com"
+                className="hover:text-gold-champagne transition-colors"
+              >
+                adm.fenomenoimoveis@gmail.com
+              </a>
+            </p>
           </div>
         </div>
       </div>

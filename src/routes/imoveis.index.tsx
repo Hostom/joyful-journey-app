@@ -60,7 +60,11 @@ export const Route = createFileRoute("/imoveis/")({
         property: "og:description",
         content: "Coberturas, penthouses e residências exclusivas no litoral catarinense.",
       },
+      { property: "og:url", content: "https://fenomenoimoveis.lovable.app/imoveis" },
+      { property: "og:site_name", content: "Fenômeno Imóveis" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://fenomenoimoveis.lovable.app/imoveis" }],
   }),
   component: ListingsPage,
 });
