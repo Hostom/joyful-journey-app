@@ -11,6 +11,7 @@ import { Footer } from "@/components/fenomeno/Footer";
 import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
 import { Building2, Handshake, TrendingUp, Headphones, ArrowRight, MessageSquare, Mail } from "lucide-react";
 import balnearioAsset from "@/assets/balneario.jpg.asset.json";
+import lojaFenomenoAsset from "@/assets/loja-fenomeno.jpg.asset.json";
 
 const REAL_ESTATE_AGENT_SCHEMA = {
   "@context": "https://schema.org",
