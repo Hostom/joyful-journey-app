@@ -1,31 +1,36 @@
-## Problema
+# Ajustar nome do site nos resultados do Google
 
-Na seção "Sobre a Fenômeno" (src/routes/index.tsx, linha 254), a terceira estatística está atualmente como:
+O resultado de pesquisa do domínio `fenomenoimoveis.lovable.app` está aparecendo com o rótulo "Lovable" acima do link, em vez de "Fenômeno Imóveis". Isso acontece porque o Google não encontra sinais estruturados suficientes para identificar a marca, e acaba usando o nome do domínio pai (`.lovable.app`) ou dados de cache antigos.
 
-**100%**  
-Discrição & Sigilo
+## O que será feito
 
-O usuário reportou que essa mensagem não tem relação com o ramo imobiliário e precisa ser trocada.
+1. **Adicionar WebSite schema (JSON-LD) na raiz**
+   - Incluir em `src/routes/__root.tsx` um bloco `application/ld+json` do tipo `WebSite`.
+   - Campos: `name: "Fenômeno Imóveis"`, `url: "https://fenomenoimoveis.lovable.app"`, `inLanguage: "pt-BR"`.
+   - Esse é o sinal mais forte para o Google substituir "Lovable" por "Fenômeno Imóveis" no resultado de pesquisa.
 
-## Onde alterar
+2. **Adicionar RealEstateAgent schema na homepage**
+   - Incluir em `src/routes/index.tsx` um bloco `RealEstateAgent` com nome, endereço (Av. Atlântica, 3230), telefone, email, URL e logo.
+   - Reforça a identidade da marca e habilita o painel de "negócio local" no Google.
 
-- `src/routes/index.tsx` — grid de 3 estatísticas abaixo do texto da seção "Sobre".
+3. **Adicionar Product schema na página de imóvel**
+   - Incluir em `src/routes/imoveis.$code.tsx` um bloco `Product`/`Residence` usando dados do loader (nome, descrição, imagens, preço, endereço).
+   - Melhora a apresentação dos imóveis em buscas específicas.
 
-## Alternativas de copy sugeridas
+4. **Corrigir metadados básicos**
+   - Encurtar o título da homepage para no máximo 60 caracteres (atualmente 63).
+   - Garantir `canonical` e `og:url` self-referenciais em `/`, `/imoveis` e `/imoveis/$code`.
+   - Verificar que `og:site_name` permanece como "Fenômeno Imóveis" em todas as rotas.
 
-1. **100%** — Negócios Concretizados
-  *(foco em resultado e eficácia)*
-2. **100%** — Atendimento Personalizado
-  *(foco no relacionamento e exclusividade)*
-3. **100%** — Satisfação dos Clientes
-  *(foco em credibilidade e reputação)*
+5. **Corrigir detalhes de confiança no footer**
+   - Corrigir o typo no email de contato: `adm.fenomenoimovies@gmail.com` → `adm.fenomenoimoveis@gmail.com`.
+   - Substituir os links `#` de redes sociais por placeholders mais apropriados ou remover até que URLs reais sejam fornecidas.
 
-## Implementação
+6. **Conectar Google Search Console (opcional, recomendado)**
+   - Configurar o conector `google_search_console` para permitir verificação, acompanhamento de indexação e envio do sitemap.
+   - Adicionar a meta-tag de verificação no `<head>` da raiz e enviar `https://fenomenoimoveis.lovable.app/sitemap.xml`.
+   - Esta etapa depende de aprovação sua, pois exige autorização do Google.
 
-- Substituir o label da terceira estatística na linha 254 pela opção escolhida.
-- Manter o layout de 3 colunas, tipografia e cores atuais.
-- Nenhuma alteração de estrutura ou comportamento.
+## Resultado esperado
 
-Por favor, escolha uma das alternativas acima ou envie o texto exato que prefere.
-
-2
+Após republicar e o Google reindexar (pode levar dias), o resultado de pesquisa de `fenomenoimoveis.lovable.app` deve passar a exibir "Fenômeno Imóveis" como nome do site, em vez de "Lovable". A indexação de imóveis individuais também ficará mais rica com os schemas adicionados.
