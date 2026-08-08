@@ -411,7 +411,7 @@ function Contact() {
       />
       <div className="relative max-w-4xl mx-auto px-6 lg:px-12 text-center flex flex-col justify-center h-full">
         <div className="reveal-up">
-          <SectionLabel>Fale Conosco</SectionLabel>
+          <SectionLabel className="mb-4 md:mb-6">Fale Conosco</SectionLabel>
           <h2 className="font-display text-3xl md:text-7xl leading-tight mb-2 md:mb-8">
             Encontre sua próxima <em className="italic text-gold-champagne">oportunidade de negócio</em>.
           </h2>
