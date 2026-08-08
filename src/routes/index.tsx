@@ -12,6 +12,7 @@ import { ContactLeadModal } from "@/components/fenomeno/ContactLeadModal";
 import { Building2, Handshake, TrendingUp, Headphones, ArrowRight, MessageSquare, Mail } from "lucide-react";
 import balnearioAsset from "@/assets/balneario.jpg.asset.json";
 import lojaFenomenoAsset from "@/assets/loja-fenomeno.jpg.asset.json";
+import lojaFenomenoMobileAsset from "@/assets/loja-fenomeno-mobile.jpg.asset.json";
 
 const REAL_ESTATE_AGENT_SCHEMA = {
   "@context": "https://schema.org",
@@ -397,9 +398,15 @@ function Contact() {
   return (
     <section id="contact" className="relative py-32 bg-forest-deep text-cream-foundation overflow-hidden">
       <div
-        className="absolute inset-0 opacity-20 bg-contain bg-center bg-no-repeat"
+        className="hidden md:block absolute inset-0 opacity-20 bg-contain bg-center bg-no-repeat"
         style={{
           backgroundImage: `url(${lojaFenomenoAsset.url})`,
+        }}
+      />
+      <div
+        className="md:hidden absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${lojaFenomenoMobileAsset.url})`,
         }}
       />
       <div className="relative max-w-4xl mx-auto px-6 lg:px-12 text-center">
