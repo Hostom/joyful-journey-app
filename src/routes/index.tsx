@@ -217,8 +217,8 @@ function Hero() {
   );
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs uppercase tracking-[0.4em] text-gold-classic mb-6">{children}</p>;
+function SectionLabel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <p className={`text-xs uppercase tracking-[0.4em] text-gold-classic mb-6 ${className}`}>{children}</p>;
 }
 
 function Properties() {
@@ -396,7 +396,7 @@ function Contact() {
   const emailUrl = "adm.fenomenoimoveis@gmail.com";
 
   return (
-    <section id="contact" className="relative py-16 md:py-32 bg-forest-deep text-cream-foundation overflow-hidden">
+    <section id="contact" className="relative aspect-[411/1024] md:aspect-auto py-6 md:py-32 bg-forest-deep text-cream-foundation overflow-hidden">
       <div
         className="hidden md:block absolute inset-0 opacity-20 bg-contain bg-center bg-no-repeat"
         style={{
@@ -404,26 +404,26 @@ function Contact() {
         }}
       />
       <div
-        className="md:hidden absolute inset-0 opacity-20 bg-contain bg-center bg-no-repeat"
+        className="md:hidden absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url(${lojaFenomenoMobileAsset.url})`,
         }}
       />
-      <div className="relative max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <div className="relative max-w-4xl mx-auto px-6 lg:px-12 text-center flex flex-col justify-center h-full">
         <div className="reveal-up">
-          <SectionLabel>Fale Conosco</SectionLabel>
-          <h2 className="font-display text-5xl md:text-7xl leading-tight mb-8">
+          <SectionLabel className="mb-4 md:mb-6">Fale Conosco</SectionLabel>
+          <h2 className="font-display text-3xl md:text-7xl leading-tight mb-2 md:mb-8">
             Encontre sua próxima <em className="italic text-gold-champagne">oportunidade de negócio</em>.
           </h2>
-          <p className="text-cream-foundation/80 text-lg max-w-2xl mx-auto mb-12">
+          <p className="text-cream-foundation/80 text-sm md:text-lg max-w-2xl mx-auto mb-4 md:mb-12">
             Fale com nossos consultores especialistas. Estamos prontos para apresentar as melhores opções de moradia e
             investimento em Balneário Camboriú.
           </p>
-          <div className="flex flex-wrap justify-center gap-4 mb-16">
+          <div className="flex flex-wrap justify-center gap-4 mb-6 md:mb-16">
             <button
               type="button"
               onClick={() => setModal("whatsapp")}
-              className="inline-flex items-center gap-3 bg-gold-classic text-forest-deep px-10 py-5 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors cursor-pointer"
+              className="inline-flex items-center gap-3 bg-gold-classic text-forest-deep px-6 py-3 md:px-10 md:py-5 text-xs uppercase tracking-[0.25em] font-medium hover:bg-gold-champagne transition-colors cursor-pointer"
             >
               <MessageSquare className="w-4 h-4" />
               Falar no WhatsApp
@@ -431,21 +431,21 @@ function Contact() {
             <button
               type="button"
               onClick={() => setModal("email")}
-              className="inline-flex items-center gap-3 border border-cream-foundation/30 px-10 py-5 text-xs uppercase tracking-[0.25em] hover:border-gold-champagne hover:text-gold-champagne transition-colors cursor-pointer"
+              className="inline-flex items-center gap-3 border border-cream-foundation/30 px-6 py-3 md:px-10 md:py-5 text-xs uppercase tracking-[0.25em] hover:border-gold-champagne hover:text-gold-champagne transition-colors cursor-pointer"
             >
               <Mail className="w-4 h-4" />
               Enviar E-mail
             </button>
           </div>
-          <div className="grid sm:grid-cols-3 gap-8 pt-12 border-t border-gold-champagne/20 text-left sm:text-center">
+          <div className="grid sm:grid-cols-3 gap-4 md:gap-8 pt-6 md:pt-12 border-t border-gold-champagne/20 text-left sm:text-center">
             {[
               ["Escritório", "Av. Atlântica, 3230\nBalneário Camboriú · SC"],
               ["Atendimento", "Seg–Sáb · 09h às 20h\nDomingo sob agendamento"],
               ["Contato Direto", "+55 (47) 9983-7494\nadm.fenomenoimoveis@gmail.com"],
             ].map(([k, v]) => (
               <div key={k}>
-                <div className="text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-3">{k}</div>
-                <div className="text-cream-foundation/80 text-sm whitespace-pre-line leading-relaxed">{v}</div>
+                <div className="text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-gold-champagne mb-3">{k}</div>
+                <div className="text-cream-foundation/80 text-xs md:text-sm whitespace-pre-line leading-relaxed">{v}</div>
               </div>
             ))}
           </div>
