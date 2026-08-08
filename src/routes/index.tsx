@@ -396,7 +396,7 @@ function Contact() {
   const emailUrl = "adm.fenomenoimoveis@gmail.com";
 
   return (
-    <section id="contact" className="relative py-32 bg-forest-deep text-cream-foundation overflow-hidden">
+    <section id="contact" className="relative py-16 md:py-32 bg-forest-deep text-cream-foundation overflow-hidden">
       <div
         className="hidden md:block absolute inset-0 opacity-20 bg-contain bg-center bg-no-repeat"
         style={{
@@ -404,7 +404,7 @@ function Contact() {
         }}
       />
       <div
-        className="md:hidden absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
+        className="md:hidden absolute inset-0 opacity-20 bg-contain bg-center bg-no-repeat"
         style={{
           backgroundImage: `url(${lojaFenomenoMobileAsset.url})`,
         }}
