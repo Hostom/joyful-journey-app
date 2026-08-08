@@ -217,8 +217,8 @@ function Hero() {
   );
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs uppercase tracking-[0.4em] text-gold-classic mb-6">{children}</p>;
+function SectionLabel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <p className={`text-xs uppercase tracking-[0.4em] text-gold-classic mb-6 ${className}`}>{children}</p>;
 }
 
 function Properties() {
