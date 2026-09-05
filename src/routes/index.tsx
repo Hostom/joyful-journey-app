@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { propertiesQueryOptions } from "@/lib/properties.functions";
-import { PropertyCard } from "@/components/fenomeno/PropertyCard";
+import { CoverFlowCarousel } from "@/components/ui/3-d-coverflow-carousel";
 import { AdvancedFilter } from "@/components/fenomeno/AdvancedFilter";
 import { Navbar } from "@/components/fenomeno/Navbar";
 import { WhatsAppButton } from "@/components/fenomeno/WhatsAppButton";
@@ -223,10 +223,10 @@ function SectionLabel({ children, className = "" }: { children: React.ReactNode;
 
 function Properties() {
   const { data: ALL_PROPERTIES } = useSuspenseQuery(propertiesQueryOptions);
-  const PROPERTIES = ALL_PROPERTIES.slice(0, 3);
+  const PROPERTIES = ALL_PROPERTIES.slice(0, 5);
   return (
     <section id="properties" className="py-32 px-6 lg:px-12 max-w-7xl mx-auto">
-      <div className="reveal-up flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-20">
+      <div className="reveal-up flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-10">
         <div>
           <SectionLabel>Imóveis em Destaque</SectionLabel>
           <h2 className="font-display text-5xl md:text-6xl leading-tight max-w-2xl">
@@ -238,11 +238,18 @@ function Properties() {
           moradia ou investimento.
         </p>
       </div>
-      <div className="grid md:grid-cols-3 gap-8">
-        {PROPERTIES.map((p, i) => (
-          <PropertyCard key={p.code} property={p} index={i} />
-        ))}
-      </div>
+      <CoverFlowCarousel
+        sectionLabel=""
+        items={PROPERTIES.map((p) => ({
+          tag: `#${p.type}`,
+          titleLine1: p.name,
+          titleLine2: `– ${p.location}`,
+          desc: `${p.neighborhood} · ${p.area}m² · ${p.priceLabel}`,
+          img: p.images[0],
+          ctaText: "Ver Imóvel",
+          ctaUrl: `/imoveis/${p.code}`,
+        }))}
+      />
       <div className="reveal-up mt-16 flex justify-center">
         <Link
           to="/imoveis"
