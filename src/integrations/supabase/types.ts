@@ -21,6 +21,7 @@ export type Database = {
           code: string
           created_at: string
           description: string
+          featured: boolean
           features: Json
           id: string
           images: Json
@@ -41,6 +42,7 @@ export type Database = {
           code: string
           created_at?: string
           description?: string
+          featured?: boolean
           features?: Json
           id?: string
           images?: Json
@@ -61,6 +63,7 @@ export type Database = {
           code?: string
           created_at?: string
           description?: string
+          featured?: boolean
           features?: Json
           id?: string
           images?: Json

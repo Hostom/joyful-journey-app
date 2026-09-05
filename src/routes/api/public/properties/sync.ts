@@ -39,6 +39,8 @@ const propertySchema = z.object({
   lat: z.coerce.number().optional(),
   lng: z.coerce.number().optional(),
   lon: z.coerce.number().optional(),
+  featured: z.coerce.boolean().optional().default(false),
+  destaque: z.coerce.boolean().optional(),
 });
 
 const deleteSchema = z.object({ code: codeSchema });
@@ -208,6 +210,7 @@ export const Route = createFileRoute("/api/public/properties/sync")({
         }
 
         const p = parsed.data;
+        const featured = p.featured || p.destaque === true;
 
         // Trata aliases para latitude, longitude e endereço
         const fullAddress = p.address || p.street || p.rua || p.logradouro;
@@ -254,6 +257,7 @@ export const Route = createFileRoute("/api/public/properties/sync")({
               images: p.images,
               latitude,
               longitude,
+              featured,
             },
             { onConflict: "code" },
           );

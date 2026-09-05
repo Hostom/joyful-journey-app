@@ -26,6 +26,8 @@ export type Property = {
   images: string[];
   latitude?: number;
   longitude?: number;
+  /** Marcado pelo CRM: indica se o imóvel deve aparecer nos destaques da home por região. */
+  featured?: boolean;
 };
 
 const fmt = (n: number) =>
@@ -47,6 +49,7 @@ export const PROPERTIES: Property[] = [
     name: "Yachthouse Residence Club",
     location: "Balneário Camboriú",
     neighborhood: "Barra Sul",
+    featured: true,
     type: "Apartamento",
     price: 0,
     area: 470,
@@ -79,6 +82,7 @@ export const PROPERTIES: Property[] = [
     name: "Cobertura Iconic Tower",
     location: "Balneário Camboriú",
     neighborhood: "Av. Atlântica · Frente Mar",
+    featured: true,
     type: "Cobertura",
     price: 38500000,
     area: 820,
@@ -111,6 +115,7 @@ export const PROPERTIES: Property[] = [
     name: "One Tower Penthouse",
     location: "Balneário Camboriú",
     neighborhood: "Centro · Vista Panorâmica",
+    featured: true,
     type: "Penthouse",
     price: 22900000,
     area: 510,
@@ -143,6 +148,7 @@ export const PROPERTIES: Property[] = [
     name: "Casa Praia Brava",
     location: "Itajaí",
     neighborhood: "Praia Brava",
+    featured: true,
     type: "Casa",
     price: 18500000,
     area: 680,

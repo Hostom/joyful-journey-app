@@ -221,12 +221,27 @@ function SectionLabel({ children, className = "" }: { children: React.ReactNode;
   return <p className={`text-xs uppercase tracking-[0.4em] text-gold-classic mb-6 ${className}`}>{children}</p>;
 }
 
+const FILTER_REGIONS = ["Praia Brava", "Frente Mar", "Barra Sul", "Centro", "Barra Norte"];
+const NEIGHBORHOOD_FILTERS = ["Todos", ...FILTER_REGIONS];
+
 function Properties() {
   const { data: ALL_PROPERTIES } = useSuspenseQuery(propertiesQueryOptions);
-  const PROPERTIES = ALL_PROPERTIES.slice(0, 5);
+  const [activeFilter, setActiveFilter] = useState("Todos");
+
+  // "featured" é marcado pelo CRM por imóvel; aqui só selecionamos quantos exibir por região.
+  const getFeaturedByRegion = (region: string, limit: number) =>
+    ALL_PROPERTIES.filter(
+      (p) => p.featured && p.neighborhood.toLowerCase().includes(region.toLowerCase()),
+    ).slice(0, limit);
+
+  const FEATURED_PROPERTIES =
+    activeFilter === "Todos"
+      ? FILTER_REGIONS.flatMap((region) => getFeaturedByRegion(region, 2))
+      : getFeaturedByRegion(activeFilter, 5);
+
   return (
     <section id="properties" className="py-32 px-6 lg:px-12 max-w-7xl mx-auto">
-      <div className="reveal-up flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-10">
+      <div className="reveal-up flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-8">
         <div>
           <SectionLabel>Imóveis em Destaque</SectionLabel>
           <h2 className="font-display text-5xl md:text-6xl leading-tight max-w-2xl">
@@ -238,18 +253,39 @@ function Properties() {
           moradia ou investimento.
         </p>
       </div>
-      <CoverFlowCarousel
-        sectionLabel=""
-        items={PROPERTIES.map((p) => ({
-          tag: `#${p.type}`,
-          titleLine1: p.name,
-          titleLine2: `– ${p.location}`,
-          desc: `${p.neighborhood} · ${p.area}m² · ${p.priceLabel}`,
-          img: p.images[0],
-          ctaText: "Ver Imóvel",
-          ctaUrl: `/imoveis/${p.code}`,
-        }))}
-      />
+      <div className="reveal-up flex flex-wrap items-center gap-3 mb-10">
+        {NEIGHBORHOOD_FILTERS.map((filter) => (
+          <button
+            key={filter}
+            type="button"
+            onClick={() => setActiveFilter(filter)}
+            className={`px-5 py-2 text-xs uppercase tracking-[0.15em] font-medium rounded-full border transition-colors cursor-pointer ${
+              activeFilter === filter
+                ? "bg-forest-deep text-cream-foundation border-forest-deep"
+                : "border-forest-deep/25 text-forest-mid/70 hover:border-gold-classic hover:text-forest-deep"
+            }`}
+          >
+            {filter}
+          </button>
+        ))}
+      </div>
+      {FEATURED_PROPERTIES.length > 0 ? (
+        <CoverFlowCarousel
+          key={activeFilter}
+          sectionLabel=""
+          items={FEATURED_PROPERTIES.map((p) => ({
+            tag: `#${p.type}`,
+            titleLine1: p.name,
+            titleLine2: `– ${p.location}`,
+            desc: `${p.neighborhood} · ${p.area}m² · ${p.priceLabel}`,
+            img: p.images[0],
+            ctaText: "Ver Imóvel",
+            ctaUrl: `/imoveis/${p.code}`,
+          }))}
+        />
+      ) : (
+        <p className="text-center text-forest-mid/60 py-16">Nenhum imóvel em destaque nesta região no momento.</p>
+      )}
       <div className="reveal-up mt-16 flex justify-center">
         <Link
           to="/imoveis"

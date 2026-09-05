@@ -49,6 +49,7 @@ function rowToProperty(row: Record<string, unknown>): Property {
     images,
     latitude,
     longitude,
+    featured: Boolean(row.featured ?? row.destaque ?? false),
   };
 }
 
