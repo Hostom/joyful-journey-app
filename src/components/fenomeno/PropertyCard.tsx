@@ -23,11 +23,10 @@ export function PropertyCard({
   const hasImages = property.images.length > 0;
   const total = property.images.length;
 
-  const handleClick = (e: React.MouseEvent) => {
-    if (onSelect) {
-      e.preventDefault();
-      onSelect(property);
-    }
+  // When onSelect is provided (modal mode), we use a button/div wrapper so that
+  // touch events on mobile don't trigger Link navigation before onClick fires.
+  const handleCardClick = () => {
+    if (onSelect) onSelect(property);
   };
 
   const scrollToIndex = (i: number) => {
@@ -114,13 +113,33 @@ export function PropertyCard({
 
   const propertyCode = `IM${property.code}`;
 
+  // Wrapper: button (modal mode, safe on mobile) or Link (navigation mode)
+  const CardWrapper = onSelect
+    ? ({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => (
+        <button
+          type="button"
+          onClick={handleCardClick}
+          className={className}
+          style={style}
+        >
+          {children}
+        </button>
+      )
+    : ({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => (
+        <Link
+          to="/imoveis/$code"
+          params={{ code: property.code }}
+          className={className}
+          style={style}
+        >
+          {children}
+        </Link>
+      );
+
   return (
     <>
-    <Link
-      to="/imoveis/$code"
-      params={{ code: property.code }}
-      onClick={handleClick}
-      className="reveal-up group block h-full"
+    <CardWrapper
+      className="reveal-up group block h-full text-left"
       style={{ transitionDelay: `${index * 80}ms` }}
     >
       <div className="h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-400 border border-cream-stone/60 hover:border-gold-classic/40 hover:-translate-y-1">
@@ -266,7 +285,7 @@ export function PropertyCard({
           </div>
         </div>
       </div>
-    </Link>
+    </CardWrapper>
 
     {/* Lightbox */}
     <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
