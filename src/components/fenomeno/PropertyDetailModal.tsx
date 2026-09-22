@@ -192,7 +192,7 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
     const key = nearbyCacheKey(lat, lng, selectedCategories);
 
     const cached = cacheGet<any[]>(key);
-    if (cached) {
+    if (cached && cached.length > 0) {
       setPlaces(cached);
       return;
     }
@@ -211,7 +211,10 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
         inflightNearby.set(key, promise);
       }
       const result = await promise;
-      cacheSet(key, result, NEARBY_TTL_MS);
+      // Só guarda resultados reais — resultado vazio pode ser falha temporária
+      if (Array.isArray(result) && result.length > 0) {
+        cacheSet(key, result, NEARBY_TTL_MS);
+      }
       setPlaces(result);
     } catch {
       setPlaces([]);
