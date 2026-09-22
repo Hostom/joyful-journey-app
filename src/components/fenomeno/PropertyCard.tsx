@@ -113,35 +113,10 @@ export function PropertyCard({
 
   const propertyCode = `IM${property.code}`;
 
-  // Wrapper: button (modal mode, safe on mobile) or Link (navigation mode)
-  const CardWrapper = onSelect
-    ? ({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => (
-        <button
-          type="button"
-          onClick={handleCardClick}
-          className={className}
-          style={style}
-        >
-          {children}
-        </button>
-      )
-    : ({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => (
-        <Link
-          to="/imoveis/$code"
-          params={{ code: property.code }}
-          className={className}
-          style={style}
-        >
-          {children}
-        </Link>
-      );
+  const wrapperClass = "reveal-up group block h-full text-left";
+  const wrapperStyle = { transitionDelay: `${index * 80}ms` };
 
-  return (
-    <>
-    <CardWrapper
-      className="reveal-up group block h-full text-left"
-      style={{ transitionDelay: `${index * 80}ms` }}
-    >
+  const cardInner = (
       <div className="h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-400 border border-cream-stone/60 hover:border-gold-classic/40 hover:-translate-y-1">
         {/* Image wrapper */}
         <div
@@ -285,7 +260,28 @@ export function PropertyCard({
           </div>
         </div>
       </div>
-    </CardWrapper>
+  );
+
+  return (
+    <>
+    {onSelect ? (
+      <div
+        onClick={handleCardClick}
+        className={`${wrapperClass} cursor-pointer`}
+        style={wrapperStyle}
+      >
+        {cardInner}
+      </div>
+    ) : (
+      <Link
+        to="/imoveis/$code"
+        params={{ code: property.code }}
+        className={wrapperClass}
+        style={wrapperStyle}
+      >
+        {cardInner}
+      </Link>
+    )}
 
     {/* Lightbox */}
     <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
