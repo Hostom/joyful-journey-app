@@ -260,7 +260,28 @@ export function PropertyCard({
           </div>
         </div>
       </div>
-    </CardWrapper>
+  );
+
+  return (
+    <>
+    {onSelect ? (
+      <div
+        onClick={handleCardClick}
+        className={`${wrapperClass} cursor-pointer`}
+        style={wrapperStyle}
+      >
+        {cardInner}
+      </div>
+    ) : (
+      <Link
+        to="/imoveis/$code"
+        params={{ code: property.code }}
+        className={wrapperClass}
+        style={wrapperStyle}
+      >
+        {cardInner}
+      </Link>
+    )}
 
     {/* Lightbox */}
     <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
