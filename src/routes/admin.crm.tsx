@@ -156,7 +156,7 @@ function AuthGate({
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #0B2E1F 0%, #0d1f14 50%, #061209 100%)",
+      background: "linear-gradient(135deg, var(--color-forest-deep) 0%, #0d1f14 50%, #061209 100%)",
       display: "flex", alignItems: "center", justifyContent: "center",
       fontFamily: "'Hanken Grotesk', sans-serif", padding: "24px",
     }}>
@@ -178,18 +178,18 @@ function AuthGate({
           <div style={{ textAlign: "center", marginBottom: "36px" }}>
             <div style={{
               width: "52px", height: "52px", borderRadius: "12px",
-              background: "linear-gradient(135deg, #C9A24A, #D9BC72)",
+              background: "linear-gradient(135deg, var(--color-gold-classic), var(--color-gold-champagne))",
               display: "flex", alignItems: "center", justifyContent: "center",
               margin: "0 auto 20px",
               boxShadow: "0 8px 24px rgba(201,162,74,0.3)",
             }}>
-              <span className="material-symbols-outlined" style={{ fontSize: "24px", color: "#0B2E1F" }}>
+              <span className="material-symbols-outlined" style={{ fontSize: "24px", color: "var(--color-forest-deep)" }}>
                 settings_suggest
               </span>
             </div>
             <h1 style={{
               margin: 0, fontSize: "22px", fontWeight: 600,
-              color: "#FAF8F2", letterSpacing: "-0.01em",
+              color: "var(--color-cream-foundation)", letterSpacing: "-0.01em",
               fontFamily: "'Libre Caslon Text', serif",
             }}>
               Configurações do CRM
@@ -212,7 +212,7 @@ function AuthGate({
             fontSize: "13px", color: "rgba(250,248,242,0.6)",
             marginBottom: "22px", lineHeight: 1.65,
           }}>
-            Insira a <strong style={{ color: "#D9BC72" }}>Chave API do Site</strong> para acessar e configurar a integração com seu CRM.
+            Insira a <strong style={{ color: "var(--color-gold-champagne)" }}>Chave API do Site</strong> para acessar e configurar a integração com seu CRM.
           </p>
 
           <form onSubmit={onSubmit} noValidate>
@@ -234,8 +234,8 @@ function AuthGate({
                 width: "100%", boxSizing: "border-box",
                 padding: "14px 16px", marginBottom: "12px",
                 background: "rgba(255,255,255,0.05)",
-                border: authError ? "1px solid rgba(239,68,68,0.6)" : "1px solid rgba(201,162,74,0.2)",
-                borderRadius: "10px", color: "#FAF8F2", fontSize: "14px",
+                border: authError ? "1px solid rgba(186,26,26,0.6)" : "1px solid rgba(201,162,74,0.2)",
+                borderRadius: "10px", color: "var(--color-cream-foundation)", fontSize: "14px",
                 outline: "none", fontFamily: "monospace",
               }}
             />
@@ -244,12 +244,12 @@ function AuthGate({
               <div style={{
                 display: "flex", alignItems: "center", gap: "8px",
                 padding: "10px 14px",
-                background: "rgba(239,68,68,0.1)",
-                border: "1px solid rgba(239,68,68,0.3)",
+                background: "rgba(186,26,26,0.1)",
+                border: "1px solid rgba(186,26,26,0.3)",
                 borderRadius: "8px", marginBottom: "12px",
               }}>
-                <span className="material-symbols-outlined" style={{ fontSize: "16px", color: "#ef4444" }}>error</span>
-                <span style={{ fontSize: "13px", color: "#ef4444" }}>{authError}</span>
+                <span className="material-symbols-outlined" style={{ fontSize: "16px", color: "#ba1a1a" }}>error</span>
+                <span style={{ fontSize: "13px", color: "#ba1a1a" }}>{authError}</span>
               </div>
             )}
 
@@ -259,9 +259,9 @@ function AuthGate({
               disabled={isAuthenticating}
               style={{
                 width: "100%", padding: "14px",
-                background: isAuthenticating ? "rgba(201,162,74,0.4)" : "linear-gradient(135deg, #C9A24A, #D9BC72)",
+                background: isAuthenticating ? "rgba(201,162,74,0.4)" : "linear-gradient(135deg, var(--color-gold-classic), var(--color-gold-champagne))",
                 border: "none", borderRadius: "10px",
-                color: "#0B2E1F", fontSize: "13px",
+                color: "var(--color-forest-deep)", fontSize: "13px",
                 fontWeight: 600, letterSpacing: "0.1em",
                 textTransform: "uppercase",
                 cursor: isAuthenticating ? "not-allowed" : "pointer",
@@ -309,8 +309,8 @@ function SettingsDashboard({
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #0B2E1F 0%, #0d1f14 50%, #061209 100%)",
-      fontFamily: "'Hanken Grotesk', sans-serif", color: "#FAF8F2",
+      background: "linear-gradient(135deg, var(--color-forest-deep) 0%, #0d1f14 50%, #061209 100%)",
+      fontFamily: "'Hanken Grotesk', sans-serif", color: "var(--color-cream-foundation)",
     }}>
       <div style={{
         position: "fixed", inset: 0, pointerEvents: "none",
@@ -332,15 +332,15 @@ function SettingsDashboard({
           <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
             <div style={{
               width: "34px", height: "34px", borderRadius: "8px",
-              background: "linear-gradient(135deg, #C9A24A, #D9BC72)",
+              background: "linear-gradient(135deg, var(--color-gold-classic), var(--color-gold-champagne))",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-              <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "#0B2E1F" }}>
+              <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "var(--color-forest-deep)" }}>
                 settings_suggest
               </span>
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: "15px", fontWeight: 600, color: "#FAF8F2" }}>
+              <p style={{ margin: 0, fontSize: "15px", fontWeight: 600, color: "var(--color-cream-foundation)" }}>
                 Integração CRM
               </p>
               <p style={{ margin: 0, fontSize: "11px", color: "rgba(250,248,242,0.4)" }}>
@@ -369,7 +369,7 @@ function SettingsDashboard({
         {/* Page heading */}
         <div style={{ marginBottom: "36px" }}>
           <h1 style={{
-            margin: "0 0 8px", fontSize: "28px", fontWeight: 700, color: "#FAF8F2",
+            margin: "0 0 8px", fontSize: "28px", fontWeight: 700, color: "var(--color-cream-foundation)",
             letterSpacing: "-0.02em", fontFamily: "'Libre Caslon Text', serif",
           }}>
             Configurações de Integração
@@ -407,7 +407,7 @@ function SettingsDashboard({
                   : "transparent",
                 border: activeTab === tab.id ? "1px solid rgba(201,162,74,0.35)" : "1px solid transparent",
                 borderRadius: "9px",
-                color: activeTab === tab.id ? "#D9BC72" : "rgba(250,248,242,0.5)",
+                color: activeTab === tab.id ? "var(--color-gold-champagne)" : "rgba(250,248,242,0.5)",
                 fontSize: "13px", fontWeight: activeTab === tab.id ? 600 : 400,
                 cursor: "pointer", fontFamily: "'Hanken Grotesk', sans-serif",
                 whiteSpace: "nowrap", transition: "all 0.2s",
@@ -444,7 +444,7 @@ function StatusCard({ icon, label, direction, status, detail }: {
       backdropFilter: "blur(12px)",
     }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#D9BC72" }}>{icon}</span>
+        <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "var(--color-gold-champagne)" }}>{icon}</span>
         <span style={{
           fontSize: "10px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase",
           padding: "3px 10px", borderRadius: "999px",
@@ -456,7 +456,7 @@ function StatusCard({ icon, label, direction, status, detail }: {
         </span>
       </div>
       <div>
-        <p style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: 600, color: "#FAF8F2" }}>{label}</p>
+        <p style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: 600, color: "var(--color-cream-foundation)" }}>{label}</p>
         <p style={{ margin: "0 0 6px", fontSize: "11px", color: "rgba(250,248,242,0.4)", letterSpacing: "0.05em" }}>{direction}</p>
         <p style={{ margin: 0, fontSize: "12px", color: "rgba(250,248,242,0.55)" }}>{detail}</p>
       </div>
@@ -472,7 +472,7 @@ function LeadsTab({ settings, copied, onCopy }: TabProps) {
       <InfoCard title="Como funciona o envio de Leads" icon="info">
         <p style={bodyText}>
           Quando um visitante preenche o formulário de contato no site, os dados são enviados automaticamente para a URL de Leads do CRM configurada abaixo. O site inclui a{" "}
-          <strong style={{ color: "#D9BC72" }}>CRM_WEBHOOK_TOKEN</strong> no corpo da requisição, no campo{" "}
+          <strong style={{ color: "var(--color-gold-champagne)" }}>CRM_WEBHOOK_TOKEN</strong> no corpo da requisição, no campo{" "}
           <code style={codeStyle}>webhook_token</code>, para autenticar o lead no CRM.
         </p>
       </InfoCard>
@@ -538,10 +538,10 @@ function ImoveisTab({ settings, copied, onCopy }: TabProps) {
     <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       <InfoCard title="Como funciona a sincronização de Imóveis" icon="info">
         <p style={bodyText}>
-          O CRM envia imóveis para o site via <strong style={{ color: "#D9BC72" }}>Webhook (Push)</strong>.
+          O CRM envia imóveis para o site via <strong style={{ color: "var(--color-gold-champagne)" }}>Webhook (Push)</strong>.
           Configure seu CRM para enviar requisições <code style={codeStyle}>POST</code> (criar/atualizar) e{" "}
           <code style={codeStyle}>DELETE</code> (remover) para o endpoint abaixo, incluindo o{" "}
-          <strong style={{ color: "#D9BC72" }}>Bearer Token</strong> no cabeçalho{" "}
+          <strong style={{ color: "var(--color-gold-champagne)" }}>Bearer Token</strong> no cabeçalho{" "}
           <code style={codeStyle}>Authorization</code>.
         </p>
       </InfoCard>
@@ -624,7 +624,7 @@ function TokensTab({ settings, copied, onCopy }: TabProps) {
     <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       <InfoCard title="Gerenciamento de Chaves" icon="shield">
         <p style={bodyText}>
-          Todas as chaves são armazenadas nas <strong style={{ color: "#D9BC72" }}>variáveis de ambiente</strong> do servidor e nunca expostas ao cliente. Para alterar qualquer chave, edite o arquivo <code style={codeStyle}>.env</code> e reinicie o servidor.
+          Todas as chaves são armazenadas nas <strong style={{ color: "var(--color-gold-champagne)" }}>variáveis de ambiente</strong> do servidor e nunca expostas ao cliente. Para alterar qualquer chave, edite o arquivo <code style={codeStyle}>.env</code> e reinicie o servidor.
         </p>
       </InfoCard>
 
@@ -679,14 +679,14 @@ CRM_LEADS_API_URL="${settings.crmLeadsApiUrl || "https://api.seu-crm.com/v1/lead
 
       <div style={{
         padding: "16px 20px",
-        background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)",
+        background: "rgba(186,26,26,0.07)", border: "1px solid rgba(186,26,26,0.2)",
         borderRadius: "12px", display: "flex", gap: "12px", alignItems: "flex-start",
       }}>
-        <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "#ef4444", flexShrink: 0, marginTop: "1px" }}>
+        <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "#ba1a1a", flexShrink: 0, marginTop: "1px" }}>
           lock
         </span>
         <div>
-          <p style={{ margin: "0 0 4px", fontSize: "13px", fontWeight: 600, color: "#ef4444" }}>
+          <p style={{ margin: "0 0 4px", fontSize: "13px", fontWeight: 600, color: "#ba1a1a" }}>
             Segurança
           </p>
           <p style={{ margin: 0, fontSize: "12px", color: "rgba(250,248,242,0.55)", lineHeight: 1.6 }}>
@@ -712,9 +712,9 @@ function InfoCard({ title, icon, children }: { title: string; icon: string; chil
       background: "rgba(217,188,114,0.06)", border: "1px solid rgba(201,162,74,0.2)",
       borderRadius: "12px", padding: "20px 24px", display: "flex", gap: "14px",
     }}>
-      <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#D9BC72", flexShrink: 0, marginTop: "1px" }}>{icon}</span>
+      <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "var(--color-gold-champagne)", flexShrink: 0, marginTop: "1px" }}>{icon}</span>
       <div>
-        <p style={{ margin: "0 0 8px", fontSize: "13px", fontWeight: 600, color: "#D9BC72", letterSpacing: "0.02em" }}>{title}</p>
+        <p style={{ margin: "0 0 8px", fontSize: "13px", fontWeight: 600, color: "var(--color-gold-champagne)", letterSpacing: "0.02em" }}>{title}</p>
         {children}
       </div>
     </div>
@@ -732,8 +732,8 @@ function Section({ title, icon, children }: { title: string; icon: string; child
         display: "flex", alignItems: "center", gap: "10px",
         background: "rgba(255,255,255,0.02)",
       }}>
-        <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "#D9BC72" }}>{icon}</span>
-        <h3 style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "#FAF8F2" }}>{title}</h3>
+        <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "var(--color-gold-champagne)" }}>{icon}</span>
+        <h3 style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "var(--color-cream-foundation)" }}>{title}</h3>
       </div>
       <div style={{ padding: "20px 24px" }}>{children}</div>
     </div>
@@ -758,7 +758,7 @@ function ConfigRow({ label, value, copyId, copied, onCopy, monospace = false, hi
         <p style={{
           margin: 0, fontSize: "13px",
           fontFamily: monospace ? "monospace" : "inherit",
-          color: empty ? "rgba(250,248,242,0.3)" : "#FAF8F2",
+          color: empty ? "rgba(250,248,242,0.3)" : "var(--color-cream-foundation)",
           overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
         }}>
           {value}
@@ -796,7 +796,7 @@ function TokenRow({ name, description, direction, value, copyId, copied, onCopy 
     <div style={{ padding: "18px 20px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "10px" }}>
       <div style={{ marginBottom: "10px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
-          <code style={{ ...codeStyle, fontSize: "13px", color: "#D9BC72" }}>{name}</code>
+          <code style={{ ...codeStyle, fontSize: "13px", color: "var(--color-gold-champagne)" }}>{name}</code>
           <span style={{
             fontSize: "10px", padding: "2px 8px", borderRadius: "999px",
             background: "rgba(201,162,74,0.1)", border: "1px solid rgba(201,162,74,0.2)",
@@ -810,7 +810,7 @@ function TokenRow({ name, description, direction, value, copyId, copied, onCopy 
           <div style={{
             flex: 1, padding: "8px 12px", background: "rgba(0,0,0,0.3)", borderRadius: "8px",
             fontFamily: "monospace", fontSize: "12px",
-            color: revealed ? "#FAF8F2" : "rgba(250,248,242,0.3)",
+            color: revealed ? "var(--color-cream-foundation)" : "rgba(250,248,242,0.3)",
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
           }}>
             {revealed ? value : maskKey(value)}
@@ -895,10 +895,10 @@ function EnvTable({ rows }: {
           {rows.map((row) => (
             <tr key={row.key} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
               <td style={{ padding: "12px 12px" }}>
-                <code style={{ ...codeStyle, color: "#D9BC72" }}>{row.key}</code>
+                <code style={{ ...codeStyle, color: "var(--color-gold-champagne)" }}>{row.key}</code>
               </td>
               <td style={{ padding: "12px 12px" }}>
-                <span style={{ fontFamily: "monospace", fontSize: "12px", color: row.value === "—" ? "rgba(250,248,242,0.3)" : "#FAF8F2" }}>
+                <span style={{ fontFamily: "monospace", fontSize: "12px", color: row.value === "—" ? "rgba(250,248,242,0.3)" : "var(--color-cream-foundation)" }}>
                   {row.value}
                 </span>
               </td>
@@ -907,8 +907,8 @@ function EnvTable({ rows }: {
                 {row.required && (
                   <span style={{
                     fontSize: "10px", padding: "2px 8px", borderRadius: "999px",
-                    background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)",
-                    color: "#ef4444", letterSpacing: "0.05em",
+                    background: "rgba(186,26,26,0.1)", border: "1px solid rgba(186,26,26,0.25)",
+                    color: "#ba1a1a", letterSpacing: "0.05em",
                   }}>
                     Obrigatório
                   </span>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useId, useState, useEffect } from "react";
 import type { PropertyLocation, PropertyType } from "@/data/properties";
 import { LOCATIONS, TYPES } from "@/data/properties";
 import { Search, ChevronDown, X } from "lucide-react";
@@ -95,10 +95,12 @@ export function SidebarFilter({
     setMaxPrice(num);
   };
 
+  const uid = useId();
+
   const getPillClass = (isSelected: boolean) => {
     return isSelected
-      ? "w-9 h-9 rounded bg-gold-classic text-forest-deep border border-gold-classic text-sm font-extrabold font-sans transition-all flex items-center justify-center cursor-pointer shadow-md shadow-gold-classic/30 hover:bg-gold-champagne"
-      : "w-9 h-9 rounded border border-cream-foundation/30 text-white hover:bg-white/10 hover:border-cream-foundation/50 text-sm font-bold font-sans transition-all flex items-center justify-center cursor-pointer";
+      ? "flex-1 max-w-11 h-11 rounded bg-gold-classic text-forest-deep border border-gold-classic text-sm font-extrabold font-sans transition-all flex items-center justify-center cursor-pointer shadow-md shadow-gold-classic/30 hover:bg-gold-champagne"
+      : "flex-1 max-w-11 h-11 rounded border border-cream-foundation/30 text-white hover:bg-white/10 hover:border-cream-foundation/50 text-sm font-bold font-sans transition-all flex items-center justify-center cursor-pointer";
   };
 
   return (
@@ -110,27 +112,29 @@ export function SidebarFilter({
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+        <label htmlFor={`${uid}-condominio`} className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Condomínio
         </label>
         <div className="relative flex items-center border-b border-cream-foundation/40 focus-within:border-gold-classic transition-colors">
           <input
+            id={`${uid}-condominio`}
             type="text"
             value={condominio}
             onChange={(e) => setCondominio(e.target.value)}
             placeholder="Buscar por condomínio..."
             className="w-full bg-transparent text-white outline-none py-2 pr-8 text-sm font-sans font-semibold placeholder:text-cream-foundation/40"
           />
-          <Search className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" />
+          <Search className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" aria-hidden="true" />
         </div>
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+        <label htmlFor={`${uid}-location`} className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Localização
         </label>
         <div className="relative">
           <select
+            id={`${uid}-location`}
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             className="w-full bg-transparent border-b border-cream-foundation/40 focus:border-gold-classic text-white outline-none py-2 pr-8 text-sm font-sans font-semibold transition-colors cursor-pointer appearance-none"
@@ -142,16 +146,17 @@ export function SidebarFilter({
               </option>
             ))}
           </select>
-          <ChevronDown className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" />
+          <ChevronDown className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" aria-hidden="true" />
         </div>
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+        <label htmlFor={`${uid}-type`} className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Tipo do Imóvel
         </label>
         <div className="relative">
           <select
+            id={`${uid}-type`}
             value={type}
             onChange={(e) => setType(e.target.value)}
             className="w-full bg-transparent border-b border-cream-foundation/40 focus:border-gold-classic text-white outline-none py-2 pr-8 text-sm font-sans font-semibold transition-colors cursor-pointer appearance-none"
@@ -163,16 +168,17 @@ export function SidebarFilter({
               </option>
             ))}
           </select>
-          <ChevronDown className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" />
+          <ChevronDown className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" aria-hidden="true" />
         </div>
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+        <label htmlFor={`${uid}-status`} className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Status
         </label>
         <div className="relative">
           <select
+            id={`${uid}-status`}
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             className="w-full bg-transparent border-b border-cream-foundation/40 focus:border-gold-classic text-white outline-none py-2 pr-8 text-sm font-sans font-semibold transition-colors cursor-pointer appearance-none"
@@ -182,19 +188,21 @@ export function SidebarFilter({
             <option value="construcao" className="bg-forest-deep text-cream-foundation">Em construção</option>
             <option value="lancamento" className="bg-forest-deep text-cream-foundation">Lançamento</option>
           </select>
-          <ChevronDown className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" />
+          <ChevronDown className="text-gold-classic absolute right-1 bottom-2 pointer-events-none w-4 h-4" aria-hidden="true" />
         </div>
       </div>
 
       <div className="flex flex-col gap-2.5">
-        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+        <span id={`${uid}-bedrooms-label`} className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Quartos mínimo
-        </label>
-        <div className="flex justify-between items-center w-full">
+        </span>
+        <div role="group" aria-labelledby={`${uid}-bedrooms-label`} className="flex items-center gap-1.5 w-full">
           {[1, 2, 3, 4, 5, 6].map((num) => (
             <button
               key={num}
               type="button"
+              aria-pressed={bedrooms === num}
+              aria-label={`${num} ${num === 1 ? "quarto" : "quartos"} mínimo`}
               onClick={() => setBedrooms(bedrooms === num ? undefined : num)}
               className={getPillClass(bedrooms === num)}
             >
@@ -205,14 +213,16 @@ export function SidebarFilter({
       </div>
 
       <div className="flex flex-col gap-2.5">
-        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+        <span id={`${uid}-suites-label`} className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Suítes mínimo
-        </label>
-        <div className="flex justify-between items-center w-full">
+        </span>
+        <div role="group" aria-labelledby={`${uid}-suites-label`} className="flex items-center gap-1.5 w-full">
           {[1, 2, 3, 4, 5, 6].map((num) => (
             <button
               key={num}
               type="button"
+              aria-pressed={suites === num}
+              aria-label={`${num} ${num === 1 ? "suíte" : "suítes"} mínimo`}
               onClick={() => setSuites(suites === num ? undefined : num)}
               className={getPillClass(suites === num)}
             >
@@ -223,14 +233,16 @@ export function SidebarFilter({
       </div>
 
       <div className="flex flex-col gap-2.5">
-        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+        <span id={`${uid}-parking-label`} className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Vagas de Garagem mínimo
-        </label>
-        <div className="flex justify-between items-center w-full">
+        </span>
+        <div role="group" aria-labelledby={`${uid}-parking-label`} className="flex items-center gap-1.5 w-full">
           {[1, 2, 3, 4, 5, 6].map((num) => (
             <button
               key={num}
               type="button"
+              aria-pressed={parking === num}
+              aria-label={`${num} ${num === 1 ? "vaga" : "vagas"} de garagem mínimo`}
               onClick={() => setParking(parking === num ? undefined : num)}
               className={getPillClass(parking === num)}
             >
@@ -241,15 +253,16 @@ export function SidebarFilter({
       </div>
 
       <div className="flex flex-col gap-3">
-        <label className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
+        <span className="text-[11px] uppercase tracking-[0.2em] text-gold-classic font-extrabold font-sans">
           Valor
-        </label>
+        </span>
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
-            <span className="text-[10px] uppercase tracking-wider text-cream-foundation/80 font-bold font-sans">
+            <label htmlFor={`${uid}-min-price`} className="text-[10px] uppercase tracking-wider text-cream-foundation/80 font-bold font-sans">
               Mínimo
-            </span>
+            </label>
             <input
+              id={`${uid}-min-price`}
               type="text"
               value={minPrice === 0 ? "" : formatBRL(minPrice)}
               onChange={(e) => handleMinPriceChange(e.target.value)}
@@ -258,10 +271,11 @@ export function SidebarFilter({
             />
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-[10px] uppercase tracking-wider text-cream-foundation/80 font-bold font-sans">
+            <label htmlFor={`${uid}-max-price`} className="text-[10px] uppercase tracking-wider text-cream-foundation/80 font-bold font-sans">
               Máximo
-            </span>
+            </label>
             <input
+              id={`${uid}-max-price`}
               type="text"
               value={maxPrice === 50000000 ? "" : formatBRL(maxPrice)}
               onChange={(e) => handleMaxPriceChange(e.target.value)}
@@ -270,9 +284,11 @@ export function SidebarFilter({
             />
           </div>
         </div>
-        
+
         <div className="mt-2 flex flex-col gap-2">
+          <label htmlFor={`${uid}-range`} className="sr-only">Valor máximo (controle deslizante)</label>
           <input
+            id={`${uid}-range`}
             type="range"
             min="0"
             max="50000000"

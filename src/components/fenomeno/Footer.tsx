@@ -64,7 +64,7 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 border-t border-gold-champagne/10 text-center text-[11px] uppercase tracking-[0.25em] text-cream-foundation/40">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 border-t border-gold-champagne/10 text-center text-[11px] uppercase tracking-[0.25em] text-cream-foundation/70">
         © 2026 Fenômeno Imóveis · Todos os direitos reservados
       </div>
     </footer>

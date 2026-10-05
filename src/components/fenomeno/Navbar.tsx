@@ -140,7 +140,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden relative w-10 h-10 flex items-center justify-center cursor-pointer"
+            className="md:hidden relative w-11 h-11 flex items-center justify-center cursor-pointer"
             aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
           >
             <div className="w-6 flex flex-col gap-1.5">

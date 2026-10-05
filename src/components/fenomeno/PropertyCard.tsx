@@ -151,6 +151,8 @@ export function PropertyCard({
                     src={src}
                     alt={`${property.name} — foto ${i + 1}`}
                     onClick={i === imgIndex ? handleImageClick : undefined}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    decoding="async"
                     className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
                       i === imgIndex ? "cursor-zoom-in" : ""
                     }`}
@@ -159,7 +161,7 @@ export function PropertyCard({
               ))}
             </div>
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-forest-mid/40 text-xs font-sans">
+            <div className="w-full h-full flex items-center justify-center text-forest-mid/70 text-xs font-sans">
               Sem fotos
             </div>
           )}
@@ -175,7 +177,7 @@ export function PropertyCard({
           <button
             type="button"
             onClick={handleToggleFav}
-            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md flex items-center justify-center text-forest-deep transition-all duration-200 z-10 cursor-pointer hover:scale-110"
+            className="absolute top-3 right-3 w-11 h-11 rounded-full bg-white/90 hover:bg-white shadow-md flex items-center justify-center text-forest-deep transition-all duration-200 z-10 cursor-pointer hover:scale-110"
             aria-label="Adicionar aos favoritos"
           >
             <Heart className={`w-4 h-4 ${isFav ? "fill-red-500 text-red-500" : "text-forest-deep/60"}`} />
@@ -187,7 +189,7 @@ export function PropertyCard({
               <button
                 type="button"
                 onClick={handlePrevImage}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-forest-deep shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 cursor-pointer hover:scale-110"
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-forest-deep shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 cursor-pointer hover:scale-110"
                 aria-label="Imagem anterior"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -195,7 +197,7 @@ export function PropertyCard({
               <button
                 type="button"
                 onClick={handleNextImage}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-forest-deep shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 cursor-pointer hover:scale-110"
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-forest-deep shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 cursor-pointer hover:scale-110"
                 aria-label="Próxima imagem"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -232,7 +234,7 @@ export function PropertyCard({
               {property.name} em {property.location}
             </h3>
 
-            <span className="text-[10px] text-forest-mid/40 font-mono tracking-widest block mb-3">{propertyCode}</span>
+            <span className="text-[10px] text-forest-mid/70 font-mono tracking-widest block mb-3">{propertyCode}</span>
 
             <div className="flex items-center gap-3 text-xs text-forest-mid/80 font-sans font-semibold flex-wrap mb-1">
               <span className="flex items-center gap-1">
@@ -302,6 +304,7 @@ export function PropertyCard({
             <img
               src={property.images[lightboxIndex]}
               alt={`${property.name} — foto ${lightboxIndex + 1}`}
+              decoding="async"
               className="max-w-full max-h-full object-contain select-none"
             />
           )}

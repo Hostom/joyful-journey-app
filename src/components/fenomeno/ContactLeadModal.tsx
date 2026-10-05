@@ -1,13 +1,6 @@
-import { useEffect, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
+import { cloneElement, useEffect, useId } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { submitLead } from "@/lib/crm.functions";
-
-declare global {
-  interface Window {
-    dataLayer: Record<string, unknown>[];
-  }
-}
+import { useLeadForm } from "@/lib/useLeadForm";
 
 export type ContactChannel = "whatsapp" | "email";
 
@@ -23,79 +16,32 @@ type Props = {
   propertyId?: string;
 };
 
-type Errors = Partial<Record<"name" | "email" | "phone", string>>;
-
 export function ContactLeadModal({ open, onOpenChange, channel, redirectUrl, defaultMessage = "", propertyId }: Props) {
-  const send = useServerFn(submitLead);
+  const formId = useId();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [errors, setErrors] = useState<Errors>({});
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
+  const baseMessage =
+    defaultMessage || "Olá! Vim pelo site da Fenômeno Imóveis e gostaria de mais informações.";
+
+  const { name, setName, email, setEmail, phone, setPhone, errors, submitting, serverError, submit, reset } =
+    useLeadForm({
+      message: baseMessage,
+      propertyId,
+      onSuccess: () => {
+        onOpenChange(false);
+        if (typeof window !== "undefined") {
+          window.open(redirectUrl, channel === "email" ? "_self" : "_blank", "noopener");
+        }
+      },
+    });
 
   useEffect(() => {
-    if (!open) {
-      setErrors({});
-      setServerError(null);
-      setSubmitting(false);
-    }
+    if (!open) reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const validate = (): boolean => {
-    const next: Errors = {};
-    if (!name.trim()) next.name = "Informe seu nome.";
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) next.email = "E-mail inválido.";
-    const digits = phone.replace(/\D/g, "");
-    if (digits.length < 8) next.phone = "Telefone inválido.";
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate() || submitting) return;
-    setSubmitting(true);
-    setServerError(null);
-    try {
-      const baseMessage =
-        defaultMessage ||
-        (channel === "whatsapp"
-          ? "Olá! Vim pelo site da Fenômeno Imóveis e gostaria de mais informações."
-          : "Olá! Vim pelo site da Fenômeno Imóveis e gostaria de mais informações.");
-
-      const result = await send({
-        data: {
-          name: name.trim(),
-          email: email.trim(),
-          phone: phone.trim(),
-          message: baseMessage,
-          ...(propertyId ? { property_id: propertyId } : {}),
-          source: "site",
-        },
-      });
-
-      if (!result.ok) {
-        setServerError(result.error || "Não foi possível enviar agora.");
-        setSubmitting(false);
-        return;
-      }
-
-      if (typeof window !== "undefined") {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({ event: "lead_enviado_crm" });
-      }
-
-      onOpenChange(false);
-      if (typeof window !== "undefined") {
-        window.open(redirectUrl, channel === "email" ? "_self" : "_blank", "noopener");
-      }
-    } catch (err) {
-      console.error(err);
-      setServerError("Erro inesperado. Tente novamente.");
-      setSubmitting(false);
-    }
+    submit();
   };
 
   const title = channel === "whatsapp" ? "Falar no WhatsApp" : "Enviar e-mail";
@@ -113,7 +59,7 @@ export function ContactLeadModal({ open, onOpenChange, channel, redirectUrl, def
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="mt-2 space-y-4" noValidate>
-          <Field label="Nome completo" error={errors.name}>
+          <Field id={`${formId}-name`} label="Nome completo" error={errors.name}>
             <input
               type="text"
               value={name}
@@ -125,7 +71,7 @@ export function ContactLeadModal({ open, onOpenChange, channel, redirectUrl, def
             />
           </Field>
 
-          <Field label="E-mail" error={errors.email}>
+          <Field id={`${formId}-email`} label="E-mail" error={errors.email}>
             <input
               type="email"
               value={email}
@@ -137,7 +83,7 @@ export function ContactLeadModal({ open, onOpenChange, channel, redirectUrl, def
             />
           </Field>
 
-          <Field label="Telefone / WhatsApp" error={errors.phone}>
+          <Field id={`${formId}-phone`} label="Telefone / WhatsApp" error={errors.phone}>
             <input
               type="tel"
               value={phone}
@@ -150,7 +96,7 @@ export function ContactLeadModal({ open, onOpenChange, channel, redirectUrl, def
           </Field>
 
           {serverError && (
-            <p className="text-xs text-red-300 bg-red-500/10 border border-red-400/30 rounded px-3 py-2">
+            <p role="alert" className="text-xs text-red-300 bg-red-500/10 border border-red-400/30 rounded px-3 py-2">
               {serverError}
             </p>
           )}
@@ -164,7 +110,7 @@ export function ContactLeadModal({ open, onOpenChange, channel, redirectUrl, def
             {submitting ? "Enviando..." : channel === "whatsapp" ? "Continuar no WhatsApp" : "Continuar por E-mail"}
           </button>
 
-          <p className="text-[11px] text-cream-foundation/50 text-center leading-relaxed">
+          <p className="text-[11px] text-cream-foundation/70 text-center leading-relaxed">
             Ao continuar, seus dados serão enviados para nossa equipe comercial.
           </p>
         </form>
@@ -173,12 +119,31 @@ export function ContactLeadModal({ open, onOpenChange, channel, redirectUrl, def
   );
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({
+  id,
+  label,
+  error,
+  children,
+}: {
+  id: string;
+  label: string;
+  error?: string;
+  children: React.ReactElement<React.InputHTMLAttributes<HTMLInputElement>>;
+}) {
+  const errorId = `${id}-error`;
   return (
-    <label className="block">
+    <label className="block" htmlFor={id}>
       <span className="block text-[11px] uppercase tracking-[0.18em] text-cream-foundation/60 mb-2">{label}</span>
-      {children}
-      {error && <span className="block mt-1 text-xs text-red-300">{error}</span>}
+      {cloneElement(children, {
+        id,
+        "aria-invalid": Boolean(error),
+        "aria-describedby": error ? errorId : undefined,
+      })}
+      {error && (
+        <span id={errorId} role="alert" className="block mt-1 text-xs text-red-300">
+          {error}
+        </span>
+      )}
     </label>
   );
 }

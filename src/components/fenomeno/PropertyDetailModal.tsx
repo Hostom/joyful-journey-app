@@ -348,8 +348,8 @@ export function PropertyDetailModal({ property, isOpen, onClose }: PropertyDetai
                           );
                         })
                       ) : (
-                        <div className="text-center py-4 text-cream-foundation/40 text-[10px] font-sans">
-                          <MapPin className="w-6 h-6 mb-1 text-gold-champagne/40 block mx-auto" />
+                        <div className="text-center py-4 text-cream-foundation/75 text-[10px] font-sans">
+                          <MapPin className="w-6 h-6 mb-1 text-gold-champagne/60 block mx-auto" aria-hidden="true" />
                           <p className="max-w-[180px] mx-auto leading-relaxed">
                             Selecione as categorias e busque para listar comércios da região.
                           </p>

@@ -119,8 +119,17 @@ export function CoverFlowCarousel({
 }: CoverFlowCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const touchStartX = useRef(0);
   const total = items.length;
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(query.matches);
+    const onChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % total);
@@ -135,10 +144,10 @@ export function CoverFlowCarousel({
   };
 
   useEffect(() => {
-    if (!autoplay || isHovered || total <= 1) return;
+    if (!autoplay || isHovered || total <= 1 || prefersReducedMotion) return;
     const interval = setInterval(nextSlide, autoplayDelay);
     return () => clearInterval(interval);
-  }, [autoplay, autoplayDelay, isHovered, nextSlide, total]);
+  }, [autoplay, autoplayDelay, isHovered, nextSlide, total, prefersReducedMotion]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -165,12 +174,7 @@ export function CoverFlowCarousel({
 
   return (
     <section
-      className={`relative w-full flex items-center justify-center overflow-hidden py-4 select-none ${className}`}
-      style={{
-        backgroundColor: "#FAF8F2",
-        color: "#0B2E1F",
-        fontFamily: "system-ui, -apple-system, sans-serif",
-      }}
+      className={`relative w-full flex items-center justify-center overflow-hidden py-4 select-none bg-cream-foundation text-forest-deep font-sans ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onTouchStart={handleTouchStart}
@@ -268,7 +272,9 @@ export function CoverFlowCarousel({
                   zIndex,
                   filter,
                   transformOrigin: "center center",
-                  transition: "all 800ms cubic-bezier(0.25, 1, 0.5, 1)",
+                  transition: prefersReducedMotion
+                    ? "opacity 200ms ease"
+                    : "all 800ms cubic-bezier(0.25, 1, 0.5, 1)",
                   boxShadow: isCenter
                     ? "0 40px 60px -10px rgba(11,46,31,0.55), 0 0 45px rgba(197,168,128,0.35)"
                     : "0 30px 50px -10px rgba(11,46,31,0.45)",
@@ -279,6 +285,8 @@ export function CoverFlowCarousel({
                 <img
                   src={item.img}
                   alt={item.titleLine1}
+                  loading={offset === 0 ? "eager" : "lazy"}
+                  decoding="async"
                   style={{
                     position: "absolute",
                     inset: 0,

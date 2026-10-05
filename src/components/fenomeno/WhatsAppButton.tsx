@@ -1,26 +1,14 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { PROPERTIES } from "@/data/properties";
-import { submitLead } from "@/lib/crm.functions";
-
-type Errors = Partial<Record<"name" | "email" | "phone", string>>;
+import { useLeadForm } from "@/lib/useLeadForm";
 
 export function WhatsAppButton() {
   const location = useLocation();
-  const send = useServerFn(submitLead);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [showBadge, setShowBadge] = useState(true);
   const [messageText, setMessageText] = useState("");
-
-  // Form states
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [errors, setErrors] = useState<Errors>({});
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [openedAt, setOpenedAt] = useState<string>("");
 
   // Track page change to pre-fill the correct message
   useEffect(() => {
@@ -50,67 +38,31 @@ export function WhatsAppButton() {
   const whatsappPhone = "5547999837494";
   const redirectUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(messageText)}`;
 
+  const { name, setName, email, setEmail, phone, setPhone, errors, submitting, serverError, submit, reset } =
+    useLeadForm({
+      message: messageText,
+      propertyId: propertyCode,
+      onSuccess: () => {
+        setIsOpen(false);
+        if (typeof window !== "undefined") {
+          window.open(redirectUrl, "_blank", "noopener");
+        }
+      },
+    });
+
   const handleOpenChat = () => {
-    setIsOpen(!isOpen);
-    setShowBadge(false);
-  };
-
-  const validate = (): boolean => {
-    const next: Errors = {};
-    if (!name.trim()) next.name = "Informe seu nome.";
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) next.email = "E-mail inválido.";
-    const digits = phone.replace(/\D/g, "");
-    if (digits.length < 8) next.phone = "Telefone inválido.";
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
-
-  const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!validate() || submitting) return;
-    setSubmitting(true);
-    setServerError(null);
-
-    try {
-      const result = await send({
-        data: {
-          name: name.trim(),
-          email: email.trim(),
-          phone: phone.trim(),
-          message: messageText,
-          ...(propertyCode ? { property_id: propertyCode } : {}),
-          source: "site",
-        },
-      });
-
-      if (!result.ok) {
-        setServerError(result.error || "Não foi possível enviar agora.");
-        setSubmitting(false);
-        return;
-      }
-
-      if (typeof window !== "undefined") {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({ event: "lead_enviado_crm" });
-      }
-
-      // Reset form & state
-      setIsOpen(false);
-      setName("");
-      setEmail("");
-      setPhone("");
-      setErrors({});
-      setSubmitting(false);
-
-      // Redirect to WhatsApp
-      if (typeof window !== "undefined") {
-        window.open(redirectUrl, "_blank", "noopener");
-      }
-    } catch (err) {
-      console.error(err);
-      setServerError("Erro inesperado. Tente novamente.");
-      setSubmitting(false);
+    const next = !isOpen;
+    setIsOpen(next);
+    if (next) {
+      setOpenedAt(new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }));
+    } else {
+      reset();
     }
+  };
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    submit();
   };
 
   return (
@@ -129,8 +81,8 @@ export function WhatsAppButton() {
               <div>
                 <h3 className="font-semibold text-sm leading-tight text-cream-foundation">Fenômeno Imóveis</h3>
                 <p className="text-[11px] text-cream-foundation/70 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] inline-block animate-pulse" />
-                  Online
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] inline-block animate-pulse" aria-hidden="true" />
+                  Atendimento via WhatsApp
                 </p>
               </div>
             </div>
@@ -154,70 +106,79 @@ export function WhatsAppButton() {
           >
             <div className="bg-white rounded-lg p-2.5 shadow-sm text-xs text-gray-800 max-w-[85%] self-start relative rounded-tl-none">
               Olá! 👋
-              <span className="block text-[9px] text-gray-400 text-right mt-1">10:00</span>
+              <span className="block text-[9px] text-gray-400 text-right mt-1">{openedAt}</span>
             </div>
-            
+
             <div className="bg-white rounded-lg p-2.5 shadow-sm text-xs text-gray-800 max-w-[85%] self-start relative rounded-tl-none">
               {isPropertyPage ? "Quer saber mais sobre este imóvel?" : "Como podemos te ajudar hoje?"}
-              <span className="block text-[9px] text-gray-400 text-right mt-1">10:00</span>
+              <span className="block text-[9px] text-gray-400 text-right mt-1">{openedAt}</span>
             </div>
 
             <div className="bg-white rounded-lg p-2.5 shadow-sm text-xs text-gray-800 max-w-[85%] self-start relative rounded-tl-none">
               Por favor, informe seus dados para iniciarmos o atendimento no WhatsApp:
-              <span className="block text-[9px] text-gray-400 text-right mt-1">10:00</span>
+              <span className="block text-[9px] text-gray-400 text-right mt-1">{openedAt}</span>
             </div>
 
             {/* Inline Lead Capture Form */}
             <div className="bg-white rounded-lg p-3.5 shadow-sm text-xs text-gray-800 max-w-[90%] self-start relative rounded-tl-none space-y-3 border border-gray-150">
               <div className="space-y-2.5">
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-1 uppercase font-medium">Nome completo *</label>
+                  <label htmlFor="wa-lead-name" className="block text-[10px] text-gray-500 mb-1 uppercase font-medium">Nome completo *</label>
                   <input
+                    id="wa-lead-name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Seu nome"
                     disabled={submitting}
+                    aria-invalid={Boolean(errors.name)}
+                    aria-describedby={errors.name ? "wa-lead-name-error" : undefined}
                     className={`w-full bg-gray-50 border rounded-lg px-2.5 py-1.5 text-xs text-gray-800 placeholder:text-gray-450 outline-none focus:border-emerald-500 transition-colors ${
                       errors.name ? "border-red-400 focus:border-red-500" : "border-gray-250"
                     }`}
                   />
-                  {errors.name && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.name}</span>}
+                  {errors.name && <span id="wa-lead-name-error" role="alert" className="text-[10px] text-red-500 mt-0.5 block">{errors.name}</span>}
                 </div>
 
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-1 uppercase font-medium">E-mail *</label>
+                  <label htmlFor="wa-lead-email" className="block text-[10px] text-gray-500 mb-1 uppercase font-medium">E-mail *</label>
                   <input
+                    id="wa-lead-email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="voce@exemplo.com"
                     disabled={submitting}
+                    aria-invalid={Boolean(errors.email)}
+                    aria-describedby={errors.email ? "wa-lead-email-error" : undefined}
                     className={`w-full bg-gray-50 border rounded-lg px-2.5 py-1.5 text-xs text-gray-800 placeholder:text-gray-450 outline-none focus:border-emerald-500 transition-colors ${
                       errors.email ? "border-red-400 focus:border-red-500" : "border-gray-250"
                     }`}
                   />
-                  {errors.email && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.email}</span>}
+                  {errors.email && <span id="wa-lead-email-error" role="alert" className="text-[10px] text-red-500 mt-0.5 block">{errors.email}</span>}
                 </div>
 
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-1 uppercase font-medium">Telefone / WhatsApp *</label>
+                  <label htmlFor="wa-lead-phone" className="block text-[10px] text-gray-500 mb-1 uppercase font-medium">Telefone / WhatsApp *</label>
                   <input
+                    id="wa-lead-phone"
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+55 (47) 9983-7494"
                     disabled={submitting}
+                    aria-invalid={Boolean(errors.phone)}
+                    aria-describedby={errors.phone ? "wa-lead-phone-error" : undefined}
                     className={`w-full bg-gray-50 border rounded-lg px-2.5 py-1.5 text-xs text-gray-800 placeholder:text-gray-450 outline-none focus:border-emerald-500 transition-colors ${
                       errors.phone ? "border-red-400 focus:border-red-500" : "border-gray-250"
                     }`}
                   />
-                  {errors.phone && <span className="text-[10px] text-red-500 mt-0.5 block">{errors.phone}</span>}
+                  {errors.phone && <span id="wa-lead-phone-error" role="alert" className="text-[10px] text-red-500 mt-0.5 block">{errors.phone}</span>}
                 </div>
               </div>
 
               {serverError && (
-                <p className="text-[10px] text-red-500 bg-red-50 p-2 border border-red-200 rounded">
+                <p role="alert" className="text-[10px] text-red-500 bg-red-50 p-2 border border-red-200 rounded">
                   {serverError}
                 </p>
               )}
@@ -238,7 +199,9 @@ export function WhatsAppButton() {
 
           {/* Footer Input Area */}
           <div className="bg-[#f0f2f5] p-2.5 border-t border-gray-200 flex items-center gap-2">
+            <label htmlFor="wa-message" className="sr-only">Mensagem</label>
             <textarea
+              id="wa-message"
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               className="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs resize-none focus:outline-none focus:border-emerald-500 max-h-[70px] min-h-[36px] text-gray-800"
@@ -268,14 +231,7 @@ export function WhatsAppButton() {
         }}
       >
         {/* Pulse ring (disabled when widget is open) */}
-        {!isOpen && <span className="absolute inset-0 rounded-full animate-ping opacity-30 bg-[#25D366]" />}
-
-        {/* Notification Badge */}
-        {!isOpen && showBadge && (
-          <span className="absolute -top-1.5 -right-1.5 bg-[#ff5252] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border border-white shadow-md animate-bounce">
-            3
-          </span>
-        )}
+        {!isOpen && <span className="absolute inset-0 rounded-full animate-ping opacity-30 bg-[#25D366]" aria-hidden="true" />}
 
         {/* WhatsApp or Close icon */}
         {isOpen ? (

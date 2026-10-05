@@ -118,10 +118,10 @@ export function DailyVerse({ variant = "dark" }: { variant?: VariantType }) {
           <span className="material-symbols-outlined text-xs">auto_stories</span>
           Versículo do Dia
         </div>
-        <div className="flex gap-2 items-center">
-          <div className="w-2 h-2 rounded-full bg-gold-champagne/40 animate-bounce [animation-delay:0ms]" />
-          <div className="w-2 h-2 rounded-full bg-gold-champagne/40 animate-bounce [animation-delay:150ms]" />
-          <div className="w-2 h-2 rounded-full bg-gold-champagne/40 animate-bounce [animation-delay:300ms]" />
+        <div className="flex gap-2 items-center" role="status" aria-label="Carregando versículo">
+          <div className="w-2 h-2 rounded-full bg-gold-champagne/40 animate-pulse [animation-delay:0ms]" />
+          <div className="w-2 h-2 rounded-full bg-gold-champagne/40 animate-pulse [animation-delay:150ms]" />
+          <div className="w-2 h-2 rounded-full bg-gold-champagne/40 animate-pulse [animation-delay:300ms]" />
         </div>
       </div>
     );

@@ -154,6 +154,9 @@ function Hero() {
   const navigate = useNavigate();
   const imgRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
     const onScroll = () => {
       if (!imgRef.current) return;
       const y = window.scrollY;
@@ -306,6 +309,14 @@ function About() {
         <div className="reveal-up relative aspect-[4/5] overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80"
+            srcSet="
+              https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=480&q=80 480w,
+              https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80 800w,
+              https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80 1200w
+            "
+            sizes="(min-width: 768px) 50vw, 100vw"
+            loading="lazy"
+            decoding="async"
             alt="Interior de luxo"
             className="w-full h-full object-cover"
           />

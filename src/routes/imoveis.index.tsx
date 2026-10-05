@@ -138,21 +138,28 @@ function ListingsPage() {
 
       <Navbar />
 
-      <div className="relative">
+      <div className="relative isolate">
         <div
-          className="absolute bottom-0 left-0 w-auto opacity-25 md:opacity-40 pointer-events-none z-0 select-none -translate-x-[20%]"
+          className="absolute bottom-0 left-0 w-auto opacity-25 md:opacity-40 pointer-events-none -z-10 select-none -translate-x-[20%]"
           style={{
             top: "max(40vh, 340px)",
           }}
         >
-          <img src="/bg-logo-symbol.svg" alt="" className="w-auto h-full object-contain object-left-bottom" />
+          <img src="/bg-logo-symbol.svg" alt="" loading="lazy" className="w-auto h-full object-contain object-left-bottom" />
         </div>
 
         <section className="relative h-[40vh] min-h-[340px] overflow-hidden flex flex-col justify-end pb-10 pt-28">
           <div className="absolute inset-0">
             <img
               src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=80"
+              srcSet="
+                https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80 800w,
+                https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80 1400w,
+                https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=80 2000w
+              "
+              sizes="100vw"
               alt="Portfólio de Luxo"
+              decoding="async"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-forest-deep/80 via-forest-deep/50 to-forest-deep" />

@@ -281,6 +281,22 @@
   animation: whatsapp-vibrate 5s infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  /* Non-essential continuous loops: stop them outright, they carry no state. */
+  .animate-whatsapp-vibrate,
+  .animate-ping {
+    animation: none !important;
+  }
+
+  /* Scroll reveals keep their meaningful opacity change, drop the spatial slide. */
+  .reveal-up {
+    transform: none !important;
+  }
+  .reveal-up.active {
+    transform: none !important;
+  }
+}
+
 /* Force WhatsApp button and chat widget to remain clickable even when a modal is open */
 .whatsapp-clickable {
   pointer-events: auto !important;

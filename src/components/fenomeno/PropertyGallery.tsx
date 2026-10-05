@@ -74,7 +74,7 @@ export function PropertyGallery({
 
   if (!hasImages) {
     return (
-      <div className="relative aspect-[16/10] bg-forest-deep/20 flex items-center justify-center text-cream-foundation/40 text-sm">
+      <div className="relative aspect-[16/10] bg-forest-deep flex items-center justify-center text-cream-foundation/85 text-sm">
         Sem fotos disponíveis
       </div>
     );
@@ -107,6 +107,8 @@ export function PropertyGallery({
                   setLightboxIndex(i);
                   setLightboxOpen(true);
                 }}
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
                 className="w-full h-full object-cover cursor-zoom-in"
               />
             </div>
@@ -164,6 +166,8 @@ export function PropertyGallery({
               <img
                 src={src}
                 alt={`${alt} — miniatura ${i + 1}`}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </button>
@@ -217,6 +221,7 @@ export function PropertyGallery({
             src={images[lightboxIndex]}
             alt={`${alt} — ${lightboxIndex + 1}`}
             onClick={(e) => e.stopPropagation()}
+            decoding="async"
             className="max-w-full max-h-full object-contain p-6"
           />
         </div>

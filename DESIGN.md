@@ -94,6 +94,11 @@ typography:
     fontWeight: '600'
     lineHeight: '1.0'
     letterSpacing: 0.1em
+  icon:
+    fontFamily: Material Symbols Outlined
+    fontSize: 24px
+    fontWeight: '400'
+    lineHeight: '1.0'
 rounded:
   sm: 0.125rem
   DEFAULT: 0.25rem
@@ -129,6 +134,7 @@ The typography strategy relies on the tension between a traditional, literary se
 - **Headlines:** `Libre Caslon Text` provides an editorial feel, reminiscent of luxury lifestyle magazines. It should be used for all major headings and impactful quotes.
 - **Body & Labels:** `Hanken Grotesk` offers a clean, technical contrast. Its high legibility is essential for property details and technical data. 
 - **Styling Note:** Use `label-caps` for section overlines (e.g., "FEATURED PROPERTIES") to create a structured, architectural hierarchy.
+- **Icons:** `Material Symbols Outlined` (Google Fonts) is the site's icon system, loaded globally and referenced via the `.material-symbols-outlined` class rather than a component library. It is a glyph set, not a text typeface — never use it for headings or body copy.
 
 ## Layout & Spacing
 
