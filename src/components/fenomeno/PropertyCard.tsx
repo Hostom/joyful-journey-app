@@ -116,6 +116,14 @@ export function PropertyCard({
   const wrapperClass = "reveal-up group block h-full text-left";
   const wrapperStyle = { transitionDelay: `${index * 80}ms` };
 
+  const handleCardKeyDown = (e: React.KeyboardEvent) => {
+    if (e.target !== e.currentTarget) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleCardClick();
+    }
+  };
+
   const cardInner = (
       <div className="h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-400 border border-cream-stone/60 hover:border-gold-classic/40 hover:-translate-y-1">
         {/* Image wrapper */}
@@ -266,7 +274,10 @@ export function PropertyCard({
     <>
     {onSelect ? (
       <div
+        role="button"
+        tabIndex={0}
         onClick={handleCardClick}
+        onKeyDown={handleCardKeyDown}
         className={`${wrapperClass} cursor-pointer`}
         style={wrapperStyle}
       >
